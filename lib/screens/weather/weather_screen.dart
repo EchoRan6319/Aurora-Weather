@@ -72,7 +72,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
         child: CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 240,
+              expandedHeight: 280,
               floating: false,
               pinned: true,
               actions: [
@@ -138,7 +138,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     return Container(
       color: colorScheme.surfaceContainer,
       child: Padding(
-        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 0, top: 48),
+        padding: const EdgeInsets.only(left: 24, right: 24, bottom: 0, top: 36),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
