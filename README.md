@@ -53,7 +53,7 @@
 
 | 分类 | 技术 |
 |------|------|
-| 框架 | Flutter 3.35.7 |
+| 框架 | Flutter 3.41.3 |
 | 状态管理 | Riverpod 2.6+ |
 | 网络请求 | Dio |
 | 数据模型 | Freezed + JSON Serializable |
