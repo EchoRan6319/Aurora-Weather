@@ -107,10 +107,12 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
           theme: AppTheme.createTheme(
             colorScheme: lightColorScheme,
             useMaterial3: themeSettings.useMaterial3,
+            fontFamily: themeSettings.useCustomFont ? 'OPPOSans' : null,
           ),
           darkTheme: AppTheme.createTheme(
             colorScheme: darkColorScheme,
             useMaterial3: themeSettings.useMaterial3,
+            fontFamily: themeSettings.useCustomFont ? 'OPPOSans' : null,
           ),
           themeMode: themeNotifier.flutterThemeMode,
           builder: (context, child) {

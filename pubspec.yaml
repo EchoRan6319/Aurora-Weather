@@ -50,3 +50,8 @@ flutter:
     - .env
     - assets/images/
     - assets/icons/
+
+  fonts:
+    - family: OPPOSans
+      fonts:
+        - asset: exfonts/OPPO Sans 4.0.ttf

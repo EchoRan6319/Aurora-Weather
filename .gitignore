@@ -57,3 +57,6 @@ api_keys.dart
 
 # Android local properties
 android/local.properties
+
+# Font files and license
+/exfonts/

@@ -97,11 +97,13 @@ class AppTheme {
   static ThemeData createTheme({
     required ColorScheme colorScheme,
     required bool useMaterial3,
+    String? fontFamily,
   }) {
     return ThemeData(
       useMaterial3: useMaterial3,
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
+      fontFamily: fontFamily,
       scaffoldBackgroundColor: colorScheme.surfaceContainer,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surfaceContainer,

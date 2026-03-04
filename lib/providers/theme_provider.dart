@@ -10,12 +10,14 @@ class ThemeSettings {
   final Color? seedColor;
   final bool useDynamicColor;
   final bool useMaterial3;
+  final bool useCustomFont;
 
   const ThemeSettings({
     this.themeMode = AppThemeMode.system,
     this.seedColor,
     this.useDynamicColor = true,
     this.useMaterial3 = true,
+    this.useCustomFont = false,
   });
 
   ThemeSettings copyWith({
@@ -23,6 +25,7 @@ class ThemeSettings {
     Color? seedColor,
     bool? useDynamicColor,
     bool? useMaterial3,
+    bool? useCustomFont,
     bool clearSeedColor = false,
   }) {
     return ThemeSettings(
@@ -30,6 +33,7 @@ class ThemeSettings {
       seedColor: clearSeedColor ? null : (seedColor ?? this.seedColor),
       useDynamicColor: useDynamicColor ?? this.useDynamicColor,
       useMaterial3: useMaterial3 ?? this.useMaterial3,
+      useCustomFont: useCustomFont ?? this.useCustomFont,
     );
   }
 }
@@ -39,6 +43,7 @@ class ThemeNotifier extends StateNotifier<ThemeSettings> {
   static const String _keySeedColor = 'seed_color';
   static const String _keyUseDynamicColor = 'use_dynamic_color';
   static const String _keyUseMaterial3 = 'use_material3';
+  static const String _keyUseCustomFont = 'use_custom_font';
 
   ThemeNotifier() : super(const ThemeSettings()) {
     _loadSettings();
@@ -51,12 +56,14 @@ class ThemeNotifier extends StateNotifier<ThemeSettings> {
     final seedColorValue = prefs.getInt(_keySeedColor);
     final useDynamicColor = prefs.getBool(_keyUseDynamicColor) ?? true;
     final useMaterial3 = prefs.getBool(_keyUseMaterial3) ?? true;
+    final useCustomFont = prefs.getBool(_keyUseCustomFont) ?? false;
 
     state = ThemeSettings(
       themeMode: AppThemeMode.values[themeModeIndex],
       seedColor: seedColorValue != null ? Color(seedColorValue) : null,
       useDynamicColor: useDynamicColor,
       useMaterial3: useMaterial3,
+      useCustomFont: useCustomFont,
     );
   }
 
@@ -86,6 +93,12 @@ class ThemeNotifier extends StateNotifier<ThemeSettings> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_keyUseMaterial3, value);
     state = state.copyWith(useMaterial3: value);
+  }
+
+  Future<void> setUseCustomFont(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyUseCustomFont, value);
+    state = state.copyWith(useCustomFont: value);
   }
 
   ThemeMode get flutterThemeMode {
@@ -125,5 +138,6 @@ final themeDataProvider = Provider.family<ThemeData, ColorScheme?>((ref, dynamic
   return AppTheme.createTheme(
     colorScheme: colorScheme,
     useMaterial3: settings.useMaterial3,
+    fontFamily: settings.useCustomFont ? 'OPPOSans' : null,
   );
 });
