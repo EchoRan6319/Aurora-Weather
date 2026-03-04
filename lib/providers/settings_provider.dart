@@ -127,6 +127,27 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
     // 加载天气卡片顺序
     final savedOrder = prefs.getStringList(_keyWeatherCardOrder);
+    
+    // 验证并修复天气卡片顺序
+    const validOrder = ['hourly', 'daily', 'airQuality', 'details'];
+    List<String> validatedOrder;
+    
+    if (savedOrder == null) {
+      validatedOrder = validOrder;
+    } else {
+      // 检查保存的顺序是否有效
+      final hasAllValidCards = savedOrder.every((card) => validOrder.contains(card));
+      final hasCorrectLength = savedOrder.length == validOrder.length;
+      
+      if (hasAllValidCards && hasCorrectLength) {
+        validatedOrder = savedOrder;
+      } else {
+        // 如果顺序无效，使用默认顺序
+        validatedOrder = validOrder;
+        // 保存修复后的顺序
+        await prefs.setStringList(_keyWeatherCardOrder, validatedOrder);
+      }
+    }
 
     // 更新状态
     state = AppSettings(
@@ -138,8 +159,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       showFeelsLike: prefs.getBool(_keyShowFeelsLike) ?? true,
       showAIAssistant: prefs.getBool(_keyShowAIAssistant) ?? true,
       locationAccuracyLevel: accuracyLevel,
-      weatherCardOrder:
-          savedOrder ?? const ['hourly', 'daily', 'airQuality', 'details'],
+      weatherCardOrder: validatedOrder,
     );
   }
 
@@ -222,9 +242,21 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   /// 
   /// [value]: 天气卡片顺序
   Future<void> setWeatherCardOrder(List<String> value) async {
+    // 验证顺序是否有效
+    const validOrder = ['hourly', 'daily', 'airQuality', 'details'];
+    final hasAllValidCards = value.every((card) => validOrder.contains(card));
+    final hasCorrectLength = value.length == validOrder.length;
+    
+    List<String> validatedOrder;
+    if (hasAllValidCards && hasCorrectLength) {
+      validatedOrder = value;
+    } else {
+      validatedOrder = validOrder;
+    }
+    
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_keyWeatherCardOrder, value);
-    state = state.copyWith(weatherCardOrder: value);
+    await prefs.setStringList(_keyWeatherCardOrder, validatedOrder);
+    state = state.copyWith(weatherCardOrder: validatedOrder);
   }
 }
 

@@ -30,7 +30,19 @@ class _CardOrderScreenState extends ConsumerState<CardOrderScreen> {
   @override
   void initState() {
     super.initState();
-    _currentOrder = List.from(ref.read(settingsProvider).weatherCardOrder);
+    // 确保使用有效的顺序
+    const validOrder = ['hourly', 'daily', 'airQuality', 'details'];
+    final savedOrder = ref.read(settingsProvider).weatherCardOrder;
+    
+    // 验证顺序
+    final hasAllValidCards = savedOrder.every((card) => validOrder.contains(card));
+    final hasCorrectLength = savedOrder.length == validOrder.length;
+    
+    if (hasAllValidCards && hasCorrectLength) {
+      _currentOrder = List.from(savedOrder);
+    } else {
+      _currentOrder = List.from(validOrder);
+    }
   }
 
   @override

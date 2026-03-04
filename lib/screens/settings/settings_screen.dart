@@ -1536,7 +1536,7 @@ class _AboutBottomSheet extends StatelessWidget {
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        '版本 3.0.0',
+                        '版本 3.1.0',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),

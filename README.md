@@ -1,6 +1,6 @@
 # 轻氧天气 (Pure Weather)
 
-一款使用 Flutter 和 Material You Design 构建的现代化 Android 天气应用。
+一款使用 Flutter 和 Material You Design 构建的现代化跨平台天气应用，支持全平台。
 
 ## 预览
 
@@ -116,6 +116,85 @@ lib/
 │   ├── weather_indices_card.dart   # 生活指数
 │   └── app_icon.dart               # 应用图标组件
 └── main.dart                # 应用入口
+```
+
+## 平台支持
+
+### 官方支持平台
+
+- **Android**：完全支持，提供预构建的 APK 文件
+- **Windows**：完全支持，提供预构建的 EXE 文件
+
+### 其他平台（需自行编译）
+
+- **iOS**：理论支持，需自行配置开发者证书和构建环境
+- **macOS**：理论支持，需自行配置开发者证书和构建环境
+- **Linux**：理论支持，可能需要额外的依赖配置
+- **Web**：理论支持，可能存在部分功能限制
+
+### 构建方法
+
+#### Android
+
+```bash
+# 构建 Debug APK
+flutter build apk --debug
+
+# 构建 Release APK
+flutter build apk --release --target-platform android-arm64
+
+# 构建 App Bundle
+flutter build appbundle --target-platform android-arm64
+```
+
+#### Windows
+
+```bash
+# 构建 Windows 可执行文件
+flutter build windows
+
+# 构建 Release 版本
+flutter build windows --release
+```
+
+#### iOS
+
+```bash
+# 构建 iOS 应用
+flutter build ios
+
+# 构建 Release 版本
+flutter build ios --release
+```
+
+#### macOS
+
+```bash
+# 构建 macOS 应用
+flutter build macos
+
+# 构建 Release 版本
+flutter build macos --release
+```
+
+#### Linux
+
+```bash
+# 构建 Linux 应用
+flutter build linux
+
+# 构建 Release 版本
+flutter build linux --release
+```
+
+#### Web
+
+```bash
+# 构建 Web 应用
+flutter build web
+
+# 构建 Release 版本
+flutter build web --release
 ```
 
 ## 配置说明
@@ -253,6 +332,8 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 ### 运行项目
 
+#### Android
+
 1. **连接设备**
    - 连接 Android 设备到电脑，或启动 Android 模拟器
    - 运行 `adb devices` 确认设备已连接
@@ -289,6 +370,99 @@ flutter pub run build_runner build --delete-conflicting-outputs
    adb install path/to/app.apk
    ```
 
+#### Windows
+
+1. **运行调试版**
+   ```bash
+   # 运行 Windows 应用
+   flutter run -d windows
+   ```
+
+2. **构建 Windows 应用**
+   ```bash
+   # 构建 Debug 版本
+   flutter build windows
+   
+   # 构建 Release 版本
+   flutter build windows --release
+   ```
+
+3. **运行构建的应用**
+   - Debug 版本：`build\windows\runner\Debug\pureweather.exe`
+   - Release 版本：`build\windows\runner\Release\pureweather.exe`
+
+#### iOS
+
+1. **运行调试版**
+   ```bash
+   # 运行 iOS 应用
+   flutter run -d ios
+   ```
+
+2. **构建 iOS 应用**
+   ```bash
+   # 构建 Debug 版本
+   flutter build ios
+   
+   # 构建 Release 版本
+   flutter build ios --release
+   ```
+
+#### macOS
+
+1. **运行调试版**
+   ```bash
+   # 运行 macOS 应用
+   flutter run -d macos
+   ```
+
+2. **构建 macOS 应用**
+   ```bash
+   # 构建 Debug 版本
+   flutter build macos
+   
+   # 构建 Release 版本
+   flutter build macos --release
+   ```
+
+#### Linux
+
+1. **运行调试版**
+   ```bash
+   # 运行 Linux 应用
+   flutter run -d linux
+   ```
+
+2. **构建 Linux 应用**
+   ```bash
+   # 构建 Debug 版本
+   flutter build linux
+   
+   # 构建 Release 版本
+   flutter build linux --release
+   ```
+
+#### Web
+
+1. **运行调试版**
+   ```bash
+   # 运行 Web 应用
+   flutter run -d web
+   ```
+
+2. **构建 Web 应用**
+   ```bash
+   # 构建 Debug 版本
+   flutter build web
+   
+   # 构建 Release 版本
+   flutter build web --release
+   ```
+
+3. **部署 Web 应用**
+   - 将 `build/web` 目录下的文件部署到 Web 服务器
+   - 支持静态网站托管服务
+
 ### 常见问题解决
 
 1. **依赖解析失败**
@@ -312,11 +486,19 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 ## 版本历史
 
+### v3.1.0
+- **应用升级**：版本号升级至 3.1.0
+- **卡片顺序修复**：修复天气详情页卡片排序功能，确保卡片按正确顺序显示
+- **默认顺序优化**：设置默认卡片顺序为：24小时预报、7天预报、空气质量、详细信息
+- **顺序验证**：添加卡片顺序有效性验证，自动修复错误的保存顺序
+- **跨平台一致性**：确保所有平台的卡片排序功能正常工作
+
 ### v3.0.0
 - **应用升级**：版本号升级至 3.0.0
 - **图标更新**：全新 Material You 风格应用图标，支持动态取色
 - **关于页面**：更新应用图标为新的 Material You 风格
 - **界面优化**：整体 UI 风格更加现代化，符合 Material Design 3 规范
+- **平台支持**：增加 Windows 平台支持，完善跨平台构建配置
 
 ### v2.6.0
 - **应用升级**：版本号升级至 2.6.0
