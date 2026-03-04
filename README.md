@@ -135,7 +135,7 @@ DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
 
 3. **克隆项目**
    ```bash
-   git clone https://github.com/yourusername/PureWeather.git
+   git clone https://github.com/EchoRan6319/PureWeather.git
    cd PureWeather
    ```
 
@@ -279,6 +279,12 @@ flutter pub run build_runner build --delete-conflicting-outputs
    - 查看 API 服务是否有访问限制
 
 ## 版本历史
+
+### v3.0.0
+- **应用升级**：版本号升级至 3.0.0
+- **图标更新**：全新 Material You 风格应用图标，支持动态取色
+- **关于页面**：更新应用图标为新的 Material You 风格
+- **界面优化**：整体 UI 风格更加现代化，符合 Material Design 3 规范
 
 ### v2.6.0
 - **应用升级**：版本号升级至 2.6.0

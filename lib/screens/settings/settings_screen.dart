@@ -10,6 +10,7 @@ import '../../providers/theme_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/notification_service.dart';
+import '../../widgets/app_icon.dart';
 import 'scheduled_broadcast_screen.dart';
 import 'card_order_screen.dart';
 
@@ -1497,14 +1498,7 @@ class _AboutBottomSheet extends StatelessWidget {
                   child: Column(
                     children: [
                       const SizedBox(height: 16),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
-                          'assets/icons/app_icon.png',
-                          width: 80,
-                          height: 80,
-                        ),
-                      ),
+                      const AppIcon(size: 80),
                       const SizedBox(height: 16),
                       Text(
                         '轻氧天气',
@@ -1513,7 +1507,7 @@ class _AboutBottomSheet extends StatelessWidget {
                             ),
                       ),
                       Text(
-                        '版本 2.6.0',
+                        '版本 3.0.0',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: colorScheme.onSurfaceVariant,
                             ),
@@ -1535,7 +1529,7 @@ class _AboutBottomSheet extends StatelessWidget {
                         context,
                         Icons.code_outlined,
                         '开源地址',
-                        'https://github.com/EchoRan/PureWeather',
+                        'https://github.com/EchoRan6319/PureWeather',
                         isLink: true,
                       ),
                       const SizedBox(height: 32),
