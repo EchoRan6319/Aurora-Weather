@@ -30,8 +30,15 @@ class ScheduledBroadcastService {
   Future<void> initialize() async {
     if (_isInitialized) return;
 
-    tz_data.initializeTimeZones();
-    tz.setLocalLocation(tz.getLocation('Asia/Shanghai'));
+    try {
+      tz_data.initializeTimeZones();
+      final String timeZoneName = 'Asia/Shanghai';
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+      debugPrint('[ScheduledBroadcast] Timezone initialized: $timeZoneName');
+    } catch (e) {
+      debugPrint('[ScheduledBroadcast] Error initializing timezone: $e');
+      // Fallback to UTC if local fails, or handle appropriately
+    }
 
     if (defaultTargetPlatform == TargetPlatform.android) {
       final androidPlugin = _notifications
@@ -116,6 +123,8 @@ class ScheduledBroadcastService {
       matchDateTimeComponents: DateTimeComponents.time,
       payload: 'morning_broadcast',
     );
+
+    debugPrint('[ScheduledBroadcast] morning broadcast scheduled successfully');
 
     final pendingNotifications = await _notifications
         .pendingNotificationRequests();

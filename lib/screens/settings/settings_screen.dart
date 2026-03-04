@@ -180,12 +180,12 @@ class SettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 icon: Icons.privacy_tip_outlined,
                 title: '隐私政策',
-                onTap: () {},
+                onTap: () => _showPrivacyPolicy(context),
               ),
               _SettingsTile(
                 icon: Icons.description_outlined,
                 title: '用户协议',
-                onTap: () {},
+                onTap: () => _showUserAgreement(context),
               ),
               _SettingsTile(
                 icon: Icons.system_update_outlined,
@@ -904,7 +904,7 @@ class SettingsScreen extends ConsumerWidget {
     showAboutDialog(
       context: context,
       applicationName: '轻氧天气',
-      applicationVersion: '2.2',
+      applicationVersion: '2.6',
       applicationIcon: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         child: Image.asset('assets/icons/app_icon.png', width: 64, height: 64),
@@ -931,6 +931,80 @@ class SettingsScreen extends ConsumerWidget {
             ),
           ),
         ),
+      ],
+    );
+  }
+
+  void _showPrivacyPolicy(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        title: const Text('隐私政策'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('生效日期：2026年3月4日'),
+                const SizedBox(height: 16),
+                const Text('轻氧天气（以下简称“我们”）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。'),
+                const SizedBox(height: 12),
+                _buildLegaleseSection('1. 信息收集', '我们仅在您使用应用期间收集必要的信息，包括：\n• 位置信息：仅用于获取您当前位置的天气预报。您可以随时在系统中关闭该权限。'),
+                _buildLegaleseSection('2. 信息使用', '收集的信息仅用于向您提供准确的天气预报和相关推送服务。我们不会将您的个人信息出售给第三方。'),
+                _buildLegaleseSection('3. 数据存储', '您的位置偏好设置存储在设备本地（SharedPreferences），除非您手动清理应用数据，否则信息将保留在您的设备上。'),
+                _buildLegaleseSection('4. 第三方服务', '本应用使用和风天气（QWeather）及彩云天气提供的天气接口，您的位置坐标（经纬度）将发送至其服务器以换取天气数据。'),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          FilledButton(onPressed: () => Navigator.pop(ctx), child: const Text('我知道了')),
+        ],
+      ),
+    );
+  }
+
+  void _showUserAgreement(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        title: const Text('用户协议'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('欢迎使用轻氧天气！请在使用前阅读以下条款。'),
+                const SizedBox(height: 16),
+                _buildLegaleseSection('1. 服务内容', '轻氧天气为您提供天气查询、极端天气预警及定时播报等非商业服务。'),
+                _buildLegaleseSection('2. 使用规范', '您不得将本应用用于任何非法目的，或以任何方式干扰应用的正常运行。'),
+                _buildLegaleseSection('3. 免责声明', '天气数据由第三方提供，受气象、地理、网络等多种因素影响，数据的准时性、准确性可能存在偏差。本应用不承担因天气数据错误导致的任何直接或间接损失。'),
+                _buildLegaleseSection('4. 协议变更', '我们保留随时修改本协议的权利，修改后的协议将在应用内公布。'),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          FilledButton(onPressed: () => Navigator.pop(ctx), child: const Text('我同意')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLegaleseSection(String title, String content) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 4),
+        Text(content, style: const TextStyle(fontSize: 14)),
       ],
     );
   }
