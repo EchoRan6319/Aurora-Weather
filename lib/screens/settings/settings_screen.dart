@@ -123,8 +123,8 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 _SettingsSwitch(
                   icon: Icons.psychology_outlined,
-                  title: '显示 AI 助手',
-                  subtitle: '在底部导航栏显示 AI 助手页面',
+                  title: '显示 AI 天气助手',
+                  subtitle: '在底部导航栏显示 AI 天气助手页面',
                   value: appSettings.showAIAssistant,
                   onChanged: (value) {
                     ref
