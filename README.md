@@ -97,8 +97,8 @@ lib/
 │   │   ├── settings_screen.dart    # 设置主页
 │   │   ├── card_order_screen.dart  # 卡片排序
 │   │   └── scheduled_broadcast_screen.dart # 定时播报设置
-│   └── ai_assistant/               # AI 助手页
-│       └── ai_assistant_screen.dart # AI 助手
+│   └── ai_assistant/               # 天气助手页
+│       └── ai_assistant_screen.dart # 天气助手
 ├── services/               # API 服务
 │   ├── qweather_service.dart       # 和风天气 API
 │   ├── caiyun_service.dart         # 彩云天气 API
@@ -132,103 +132,7 @@ lib/
 - **Linux**：理论支持，可能需要额外的依赖配置
 - **Web**：理论支持，可能存在部分功能限制
 
-### 构建方法
-
-#### Android
-
-```bash
-# 构建 Debug APK
-flutter build apk --debug
-
-# 构建 Release APK
-flutter build apk --release --target-platform android-arm64
-
-# 构建 App Bundle
-flutter build appbundle --target-platform android-arm64
-```
-
-#### Windows
-
-```bash
-# 构建 Windows 可执行文件
-flutter build windows
-
-# 构建 Release 版本
-flutter build windows --release
-```
-
-#### iOS
-
-```bash
-# 构建 iOS 应用
-flutter build ios
-
-# 构建 Release 版本
-flutter build ios --release
-```
-
-#### macOS
-
-```bash
-# 构建 macOS 应用
-flutter build macos
-
-# 构建 Release 版本
-flutter build macos --release
-```
-
-#### Linux
-
-```bash
-# 构建 Linux 应用
-flutter build linux
-
-# 构建 Release 版本
-flutter build linux --release
-```
-
-#### Web
-
-```bash
-# 构建 Web 应用
-flutter build web
-
-# 构建 Release 版本
-flutter build web --release
-```
-
-## 配置说明
-
-### 环境变量
-
-在项目根目录创建 `.env` 文件：
-
-```env
-# 和风天气 API（必填）
-QWEATHER_API_KEY=your_qweather_api_key
-QWEATHER_BASE_URL=https://devapi.qweather.com/v7
-
-# 彩云天气 API（必填）
-CAIYUN_API_KEY=your_caiyun_api_key
-CAIYUN_BASE_URL=https://api.caiyunapp.com/v2.6
-
-# 高德地图 API（必填）
-AMAP_API_KEY=your_amap_api_key
-AMAP_WEB_KEY=your_amap_web_key
-
-# DeepSeek API（可选，用于 AI 助手）
-DEEPSEEK_API_KEY=your_deepseek_api_key
-DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
-```
-
-### API 申请
-
-1. **和风天气**: https://dev.qweather.com/
-2. **彩云天气**: https://open.caiyunapp.com/
-3. **高德地图**: https://lbs.amap.com/
-4. **DeepSeek**: https://platform.deepseek.com/
-
-## 本地部署教程
+## 快速开始
 
 ### 环境准备
 
@@ -237,7 +141,7 @@ DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
    - 配置 Flutter 环境变量，确保 `flutter` 命令在终端中可用
    - 运行 `flutter doctor` 检查环境是否配置正确
 
-2. **安装 Android 开发环境**
+2. **安装 Android 开发环境**（仅 Android 平台）
    - 安装 Android Studio：[Android Studio 官方下载](https://developer.android.com/studio)
    - 在 Android Studio 中安装 Android SDK、Android SDK Platform-Tools 和 Android SDK Build-Tools
    - 配置 Android 环境变量（`ANDROID_HOME`）
@@ -300,7 +204,7 @@ export FLUTTER_STORAGE_BASE_URL="https://mirrors.tuna.tsinghua.edu.cn/flutter"
 
 2. **创建配置文件**
    - 在项目根目录创建 `.env` 文件
-   - 复制 `.env.example` 文件内容并填写你的 API Key
+   - 复制以下内容并填写你的 API Key
 
    ```env
    # 和风天气 API（必填）
@@ -315,7 +219,7 @@ export FLUTTER_STORAGE_BASE_URL="https://mirrors.tuna.tsinghua.edu.cn/flutter"
    AMAP_API_KEY=your_amap_api_key
    AMAP_WEB_KEY=your_amap_web_key
    
-   # DeepSeek API（可选，用于 AI 助手）
+   # DeepSeek API（可选，用于天气助手）
    DEEPSEEK_API_KEY=your_deepseek_api_key
    DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
    ```
@@ -330,9 +234,9 @@ flutter pub get
 flutter pub run build_runner build --delete-conflicting-outputs
 ```
 
-### 运行项目
+## 运行项目
 
-#### Android
+### Android
 
 1. **连接设备**
    - 连接 Android 设备到电脑，或启动 Android 模拟器
@@ -347,30 +251,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
    flutter run -d device_id
    ```
 
-3. **构建 APK**
-   ```bash
-   # 构建 Debug APK（体积较大，包含调试信息）
-   flutter build apk --debug
-   
-   # 构建 Release APK（体积小巧，推荐）
-   flutter build apk --release --target-platform android-arm64
-   
-   # 构建 App Bundle（Google Play 推荐格式）
-   flutter build appbundle --target-platform android-arm64
-   ```
-
-4. **安装 APK**
-   ```bash
-   # 安装到连接的设备
-   flutter install
-   
-   # 手动安装（找到构建的 APK 文件）
-   # Debug APK: build/app/outputs/flutter-apk/app-debug.apk
-   # Release APK: build/app/outputs/flutter-apk/app-release.apk
-   adb install path/to/app.apk
-   ```
-
-#### Windows
+### Windows
 
 1. **运行调试版**
    ```bash
@@ -378,20 +259,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
    flutter run -d windows
    ```
 
-2. **构建 Windows 应用**
-   ```bash
-   # 构建 Debug 版本
-   flutter build windows
-   
-   # 构建 Release 版本
-   flutter build windows --release
-   ```
-
-3. **运行构建的应用**
-   - Debug 版本：`build\windows\runner\Debug\pureweather.exe`
-   - Release 版本：`build\windows\runner\Release\pureweather.exe`
-
-#### iOS
+### iOS
 
 1. **运行调试版**
    ```bash
@@ -399,16 +267,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
    flutter run -d ios
    ```
 
-2. **构建 iOS 应用**
-   ```bash
-   # 构建 Debug 版本
-   flutter build ios
-   
-   # 构建 Release 版本
-   flutter build ios --release
-   ```
-
-#### macOS
+### macOS
 
 1. **运行调试版**
    ```bash
@@ -416,16 +275,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
    flutter run -d macos
    ```
 
-2. **构建 macOS 应用**
-   ```bash
-   # 构建 Debug 版本
-   flutter build macos
-   
-   # 构建 Release 版本
-   flutter build macos --release
-   ```
-
-#### Linux
+### Linux
 
 1. **运行调试版**
    ```bash
@@ -433,16 +283,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
    flutter run -d linux
    ```
 
-2. **构建 Linux 应用**
-   ```bash
-   # 构建 Debug 版本
-   flutter build linux
-   
-   # 构建 Release 版本
-   flutter build linux --release
-   ```
-
-#### Web
+### Web
 
 1. **运行调试版**
    ```bash
@@ -450,20 +291,83 @@ flutter pub run build_runner build --delete-conflicting-outputs
    flutter run -d web
    ```
 
-2. **构建 Web 应用**
-   ```bash
-   # 构建 Debug 版本
-   flutter build web
-   
-   # 构建 Release 版本
-   flutter build web --release
-   ```
+## 构建指南
 
-3. **部署 Web 应用**
-   - 将 `build/web` 目录下的文件部署到 Web 服务器
-   - 支持静态网站托管服务
+### Android
 
-### 常见问题解决
+```bash
+# 构建 Debug APK（体积较大，包含调试信息）
+flutter build apk --debug
+
+# 构建 Release APK（体积小巧，推荐）
+flutter build apk --release --target-platform android-arm64
+
+# 构建 App Bundle（Google Play 推荐格式）
+flutter build appbundle --target-platform android-arm64
+
+# 安装到连接的设备
+flutter install
+```
+
+### Windows
+
+```bash
+# 构建 Debug 版本
+flutter build windows
+
+# 构建 Release 版本
+flutter build windows --release
+
+# 运行构建的应用
+# Debug 版本：build\windows\runner\Debug\pureweather.exe
+# Release 版本：build\windows\runner\Release\pureweather.exe
+```
+
+### iOS
+
+```bash
+# 构建 Debug 版本
+flutter build ios
+
+# 构建 Release 版本
+flutter build ios --release
+```
+
+### macOS
+
+```bash
+# 构建 Debug 版本
+flutter build macos
+
+# 构建 Release 版本
+flutter build macos --release
+```
+
+### Linux
+
+```bash
+# 构建 Debug 版本
+flutter build linux
+
+# 构建 Release 版本
+flutter build linux --release
+```
+
+### Web
+
+```bash
+# 构建 Debug 版本
+flutter build web
+
+# 构建 Release 版本
+flutter build web --release
+
+# 部署 Web 应用
+# 将 build/web 目录下的文件部署到 Web 服务器
+# 支持静态网站托管服务
+```
+
+## 常见问题解决
 
 1. **依赖解析失败**
    - 确保已配置镜像源
@@ -488,7 +392,8 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 ### v3.2.0
 - **应用升级**：版本号升级至 3.2.0
-- **布局优化**：重构天气预警卡片
+- **布局优化**：将顶部天气信息和天气详情卡片集成在一个页面，顶部信息固定显示
+- **国际化支持**：添加完整的英文（美国）支持，可在设置页面自行切换语言
 - **本地化修复**：修复应用内长按操作名称未汉化的问题
 - **用户体验**：优化Windows端的滚动交互体验，支持鼠标拖拽滚动
 
@@ -557,7 +462,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
 ### v1.1.x
 - 城市搜索功能优化
 - Material You 动态主题色
-- AI 助手功能
+- 天气助手功能
 
 ## 许可证
 
