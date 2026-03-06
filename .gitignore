@@ -58,8 +58,7 @@ api_keys.dart
 # Android local properties
 android/local.properties
 
-# Font files and license
-/exfonts/
+
 Trae CNresourcesappoutvsworkbenchcontribterminalcommonscriptssafe_rm_aliases.ps1 } catch{} ; Write-Output \[Trae CN\] Safe Rm alias is not enabled, try to fix it now.
 ersEchoRanAppDataLocalProgramsTrae CNresourcesappoutvsworkbenchcontribterminalcommonscriptssafe_rm_aliases.ps1 } catch{} ; Write-Output \[Trae CN] Safe Rm alias is not enabled, try to fix it now.
 System32;CWindowsSystem32WindowsPowerShellv1.0;CProgram FilesGitbin;DFlutterbin'''

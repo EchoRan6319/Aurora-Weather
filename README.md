@@ -183,16 +183,15 @@ export PUB_HOSTED_URL="https://mirrors.tuna.tsinghua.edu.cn/dart-pub"
 export FLUTTER_STORAGE_BASE_URL="https://mirrors.tuna.tsinghua.edu.cn/flutter"
 ```
 
-### 字体要求 (必填)
+### 字体要求
 
-由于代码中引用了 OPPO Sans 字体，为了顺利构建：
-1. 请自行下载 `OPPO Sans 4.0` 字体文件。
-2. 在项目根目录下创建 `exfonts` 文件夹。
-3. 将下载的字体文件重命名为 `OPPO Sans 4.0.ttf` 并放入 `exfonts` 文件夹中。
+本项目已包含 `OPPO Sans 4.0` 字体文件，无需手动下载。
 
-**注意**：根据 OPPO Sans 字体文件的开源许可要求，本项目无法将字体文件一并提供，字体下载地址：`https://www.coloros.com/article/A00000074/`
+**说明**：根据 OPPO Sans 4.0 字体的开源许可要求，本项目将字体文件与应用程序一起分发，符合许可证的使用条款。
 
-如果不添加字体文件，构建调试版或正式版 APK 时可能会因缺少资源而报错。
+- 字体文件位于项目根目录的 `exfonts` 文件夹中
+- 字体文件名称为 `OPPO Sans 4.0.ttf`
+- 本项目保留了完整的 OPPO Sans 4.0 许可证文件，确保合规性
 
 ### API 配置
 
