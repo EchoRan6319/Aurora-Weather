@@ -131,17 +131,17 @@ jobs:
           mkdir -p artifacts/linux
           cp -r build/linux/x64/release/bundle artifacts/linux/
           cd artifacts/linux
-          echo 'Package: pureweather
+          echo "Package: pureweather
 Version: 1.0.0
 Section: utils
 Priority: optional
 Architecture: amd64
 Depends: libgtk-3-0, libstdc++6
 Maintainer: EchoRan
-Description: A modern weather app built with Flutter' > control
+Description: A modern weather app built with Flutter" > control
           tar -czf data.tar.gz bundle
           tar -czf control.tar.gz control
-          echo '2.0' > debian-binary
+          echo "2.0" > debian-binary
           ar r pureweather.deb debian-binary control.tar.gz data.tar.gz
 
       - name: Upload Linux artifact
