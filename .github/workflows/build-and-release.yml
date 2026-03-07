@@ -110,13 +110,4 @@ jobs:
           name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
-          files:
-            - artifacts/android/app-release.apk
-            - artifacts/windows/pureweather.exe
-            - artifacts/pureweather-web.zip
-            - artifacts/pureweather-linux.zip
-          asset_names:
-            - PureWeather-${{ github.ref_name }}-android.apk
-            - PureWeather-${{ github.ref_name }}-windows.exe
-            - PureWeather-${{ github.ref_name }}-web.zip
-            - PureWeather-${{ github.ref_name }}-linux.zip
+          files: artifacts/android/app-release.apk,artifacts/windows/pureweather.exe,artifacts/pureweather-web.zip,artifacts/pureweather-linux.zip
