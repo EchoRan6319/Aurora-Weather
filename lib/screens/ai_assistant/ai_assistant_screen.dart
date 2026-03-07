@@ -103,16 +103,84 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
     final weather = weatherState.weatherData;
     if (weather == null || location == null) return '';
 
+    // 构建完整的天气数据JSON
+    final weatherData = {
+      'location': {
+        'name': location.name,
+        'adm1': location.adm1,
+        'adm2': location.adm2,
+        'country': location.country,
+        'lat': location.lat,
+        'lon': location.lon
+      },
+      'current': {
+        'temp': weather.current.temp,
+        'feelsLike': weather.current.feelsLike,
+        'text': weather.current.text,
+        'humidity': weather.current.humidity,
+        'windSpeed': weather.current.windSpeed,
+        'windDir': weather.current.windDir,
+        'windScale': weather.current.windScale,
+        'precip': weather.current.precip,
+        'pressure': weather.current.pressure,
+        'vis': weather.current.vis,
+        'cloud': weather.current.cloud,
+        'obsTime': weather.current.obsTime
+      },
+      'daily': weather.daily.map((day) => {
+        'fxDate': day.fxDate,
+        'tempMax': day.tempMax,
+        'tempMin': day.tempMin,
+        'textDay': day.textDay,
+        'textNight': day.textNight,
+        'windDirDay': day.windDirDay,
+        'windScaleDay': day.windScaleDay,
+        'windDirNight': day.windDirNight,
+        'windScaleNight': day.windScaleNight,
+        'humidity': day.humidity,
+        'precip': day.precip,
+        'uvIndex': day.uvIndex
+      }).toList(),
+      'hourly': weather.hourly.take(24).map((hour) => {
+        'fxTime': hour.fxTime,
+        'temp': hour.temp,
+        'text': hour.text,
+        'windDir': hour.windDir,
+        'windScale': hour.windScale,
+        'pop': hour.pop,
+        'precip': hour.precip
+      }).toList(),
+      'alerts': weather.alerts.map((alert) => {
+        'title': alert.title,
+        'level': alert.level,
+        'typeName': alert.typeName,
+        'text': alert.text,
+        'pubTime': alert.pubTime
+      }).toList(),
+      'airQuality': weatherState.airQuality != null ? {
+        'aqi': weatherState.airQuality!.aqi,
+        'level': weatherState.airQuality!.level,
+        'category': weatherState.airQuality!.category,
+        'pm2p5': weatherState.airQuality!.pm2p5,
+        'pm10': weatherState.airQuality!.pm10,
+        'no2': weatherState.airQuality!.no2,
+        'so2': weatherState.airQuality!.so2,
+        'co': weatherState.airQuality!.co,
+        'o3': weatherState.airQuality!.o3
+      } : null,
+      'lastUpdated': weather.lastUpdated.toIso8601String()
+    };
+
+    // 将天气数据转换为字符串表示
+    final weatherJson = weatherData.toString();
+
+    // 构建系统提示，告诉AI如何使用这些数据
     return '''
-位置: ${location.name}, ${location.adm1}
-当前温度: ${weather.current.temp}°C
-体感温度: ${weather.current.feelsLike}°C
-天气状况: ${weather.current.text}
-湿度: ${weather.current.humidity}%
-风速: ${weather.current.windSpeed} km/h
-风向: ${weather.current.windDir}
-今日最高温: ${weather.daily.first.tempMax}°C
-今日最低温: ${weather.daily.first.tempMin}°C
+你是一个智能天气助手，需要根据以下天气数据回答用户的问题。请使用提供的天气数据提供准确的天气信息。
+
+天气数据: $weatherJson
+
+请根据以上数据回答用户的问题，确保信息准确且符合实际天气状况。
 ''';
   }
 
