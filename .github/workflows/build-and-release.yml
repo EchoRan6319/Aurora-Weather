@@ -40,12 +40,28 @@ jobs:
         if: matrix.target == 'web'
         run: flutter build web --release
 
-      - name: Upload artifacts
-        if: matrix.target == 'android' || matrix.target == 'windows' || matrix.target == 'web'
+      - name: Upload Android artifact
+        if: matrix.target == 'android'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.target }}-build
-          path: ${{ matrix.target == 'android' ? 'build/app/outputs/flutter-apk/app-release.apk' : matrix.target == 'windows' ? 'build/windows/x64/runner/Release/pureweather.exe' : 'build/web' }}
+          name: android-build
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 1
+
+      - name: Upload Windows artifact
+        if: matrix.target == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build
+          path: build/windows/x64/runner/Release/pureweather.exe
+          retention-days: 1
+
+      - name: Upload Web artifact
+        if: matrix.target == 'web'
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-build
+          path: build/web
           retention-days: 1
 
   build-macos-ios:
