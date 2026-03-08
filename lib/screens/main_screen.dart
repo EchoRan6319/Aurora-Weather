@@ -229,9 +229,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     });
 
     return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 200),
-        child: screens[_currentIndex],
+      body: IndexedStack(
+        index: _currentIndex,
+        children: screens,
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,

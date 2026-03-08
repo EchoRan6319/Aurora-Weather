@@ -453,8 +453,23 @@ class _ChatBubble extends StatelessWidget {
   /// [isUser] 是否是用户消息
   const _ChatBubble({required this.message, required this.isUser});
 
+  String _formatAssistantMessage(String input) {
+    var text = input.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+
+    // Keep numbered items readable even when model returns one long line.
+    text = text.replaceAll(RegExp(r'(?<!\n)(\d+[.、])\s*'), '\n$1 ');
+
+    // Break long paragraphs at sentence punctuation for readability.
+    text = text.replaceAll(RegExp(r'(?<=[。！？；.!?;])(?=[^\n])'), '\n');
+
+    // Avoid too many blank lines after formatting.
+    text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n').trim();
+    return text;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final displayMessage = isUser ? message : _formatAssistantMessage(message);
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -483,7 +498,10 @@ class _ChatBubble extends StatelessWidget {
                 ),
         ),
         child: Text(
-          message,
+          displayMessage,
+          softWrap: true,
+          overflow: TextOverflow.visible,
+          textWidthBasis: TextWidthBasis.parent,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isUser
                 ? Theme.of(context).colorScheme.onPrimaryContainer
