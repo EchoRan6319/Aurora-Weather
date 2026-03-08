@@ -62,7 +62,10 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
+          BUILD_NAME="${GITHUB_REF_NAME#v}"
           flutter build apk --release \
+            --build-name="$BUILD_NAME" \
+            --build-number="$GITHUB_RUN_NUMBER" \
             --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
             --dart-define=CAIYUN_API_KEY="$CAIYUN_API_KEY" \
             --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
@@ -70,13 +73,13 @@ jobs:
             --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
 
       - name: Prepare Android artifact
-        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/PureWeather-android.apk
+        run: cp build/app/outputs/flutter-apk/app-release.apk "build/app/outputs/flutter-apk/PureWeather-${GITHUB_REF_NAME}-android-arm64-release.apk"
 
       - name: Upload Android artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: build/app/outputs/flutter-apk/PureWeather-android.apk
+          path: build/app/outputs/flutter-apk/PureWeather-*-android-arm64-release.apk
           if-no-files-found: error
 
   build-windows:
@@ -120,7 +123,10 @@ jobs:
           AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
+          $buildName = $env:GITHUB_REF_NAME -replace '^v', ''
           flutter build windows --release `
+            --build-name="$buildName" `
+            --build-number="$env:GITHUB_RUN_NUMBER" `
             --dart-define=QWEATHER_API_KEY="$env:QWEATHER_API_KEY" `
             --dart-define=CAIYUN_API_KEY="$env:CAIYUN_API_KEY" `
             --dart-define=AMAP_API_KEY="$env:AMAP_API_KEY" `
@@ -130,13 +136,13 @@ jobs:
       - name: Package Windows artifact
         shell: pwsh
         run: |
-          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "build/windows/x64/runner/PureWeather-windows.zip" -Force
+          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "build/windows/x64/runner/PureWeather-$env:GITHUB_REF_NAME-windows-x64.zip" -Force
 
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-package
-          path: build/windows/x64/runner/PureWeather-windows.zip
+          path: build/windows/x64/runner/PureWeather-*-windows-x64.zip
           if-no-files-found: error
 
   release:
@@ -163,5 +169,5 @@ jobs:
         with:
           name: Release ${{ github.ref_name }}
           files: |
-            dist/android/PureWeather-android.apk
-            dist/windows/PureWeather-windows.zip
+            dist/android/*.apk
+            dist/windows/*.zip
