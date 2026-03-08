@@ -1,0 +1,4 @@
+storeFile=../PureWaether
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyAlias=YOUR_KEY_ALIAS
+keyPassword=YOUR_KEY_PASSWORD

@@ -48,3 +48,8 @@ secrets.dart
 api_keys.dart
 # Android local properties
 android/local.properties
+
+android/key.properties
+PureWaether
+*.jks
+*.keystore

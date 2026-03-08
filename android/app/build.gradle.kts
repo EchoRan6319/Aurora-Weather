@@ -1,8 +1,27 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.inputStream().use { keystoreProperties.load(it) }
+}
+
+val releaseStoreFilePath =
+    System.getenv("SIGNING_KEYSTORE_PATH")
+        ?: keystoreProperties.getProperty("storeFile")
+        ?: "../PureWaether"
+val releaseStorePassword =
+    System.getenv("KEYSTORE_PASSWORD") ?: keystoreProperties.getProperty("storePassword")
+val releaseKeyAlias =
+    System.getenv("KEY_ALIAS") ?: keystoreProperties.getProperty("keyAlias")
+val releaseKeyPassword =
+    System.getenv("KEY_PASSWORD") ?: keystoreProperties.getProperty("keyPassword")
 
 android {
     namespace = "com.echoran.pureweather"
@@ -30,9 +49,18 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(releaseStoreFilePath)
+            storePassword = releaseStorePassword
+            keyAlias = releaseKeyAlias
+            keyPassword = releaseKeyPassword
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

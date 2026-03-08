@@ -28,6 +28,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Restore Android release keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > PureWaether
+
       - name: Generate .env for Flutter asset bundling
         env:
           QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
@@ -51,6 +57,10 @@ jobs:
           AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
           AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          SIGNING_KEYSTORE_PATH: ../PureWaether
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           flutter build apk --release \
             --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
