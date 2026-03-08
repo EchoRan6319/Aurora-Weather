@@ -11,18 +11,15 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
-
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
-
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
 # is commented out by default.
 #.vscode/
-
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
@@ -32,33 +29,22 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
-
 # Flutter generated platform plugin files
 linux/flutter/generated_*
 macos/Flutter/generated_*
 windows/flutter/generated_*
-
 # Symbolication related
 app.*.symbols
-
 # Obfuscation related
 app.*.map.json
-
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
-
 # Environment files with API keys - DO NOT COMMIT
 .env
 *.env.local
 secrets.dart
 api_keys.dart
-
 # Android local properties
 android/local.properties
-
-
-Trae CNresourcesappoutvsworkbenchcontribterminalcommonscriptssafe_rm_aliases.ps1 } catch{} ; Write-Output \[Trae CN\] Safe Rm alias is not enabled, try to fix it now.
-ersEchoRanAppDataLocalProgramsTrae CNresourcesappoutvsworkbenchcontribterminalcommonscriptssafe_rm_aliases.ps1 } catch{} ; Write-Output \[Trae CN] Safe Rm alias is not enabled, try to fix it now.
-System32;CWindowsSystem32WindowsPowerShellv1.0;CProgram FilesGitbin;DFlutterbin'''

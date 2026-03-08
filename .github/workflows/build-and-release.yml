@@ -6,15 +6,15 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        target:
-          - android
-          - windows
+permissions:
+  contents: write
 
+env:
+  FLUTTER_VERSION: '3.41.3'
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -22,50 +22,103 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.3'
-          channel: 'stable'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
 
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build Android APK
-        if: matrix.target == 'android'
-        run: flutter build apk --release
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          flutter build apk --release \
+            --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
+            --dart-define=CAIYUN_API_KEY="$CAIYUN_API_KEY" \
+            --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
+            --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
+            --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+
+      - name: Prepare Android artifact
+        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/PureWeather-android.apk
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: build/app/outputs/flutter-apk/PureWeather-android.apk
+          if-no-files-found: error
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
 
       - name: Build Windows
-        if: matrix.target == 'windows'
-        run: flutter build windows --release
-
-      - name: Create release
-        if: matrix.target == 'android'
-        id: create_release
-        uses: actions/create-release@v1
+        shell: pwsh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          flutter build windows --release `
+            --dart-define=QWEATHER_API_KEY="$env:QWEATHER_API_KEY" `
+            --dart-define=CAIYUN_API_KEY="$env:CAIYUN_API_KEY" `
+            --dart-define=AMAP_API_KEY="$env:AMAP_API_KEY" `
+            --dart-define=AMAP_WEB_KEY="$env:AMAP_WEB_KEY" `
+            --dart-define=DEEPSEEK_API_KEY="$env:DEEPSEEK_API_KEY"
 
-      - name: Upload Android APK
-        if: matrix.target == 'android'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/app/outputs/flutter-apk/app-release.apk
-          asset_name: PureWeather-${{ github.ref_name }}-android.apk
-          asset_content_type: application/vnd.android.package-archive
+      - name: Package Windows artifact
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "build/windows/x64/runner/PureWeather-windows.zip" -Force
 
-      - name: Upload Windows executable
-        if: matrix.target == 'windows'
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build/windows/x64/runner/Release/pureweather.exe
-          asset_name: PureWeather-${{ github.ref_name }}-windows.exe
-          asset_content_type: application/vnd.microsoft.portable-executable
+          name: windows-package
+          path: build/windows/x64/runner/PureWeather-windows.zip
+          if-no-files-found: error
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs:
+      - build-android
+      - build-windows
+    steps:
+      - name: Download Android artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: dist/android
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-package
+          path: dist/windows
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ github.ref_name }}
+          files: |
+            dist/android/PureWeather-android.apk
+            dist/windows/PureWeather-windows.zip

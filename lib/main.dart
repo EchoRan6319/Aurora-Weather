@@ -15,7 +15,11 @@ import 'services/scheduled_broadcast_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await dotenv.load(fileName: ".env");
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (_) {
+    // CI can inject API keys via --dart-define or environment variables.
+  }
 
   await notificationServiceProvider.initialize();
   await notificationServiceProvider.createNotificationChannel();
@@ -103,7 +107,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         }
 
         return MaterialApp(
-          title: '轻氧天气',
+          title: '\u8f7b\u6c27\u5929\u6c14',
           debugShowCheckedModeBanner: false,
           localizationsDelegates: const [
             GlobalMaterialLocalizations.delegate,
