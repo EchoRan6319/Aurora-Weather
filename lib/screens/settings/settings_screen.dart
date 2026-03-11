@@ -12,6 +12,7 @@ import '../../providers/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/notification_service.dart';
 import '../../widgets/app_icon.dart';
+import '../../core/constants/app_constants.dart';
 import 'scheduled_broadcast_screen.dart';
 import 'card_order_screen.dart';
 
@@ -83,15 +84,7 @@ class SettingsScreen extends ConsumerWidget {
                                   ref.read(themeProvider.notifier).setUseDynamicColor(value);
                                 },
                               ),
-                              _SettingsSwitch(
-                                icon: Icons.font_download_outlined,
-                                title: '内置字体 (OPPO Sans)',
-                                subtitle: '启用后可解决部分ColorOS设备系统的字体显示问题',
-                                value: themeSettings.useCustomFont,
-                                onChanged: (value) {
-                                  ref.read(themeProvider.notifier).setUseCustomFont(value);
-                                },
-                              ),
+
                             ],
                           ),
                           _SettingsSection(
@@ -1569,7 +1562,7 @@ class _AboutBottomSheet extends StatelessWidget {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            '版本 1.0.0',
+                            '版本 ${AppConstants.appVersion}',
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
@@ -1581,7 +1574,7 @@ class _AboutBottomSheet extends StatelessWidget {
                       context,
                       Icons.info_outline,
                       '应用介绍',
-                      '轻氧天气是一款简约、美观的天气预报应用，提供实时天气、未来预报、极端天气预警等功能。',
+                      '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。',
                     ),
                     _buildAboutItem(
                       context,
@@ -1599,7 +1592,7 @@ class _AboutBottomSheet extends StatelessWidget {
                       context,
                       Icons.link_outlined,
                       'GitHub',
-                      'https://github.com/EchoRan/PureWeather',
+                      'https://github.com/EchoRan6319/PureWeather',
                       isLink: true,
                     ),
                     const SizedBox(height: 24),
@@ -1628,12 +1621,6 @@ class _AboutBottomSheet extends StatelessWidget {
                       Icons.location_on_outlined,
                       '高德地图',
                       '提供城市搜索和定位服务',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.lightbulb_outlined,
-                      'DeepSeek',
-                      '提供天气助手的AI问答功能',
                     ),
                   ],
                 ),
