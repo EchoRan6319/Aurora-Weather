@@ -1622,6 +1622,12 @@ class _AboutBottomSheet extends StatelessWidget {
                       '高德地图',
                       '提供城市搜索和定位服务',
                     ),
+                    _buildAboutItem(
+                      context,
+                      Icons.lightbulb_outlined,
+                      'DeepSeek',
+                      '提供天气助手的AI问答功能',
+                    ),
                   ],
                 ),
               ),
