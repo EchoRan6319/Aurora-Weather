@@ -39,6 +39,9 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
+  // 添加一个计数器，用于强制重建MaterialApp
+  int _rebuildCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +60,10 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      setState(() {});
+      // 当应用从后台返回前台时，增加计数器以强制重建MaterialApp
+      setState(() {
+        _rebuildCount++;
+      });
     }
   }
 
@@ -81,61 +87,65 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       }
     });
 
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        ColorScheme lightColorScheme;
-        ColorScheme darkColorScheme;
+    // 使用_rebuildCount作为key，确保应用从后台返回前台时重新构建
+    return KeyedSubtree(
+      key: ValueKey(_rebuildCount),
+      child: DynamicColorBuilder(
+        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+          ColorScheme lightColorScheme;
+          ColorScheme darkColorScheme;
 
-        if (themeSettings.useDynamicColor && lightDynamic != null) {
-          lightColorScheme = lightDynamic;
-          darkColorScheme = darkDynamic ?? lightDynamic;
-          debugPrint(
-            '[DynamicColor] Using dynamic colors: primary=${lightDynamic.primary}',
-          );
-        } else {
-          final seedColor =
-              themeSettings.seedColor ?? AppTheme.presetSeedColors.first;
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor,
-            brightness: Brightness.light,
-          );
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor,
-            brightness: Brightness.dark,
-          );
-          debugPrint('[DynamicColor] Using seed color: $seedColor');
-        }
+          if (themeSettings.useDynamicColor && lightDynamic != null) {
+            lightColorScheme = lightDynamic;
+            darkColorScheme = darkDynamic ?? lightDynamic;
+            debugPrint(
+              '[DynamicColor] Using dynamic colors: primary=${lightDynamic.primary}',
+            );
+          } else {
+            final seedColor =
+                themeSettings.seedColor ?? AppTheme.presetSeedColors.first;
+            lightColorScheme = ColorScheme.fromSeed(
+              seedColor: seedColor,
+              brightness: Brightness.light,
+            );
+            darkColorScheme = ColorScheme.fromSeed(
+              seedColor: seedColor,
+              brightness: Brightness.dark,
+            );
+            debugPrint('[DynamicColor] Using seed color: $seedColor');
+          }
 
-        return MaterialApp(
-          title: '\u8f7b\u6c27\u5929\u6c14',
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('zh', 'CN'),
-            Locale('en', 'US'),
-          ],
-          theme: AppTheme.createTheme(
-            colorScheme: lightColorScheme,
-            useMaterial3: themeSettings.useMaterial3,
-          ),
-          darkTheme: AppTheme.createTheme(
-            colorScheme: darkColorScheme,
-            useMaterial3: themeSettings.useMaterial3,
-          ),
-          themeMode: themeNotifier.flutterThemeMode,
-          builder: (context, child) {
-            if (appSettings.predictiveBackEnabled) {
-              return PredictiveBackGestureHandler(child: child!);
-            }
-            return child!;
-          },
-          home: const MainScreen(),
-        );
-      },
+          return MaterialApp(
+            title: '\u8f7b\u6c27\u5929\u6c14',
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('zh', 'CN'),
+              Locale('en', 'US'),
+            ],
+            theme: AppTheme.createTheme(
+              colorScheme: lightColorScheme,
+              useMaterial3: themeSettings.useMaterial3,
+            ),
+            darkTheme: AppTheme.createTheme(
+              colorScheme: darkColorScheme,
+              useMaterial3: themeSettings.useMaterial3,
+            ),
+            themeMode: themeNotifier.flutterThemeMode,
+            builder: (context, child) {
+              if (appSettings.predictiveBackEnabled) {
+                return PredictiveBackGestureHandler(child: child!);
+              }
+              return child!;
+            },
+            home: const MainScreen(),
+          );
+        },
+      ),
     );
   }
 }
