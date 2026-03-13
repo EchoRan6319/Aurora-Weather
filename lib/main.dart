@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,65 +85,110 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
 
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        ColorScheme lightColorScheme;
-        ColorScheme darkColorScheme;
+        return FutureBuilder<ColorScheme?>(
+          future: _getBypassedColorScheme(lightDynamic, themeSettings.useDynamicColor),
+          builder: (context, snapshot) {
+            final ColorScheme? finalLightDynamic = snapshot.data ?? lightDynamic;
+            
+            ColorScheme lightColorScheme;
+            ColorScheme darkColorScheme;
 
-        if (themeSettings.useDynamicColor && lightDynamic != null) {
-          lightColorScheme = lightDynamic;
-          // Generate a proper dark scheme if the platform only provides a light one (like some Windows versions)
-          darkColorScheme = darkDynamic ??
-              ColorScheme.fromSeed(
-                seedColor: lightDynamic.primary,
+            if (themeSettings.useDynamicColor && finalLightDynamic != null) {
+              lightColorScheme = finalLightDynamic;
+              // Generate a proper dark scheme
+              darkColorScheme = ColorScheme.fromSeed(
+                seedColor: finalLightDynamic.primary,
                 brightness: Brightness.dark,
               );
-          debugPrint(
-            '[DynamicColor] Using system dynamic colors. Primary: ${lightDynamic.primary}',
-          );
-        } else {
-          final seedColor =
-              themeSettings.seedColor ?? AppTheme.presetSeedColors.first;
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor,
-            brightness: Brightness.light,
-          );
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor,
-            brightness: Brightness.dark,
-          );
-          debugPrint('[DynamicColor] Using seed color: $seedColor');
-        }
-
-        return MaterialApp(
-          title: '轻氧天气',
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('zh', 'CN'),
-            Locale('en', 'US'),
-          ],
-          theme: AppTheme.createTheme(
-            colorScheme: lightColorScheme,
-            useMaterial3: themeSettings.useMaterial3,
-          ),
-          darkTheme: AppTheme.createTheme(
-            colorScheme: darkColorScheme,
-            useMaterial3: themeSettings.useMaterial3,
-          ),
-          themeMode: themeNotifier.flutterThemeMode,
-          builder: (context, child) {
-            if (appSettings.predictiveBackEnabled) {
-              return PredictiveBackGestureHandler(child: child!);
+              debugPrint(
+                '[DynamicColor] Using system dynamic colors. Primary: ${finalLightDynamic.primary}',
+              );
+            } else {
+              final seedColor =
+                  themeSettings.seedColor ?? AppTheme.presetSeedColors.first;
+              lightColorScheme = ColorScheme.fromSeed(
+                seedColor: seedColor,
+                brightness: Brightness.light,
+              );
+              darkColorScheme = ColorScheme.fromSeed(
+                seedColor: seedColor,
+                brightness: Brightness.dark,
+              );
+              debugPrint('[DynamicColor] Using seed color: $seedColor');
             }
-            return child!;
+
+            return MaterialApp(
+              title: '轻氧天气',
+              debugShowCheckedModeBanner: false,
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: const [
+                Locale('zh', 'CN'),
+                Locale('en', 'US'),
+              ],
+              theme: AppTheme.createTheme(
+                colorScheme: lightColorScheme,
+                useMaterial3: themeSettings.useMaterial3,
+              ),
+              darkTheme: AppTheme.createTheme(
+                colorScheme: darkColorScheme,
+                useMaterial3: themeSettings.useMaterial3,
+              ),
+              themeMode: themeNotifier.flutterThemeMode,
+              builder: (context, child) {
+                if (appSettings.predictiveBackEnabled) {
+                  return PredictiveBackGestureHandler(child: child!);
+                }
+                return child!;
+              },
+              home: const MainScreen(),
+            );
           },
-          home: const MainScreen(),
         );
       },
     );
+  }
+
+  /// 针对 ColorOS 等系统的动态取色绕过逻辑
+  Future<ColorScheme?> _getBypassedColorScheme(ColorScheme? dynamic, bool enabled) async {
+    if (!enabled || dynamic == null) return null;
+    if (defaultTargetPlatform != TargetPlatform.android) return null;
+
+    // ColorOS 常见的“锁定颜色”列表
+    const suspiciousColors = [
+      Color(0xFF0054D6),
+      Color(0xFF006E06),
+      Color(0xFF006A6A),
+      Color(0xFF005BBD),
+      Color(0xFF0052DC),
+      Color(0xFF005DB5),
+    ];
+    
+    // 如果发现颜色被锁定在上述任意一个颜色，则触发原生绕过
+    final primaryValue = dynamic.primary.toARGB32();
+    bool isSuspicious = suspiciousColors.any((c) => c.toARGB32() == primaryValue);
+
+    if (isSuspicious) {
+      debugPrint('[DynamicColor] Detected suspicious ColorOS default color: ${dynamic.primary}. Attempting native bypass...');
+      try {
+        const channel = MethodChannel('com.echoran.pureweather/wallpaper');
+        final int? colorInt = await channel.invokeMethod<int>('getWallpaperPrimaryColor');
+        if (colorInt != null) {
+          final color = Color(colorInt);
+          debugPrint('[DynamicColor] Native bypass successful. Extracted color: $color');
+          return ColorScheme.fromSeed(
+            seedColor: color,
+            brightness: Brightness.light,
+          );
+        }
+      } catch (e) {
+        debugPrint('[DynamicColor] Native bypass failed: $e');
+      }
+    }
+    return null;
   }
 }
 
