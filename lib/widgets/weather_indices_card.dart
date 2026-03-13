@@ -11,6 +11,9 @@ class WeatherIndicesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     if (indices.isEmpty) return const SizedBox.shrink();
 
+    // 只取前6个指数
+    final displayIndices = indices.take(6).toList();
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -34,14 +37,53 @@ class WeatherIndicesCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: indices.take(6).map((index) {
-                return _IndexItem(index: index)
-                    .animate()
-                    .fadeIn(delay: Duration(milliseconds: 50 * indices.indexOf(index)));
-              }).toList(),
+            // 两行三列布局
+            Column(
+              children: [
+                // 第一行
+                Row(
+                  children: [
+                    Expanded(
+                      child: _IndexItem(index: displayIndices[0]),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: displayIndices.length > 1
+                          ? _IndexItem(index: displayIndices[1])
+                          : const SizedBox(),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: displayIndices.length > 2
+                          ? _IndexItem(index: displayIndices[2])
+                          : const SizedBox(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // 第二行
+                Row(
+                  children: [
+                    Expanded(
+                      child: displayIndices.length > 3
+                          ? _IndexItem(index: displayIndices[3])
+                          : const SizedBox(),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: displayIndices.length > 4
+                          ? _IndexItem(index: displayIndices[4])
+                          : const SizedBox(),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: displayIndices.length > 5
+                          ? _IndexItem(index: displayIndices[5])
+                          : const SizedBox(),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
@@ -58,17 +100,18 @@ class _IndexItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: (MediaQuery.of(context).size.width - 64) / 3,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             _getIndexIcon(index.type),
             color: Theme.of(context).colorScheme.primary,
+            size: 24,
           ),
           const SizedBox(height: 8),
           Text(
@@ -76,6 +119,9 @@ class _IndexItem extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 4),
           Text(
@@ -83,6 +129,9 @@ class _IndexItem extends StatelessWidget {
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w500,
                 ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

@@ -45,6 +45,7 @@ class AppSettings {
       'daily',
       'airQuality',
       'details',
+      'indices',
     ],
   });
 
@@ -129,7 +130,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     final savedOrder = prefs.getStringList(_keyWeatherCardOrder);
     
     // 验证并修复天气卡片顺序
-    const validOrder = ['hourly', 'daily', 'airQuality', 'details'];
+    const validOrder = ['hourly', 'daily', 'airQuality', 'details', 'indices'];
     List<String> validatedOrder;
     
     if (savedOrder == null) {

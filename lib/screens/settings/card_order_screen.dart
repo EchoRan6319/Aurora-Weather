@@ -25,13 +25,14 @@ class _CardOrderScreenState extends ConsumerState<CardOrderScreen> {
     'daily': (title: '7天预报', icon: Icons.calendar_month_outlined),
     'airQuality': (title: '空气质量', icon: Icons.air_outlined),
     'details': (title: '详细信息', icon: Icons.info_outline),
+    'indices': (title: '生活指数', icon: Icons.tips_and_updates),
   };
 
   @override
   void initState() {
     super.initState();
     // 确保使用有效的顺序
-    const validOrder = ['hourly', 'daily', 'airQuality', 'details'];
+    const validOrder = ['hourly', 'daily', 'airQuality', 'details', 'indices'];
     final savedOrder = ref.read(settingsProvider).weatherCardOrder;
     
     // 验证顺序
@@ -55,7 +56,7 @@ class _CardOrderScreenState extends ConsumerState<CardOrderScreen> {
             icon: const Icon(Icons.restore_outlined),
             onPressed: () {
               setState(() {
-                _currentOrder = ['hourly', 'daily', 'airQuality', 'details'];
+                _currentOrder = ['hourly', 'daily', 'airQuality', 'details', 'indices'];
               });
             },
             tooltip: '恢复默认',

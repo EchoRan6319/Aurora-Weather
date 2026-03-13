@@ -168,6 +168,13 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         'co': weatherState.airQuality!.co,
         'o3': weatherState.airQuality!.o3
       } : null,
+      'indices': weatherState.weatherIndices?.map((index) => {
+        'type': index.type,
+        'name': index.name,
+        'level': index.level,
+        'category': index.category,
+        'text': index.text,
+      }).toList(),
       'lastUpdated': weather.lastUpdated.toIso8601String()
     };
 

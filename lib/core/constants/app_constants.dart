@@ -5,19 +5,19 @@ import 'package:flutter/material.dart';
 class AppConstants {
   /// 应用名称
   static const String appName = '轻氧天气';
-  
+
   /// 应用版本号
-  static const String appVersion = '3.7.0';
+  static const String appVersion = '4.1.0-3';
 
   /// API 请求超时时间
   static const Duration apiTimeout = Duration(seconds: 15);
-  
+
   /// 缓存有效期
   static const Duration cacheValidDuration = Duration(minutes: 30);
 
   /// 最大城市数量
   static const int maxCities = 10;
-  
+
   /// 默认动画持续时间（毫秒）
   static const int defaultAnimationDuration = 300;
 }
@@ -92,7 +92,7 @@ class WeatherCode {
   };
 
   /// 根据天气代码获取描述
-  /// 
+  ///
   /// [code] 天气代码
   /// 返回对应的天气描述，如果没有找到则返回 '未知'
   static String getDescription(int code) {
@@ -100,7 +100,7 @@ class WeatherCode {
   }
 
   /// 根据天气代码获取对应的图标
-  /// 
+  ///
   /// [code] 天气代码
   /// [isNight] 是否为夜间
   /// 返回对应的天气图标
@@ -131,7 +131,7 @@ class WeatherCode {
   }
 
   /// 温度单位转换
-  /// 
+  ///
   /// [celsiusTemp] 摄氏度温度字符串
   /// [toFahrenheit] 是否转换为华氏度
   /// 返回转换后的温度字符串

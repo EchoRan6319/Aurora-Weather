@@ -11,6 +11,7 @@ import '../../widgets/hourly_forecast.dart';
 import '../../widgets/daily_forecast.dart';
 import '../../widgets/weather_alert_card.dart';
 import '../../widgets/air_quality_card.dart';
+import '../../widgets/weather_indices_card.dart';
 
 /// 天气主页面
 ///
@@ -473,6 +474,11 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                   weather.current,
                   weather.daily.isNotEmpty ? weather.daily.first : null,
                 );
+                break;
+              case 'indices':
+                if (state.weatherIndices != null && state.weatherIndices!.isNotEmpty) {
+                  card = WeatherIndicesCard(indices: state.weatherIndices!);
+                }
                 break;
             }
 

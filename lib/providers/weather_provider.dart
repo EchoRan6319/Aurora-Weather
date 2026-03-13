@@ -38,6 +38,9 @@ class WeatherState {
   /// 分钟级降雨预报
   final CaiyunMinuteRain? minuteRain;
   
+  /// 生活指数数据
+  final List<WeatherIndices>? weatherIndices;
+  
   /// 错误信息
   final String? errorMessage;
 
@@ -47,6 +50,7 @@ class WeatherState {
     this.weatherData,
     this.airQuality,
     this.minuteRain,
+    this.weatherIndices,
     this.errorMessage,
   });
 
@@ -56,6 +60,7 @@ class WeatherState {
   /// [weatherData]: 新的天气数据
   /// [airQuality]: 新的空气质量数据
   /// [minuteRain]: 新的分钟级降雨预报
+  /// [weatherIndices]: 新的生活指数数据
   /// [errorMessage]: 新的错误信息
   /// [clearError]: 是否清除错误信息
   /// [clearWeather]: 是否清除天气数据
@@ -64,6 +69,7 @@ class WeatherState {
     WeatherData? weatherData,
     AirQuality? airQuality,
     CaiyunMinuteRain? minuteRain,
+    List<WeatherIndices>? weatherIndices,
     String? errorMessage,
     bool clearError = false,
     bool clearWeather = false,
@@ -73,6 +79,7 @@ class WeatherState {
       weatherData: clearWeather ? null : (weatherData ?? this.weatherData),
       airQuality: clearWeather ? null : (airQuality ?? this.airQuality),
       minuteRain: clearWeather ? null : (minuteRain ?? this.minuteRain),
+      weatherIndices: clearWeather ? null : (weatherIndices ?? this.weatherIndices),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
@@ -136,12 +143,21 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
         debugPrint('加载彩云天气失败: $e');
       }
 
+      // 3. 获取生活指数数据
+      List<WeatherIndices>? weatherIndices;
+      try {
+        weatherIndices = await _qweatherService.getWeatherIndices(location.id);
+      } catch (e) {
+        debugPrint('加载生活指数失败: $e');
+      }
+
       // 更新状态为加载完成
       state = WeatherState(
         loadingState: WeatherLoadingState.loaded,
         weatherData: weatherData,
         airQuality: airQuality,
         minuteRain: minuteRain,
+        weatherIndices: weatherIndices,
       );
 
       // 自动持久化缓存数据，供定时播报回退使用
