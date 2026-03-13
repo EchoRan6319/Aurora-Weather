@@ -15,7 +15,6 @@ import '../../widgets/app_icon.dart';
 import '../../core/constants/app_constants.dart';
 import 'scheduled_broadcast_screen.dart';
 import 'card_order_screen.dart';
-import 'language_settings_screen.dart';
 import '../../providers/language_provider.dart';
 import '../../generated/l10n/app_localizations.dart';
 
@@ -169,12 +168,7 @@ class SettingsScreen extends ConsumerWidget {
                                   icon: Icons.language_outlined,
                                   title: AppLocalizations.of(context).language,
                                   subtitle: _getLanguageName(context, ref.watch(languageProvider)),
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LanguageSettingsScreen(),
-                                    ),
-                                  ),
+                                  onTap: () => _showLanguageDialog(context, ref),
                                 ),
                                 _SettingsTile(
                                   icon: Icons.sort_rounded,
@@ -289,6 +283,51 @@ class SettingsScreen extends ConsumerWidget {
       case LanguageMode.en:
         return l10n.english;
     }
+  }
+
+  void _showLanguageDialog(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final currentMode = ref.watch(languageProvider);
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _SelectionBottomSheet(
+        title: l10n.language,
+        items: [
+          _SelectionItem(
+            title: l10n.follow_system,
+            icon: Icons.settings_outlined,
+            isSelected: currentMode == LanguageMode.system,
+            onTap: () {
+              ref.read(languageProvider.notifier).setLanguage(LanguageMode.system);
+              Navigator.pop(ctx);
+            },
+          ),
+          _SelectionItem(
+            title: l10n.chinese,
+            icon: Icons.translate,
+            isSelected: currentMode == LanguageMode.zh,
+            onTap: () {
+              ref.read(languageProvider.notifier).setLanguage(LanguageMode.zh);
+              Navigator.pop(ctx);
+            },
+          ),
+          _SelectionItem(
+            title: l10n.english,
+            icon: Icons.translate,
+            isSelected: currentMode == LanguageMode.en,
+            onTap: () {
+              ref.read(languageProvider.notifier).setLanguage(LanguageMode.en);
+              Navigator.pop(ctx);
+            },
+          ),
+        ],
+        onClose: () => Navigator.pop(ctx),
+      ),
+    );
   }
 
   String _getWindSpeedUnitName(BuildContext context, String unit) {

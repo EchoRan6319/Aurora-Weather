@@ -118,6 +118,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sunset => '日落';
 
   @override
+  String get today => '今天';
+
+  @override
   String get personalization => '个性化';
 
   @override
@@ -375,5 +378,70 @@ class AppLocalizationsZh extends AppLocalizations {
   String get condition_unknown => '未知';
 
   @override
+  String get wind_dir_n => '北';
+
+  @override
+  String get wind_dir_ne => '东北';
+
+  @override
+  String get wind_dir_e => '东';
+
+  @override
+  String get wind_dir_se => '东南';
+
+  @override
+  String get wind_dir_s => '南';
+
+  @override
+  String get wind_dir_sw => '西南';
+
+  @override
+  String get wind_dir_w => '西';
+
+  @override
+  String get wind_dir_nw => '西北';
+
+  @override
+  String get wind_dir_calm => '静风';
+
+  @override
+  String get wind_dir_variable => '风向不定';
+
+  @override
+  String wind_scale(Object scale) {
+    return '$scale级';
+  }
+
+  @override
   String get main_pollutant => '主要污染物';
+
+  @override
+  String get ai_assistant_title => '天气助手';
+
+  @override
+  String get ai_assistant_greeting => '你好，我是轻氧天气助手';
+
+  @override
+  String get ai_assistant_description => '我可以帮你解答天气相关问题，提供穿衣建议、出行提醒等';
+
+  @override
+  String get ai_quick_action_1 => '今天适合户外运动吗？';
+
+  @override
+  String get ai_quick_action_2 => '明天需要带伞吗？';
+
+  @override
+  String get ai_quick_action_3 => '今天穿什么合适？';
+
+  @override
+  String get ai_thinking => '正在思考...';
+
+  @override
+  String get ai_input_hint => '输入消息...';
+
+  @override
+  String get ai_error_message => '抱歉，发生了错误。请稍后再试。';
+
+  @override
+  String get clear_chat => '清空对话';
 }

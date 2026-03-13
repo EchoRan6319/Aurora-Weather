@@ -559,7 +559,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                     Icons.air,
                     AppLocalizations.of(context).wind_speed,
                     '${WeatherCode.convertWindSpeed(current.windSpeed, unit: ref.read(settingsProvider).windSpeedUnit)} ${_getWindUnitDisplay(ref.read(settingsProvider).windSpeedUnit)}',
-                    current.windDir,
+                    '${WeatherCode.getLocalizedWindDirection(context, current.windDir)}${current.windScale.isNotEmpty ? ', ${AppLocalizations.of(context).wind_scale(current.windScale)}' : ''}',
                   ),
                 ),
                 Expanded(

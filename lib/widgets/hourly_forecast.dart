@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import '../models/weather_models.dart';
 import '../core/constants/app_constants.dart';
+import '../generated/l10n/app_localizations.dart';
 
 /// 24小时天气预报组件
 /// 
@@ -57,9 +58,10 @@ class HourlyForecast extends StatelessWidget {
   }
 
   /// 构建头部
-  /// 
+  ///
   /// [context]: 上下文
   Widget _buildHeader(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         Icon(
@@ -69,7 +71,7 @@ class HourlyForecast extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Text(
-          '24小时预报',
+          l10n.forecast_24h,
           style: Theme.of(
             context,
           ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),

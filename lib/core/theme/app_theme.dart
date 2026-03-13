@@ -174,22 +174,132 @@ class AppTheme {
   ];
 
   /// 创建应用主题
-  /// 
+  ///
   /// [colorScheme] 颜色方案
   /// [useMaterial3] 是否使用Material 3
   /// [fontFamily] 字体系列
-  /// 
+  ///
   /// 返回配置好的ThemeData实例
   static ThemeData createTheme({
     required ColorScheme colorScheme,
     required bool useMaterial3,
     String? fontFamily,
   }) {
+    // 统一的文本主题，确保跨平台字体一致性
+    final textTheme = TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 57,
+        fontWeight: FontWeight.w400,
+        letterSpacing: -0.25,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 45,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      displaySmall: TextStyle(
+        fontSize: 36,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      headlineLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      titleMedium: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.15,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      titleSmall: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.1,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.5,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.25,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      bodySmall: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.4,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      labelLarge: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.1,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      labelMedium: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.5,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+      labelSmall: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w500,
+        letterSpacing: 0.5,
+        color: colorScheme.onSurface,
+        fontFamily: fontFamily,
+      ),
+    );
+
     return ThemeData(
       useMaterial3: useMaterial3,
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
       fontFamily: fontFamily,
+      textTheme: textTheme,
       scaffoldBackgroundColor: colorScheme.surfaceContainer,
       
       // 应用栏主题

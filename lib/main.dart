@@ -124,6 +124,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
               prefs.setInt('notification_accent_color', (lightColorScheme.primary.toARGB32()));
             });
 
+            final languageMode = ref.watch(languageProvider);
             final languageNotifier = ref.read(languageProvider.notifier);
 
             return MaterialApp(

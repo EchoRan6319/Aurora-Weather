@@ -28,27 +28,74 @@ class DeepSeekService {
         _apiKey = apiKey ?? ApiConfig.deepseekApiKey,
         _baseUrl = baseUrl ?? ApiConfig.deepseekBaseUrl;
 
-  String _buildSystemPrompt(String? weatherContext) {
+  String _buildSystemPrompt(String? weatherContext, {String language = 'zh'}) {
     final dataSection = weatherContext != null && weatherContext.trim().isNotEmpty
-        ? '【当前天气信息】\n$weatherContext'
-        : '（暂无天气数据，请先提醒用户添加城市并刷新天气）';
+        ? language == 'zh'
+            ? '【当前天气信息】\n$weatherContext'
+            : '[Current Weather Information]\n$weatherContext'
+        : language == 'zh'
+            ? '（暂无天气数据，请先提醒用户添加城市并刷新天气）'
+            : '(No weather data available. Please remind the user to add a city and refresh the weather.)';
 
-    return '''你是“轻氧天气助手”。请基于天气数据给出准确、易读、可执行的建议。
+    if (language == 'zh') {
+      return '''你是"轻氧天气助手"。请基于天气数据给出准确、易读、可执行的建议。
 
 只输出纯文本，禁止使用 Markdown 控制标记（例如：#标题、**加粗**、反引号代码块、链接包装符号等），但保留正常中文标点和常用符号。
 
 请按固定结构回答：
 结论：一句话先给判断。
 原因：最多 3 条，每条一行。
-建议：给出可执行动作，优先按“现在/今天/明天”组织。
+建议：给出可执行动作，优先按"现在/今天/明天"组织。
 补充：如有预警、温差、降水、空气质量风险，明确提醒。
 
 表达要求：
 1. 使用简洁中文短句，避免大段文字。
 2. 优先给出时间点和阈值（如气温、降水概率、风力等级）。
 3. 用户问题不完整时，先给最佳可用答案，再补一句可追问项。
+4. 禁止输出任何货币符号（如美元符号\$）。
 
-$dataSection''';
+''' + dataSection;
+    } else {
+      return '''You are "PureWeather Assistant", a helpful weather advisor. Your task is to provide weather advice based on the data provided below.
+
+**Output Format Rules (STRICT):**
+- Output must be plain text only.
+- NO Markdown syntax (no #, no **, no \`, no []()).
+- NO currency symbols (\$, €, £, ¥).
+- NO special characters except standard punctuation: . , : ; ? ! ( ) -
+
+**Formatting Rules (CRITICAL - READ CAREFULLY):**
+- You MUST put a space after every punctuation mark (.,:;?!).
+- You MUST put a space between EVERY word.
+- NEVER join words together.
+
+**Examples of CORRECT output (with spaces):**
+Conclusion: Today is not ideal for outdoor sports due to air quality and potential light rain.
+Reason: The current air quality is at a level of mild pollution, which can be irritating during exercise.
+Reason: There is a 55 percent chance of light rain starting around 2 PM today.
+Advice: If you must exercise outdoors, consider doing so in the morning before the rain chance increases.
+Additional: The temperature will be mild, ranging from 7 to 16 degrees Celsius.
+
+**Examples of WRONG output (missing spaces):**
+Conclusion:Todayisnotidealforoutdoorsportsduetoairqualityandpotentiallightrain.
+Reason:Thecurrentairqualityisatalevelofmildpollution.
+Advice:Ifyoumustexerciseoutdoors,considerdoingsointhemorning.
+
+**Response Structure:**
+Conclusion: [One clear sentence answering the user's question]
+Reason: [Point 1]
+Reason: [Point 2 - if applicable]
+Reason: [Point 3 - if applicable]
+Advice: [Actionable advice for now/today/tomorrow]
+Additional: [Any warnings about air quality, temperature changes, etc.]
+
+**Tone:**
+- Be concise and direct.
+- Use everyday language.
+- Focus on practical advice.
+
+''' + dataSection;
+    }
   }
 
   String _sanitizeAiResponse(String input) {
@@ -66,6 +113,12 @@ $dataSection''';
     text = text.replaceAll(RegExp(r'!\[([^\]]*)\]\(([^)]*)\)'), r'$1');
     text = text.replaceAll(RegExp(r'\[([^\]]+)\]\(([^)]*)\)'), r'$1');
 
+    // Remove currency symbols and other unwanted special characters
+    text = text.replaceAll('\$', '');
+    text = text.replaceAll('€', '');
+    text = text.replaceAll('£', '');
+    text = text.replaceAll('¥', '');
+
     text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
 
     return text.trim();
@@ -75,11 +128,12 @@ $dataSection''';
     required String userMessage,
     required List<ChatMessage> history,
     String? weatherContext,
+    String language = 'zh',
   }) async* {
     final messages = <Map<String, String>>[
       {
         'role': 'system',
-        'content': _buildSystemPrompt(weatherContext),
+        'content': _buildSystemPrompt(weatherContext, language: language),
       },
       ...history.map((m) => {'role': m.role, 'content': m.content}),
       {'role': 'user', 'content': userMessage},
@@ -143,12 +197,14 @@ $dataSection''';
     required String userMessage,
     required List<ChatMessage> history,
     String? weatherContext,
+    String language = 'zh',
   }) async {
     final buffer = StringBuffer();
     await for (final chunk in chatStream(
       userMessage: userMessage,
       history: history,
       weatherContext: weatherContext,
+      language: language,
     )) {
       buffer.write(chunk);
     }

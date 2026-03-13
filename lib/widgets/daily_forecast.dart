@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../models/weather_models.dart';
 import '../core/constants/app_constants.dart';
+import '../generated/l10n/app_localizations.dart';
 
 /// 7天天气预报组件
 /// 
@@ -38,6 +39,7 @@ class DailyForecast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (daily.isEmpty) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       child: Padding(
@@ -55,7 +57,7 @@ class DailyForecast extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  '7天预报',
+                  l10n.forecast_7d,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -147,24 +149,28 @@ class _DailyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final date = DateTime.tryParse(weather.fxDate);
-    final weekday = date != null ? _getWeekday(date.weekday) : '--';
+    final weekday = date != null ? _getWeekday(context, date.weekday) : '--';
     final dateStr = date != null ? DateFormat('MM/dd').format(date) : '--/--';
 
     int icon;
-    String text;
+    String chineseText;
 
     // 今天显示当前天气，其他天显示白天天气
     if (isToday && currentWeather != null) {
       icon = int.tryParse(currentWeather!.icon) ?? 100;
-      text = currentWeather!.text;
+      chineseText = currentWeather!.text;
     } else {
       icon =
           int.tryParse(weather.iconDay) ??
           int.tryParse(weather.iconNight) ??
           100;
-      text = weather.textDay.isNotEmpty ? weather.textDay : weather.textNight;
+      chineseText = weather.textDay.isNotEmpty ? weather.textDay : weather.textNight;
     }
+
+    // 获取本地化的天气描述
+    final text = WeatherCode.getLocalizedDescription(context, chineseText);
 
     final isNight = isToday ? _isNightTime() : false;
 
@@ -179,7 +185,7 @@ class _DailyItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  isToday ? '今天' : weekday,
+                  isToday ? l10n.today : weekday,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: isToday ? FontWeight.w600 : FontWeight.w400,
                   ),
@@ -244,10 +250,13 @@ class _DailyItem extends StatelessWidget {
   }
 
   /// 获取星期几
-  /// 
+  ///
   /// [weekday]: 星期几的数字表示（1-7）
-  String _getWeekday(int weekday) {
-    const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
-    return '周${weekdays[weekday - 1]}';
+  String _getWeekday(BuildContext context, int weekday) {
+    final l10n = AppLocalizations.of(context);
+    // 使用本地化的星期格式
+    final now = DateTime.now();
+    final date = now.add(Duration(days: weekday - now.weekday));
+    return DateFormat.E(AppLocalizations.of(context).localeName).format(date);
   }
 }

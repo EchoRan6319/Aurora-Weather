@@ -314,6 +314,12 @@ abstract class AppLocalizations {
   /// **'日落'**
   String get sunset;
 
+  /// No description provided for @today.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天'**
+  String get today;
+
   /// No description provided for @personalization.
   ///
   /// In zh, this message translates to:
@@ -824,11 +830,137 @@ abstract class AppLocalizations {
   /// **'未知'**
   String get condition_unknown;
 
+  /// No description provided for @wind_dir_n.
+  ///
+  /// In zh, this message translates to:
+  /// **'北'**
+  String get wind_dir_n;
+
+  /// No description provided for @wind_dir_ne.
+  ///
+  /// In zh, this message translates to:
+  /// **'东北'**
+  String get wind_dir_ne;
+
+  /// No description provided for @wind_dir_e.
+  ///
+  /// In zh, this message translates to:
+  /// **'东'**
+  String get wind_dir_e;
+
+  /// No description provided for @wind_dir_se.
+  ///
+  /// In zh, this message translates to:
+  /// **'东南'**
+  String get wind_dir_se;
+
+  /// No description provided for @wind_dir_s.
+  ///
+  /// In zh, this message translates to:
+  /// **'南'**
+  String get wind_dir_s;
+
+  /// No description provided for @wind_dir_sw.
+  ///
+  /// In zh, this message translates to:
+  /// **'西南'**
+  String get wind_dir_sw;
+
+  /// No description provided for @wind_dir_w.
+  ///
+  /// In zh, this message translates to:
+  /// **'西'**
+  String get wind_dir_w;
+
+  /// No description provided for @wind_dir_nw.
+  ///
+  /// In zh, this message translates to:
+  /// **'西北'**
+  String get wind_dir_nw;
+
+  /// No description provided for @wind_dir_calm.
+  ///
+  /// In zh, this message translates to:
+  /// **'静风'**
+  String get wind_dir_calm;
+
+  /// No description provided for @wind_dir_variable.
+  ///
+  /// In zh, this message translates to:
+  /// **'风向不定'**
+  String get wind_dir_variable;
+
+  /// No description provided for @wind_scale.
+  ///
+  /// In zh, this message translates to:
+  /// **'{scale}级'**
+  String wind_scale(Object scale);
+
   /// No description provided for @main_pollutant.
   ///
   /// In zh, this message translates to:
   /// **'主要污染物'**
   String get main_pollutant;
+
+  /// No description provided for @ai_assistant_title.
+  ///
+  /// In zh, this message translates to:
+  /// **'天气助手'**
+  String get ai_assistant_title;
+
+  /// No description provided for @ai_assistant_greeting.
+  ///
+  /// In zh, this message translates to:
+  /// **'你好，我是轻氧天气助手'**
+  String get ai_assistant_greeting;
+
+  /// No description provided for @ai_assistant_description.
+  ///
+  /// In zh, this message translates to:
+  /// **'我可以帮你解答天气相关问题，提供穿衣建议、出行提醒等'**
+  String get ai_assistant_description;
+
+  /// No description provided for @ai_quick_action_1.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天适合户外运动吗？'**
+  String get ai_quick_action_1;
+
+  /// No description provided for @ai_quick_action_2.
+  ///
+  /// In zh, this message translates to:
+  /// **'明天需要带伞吗？'**
+  String get ai_quick_action_2;
+
+  /// No description provided for @ai_quick_action_3.
+  ///
+  /// In zh, this message translates to:
+  /// **'今天穿什么合适？'**
+  String get ai_quick_action_3;
+
+  /// No description provided for @ai_thinking.
+  ///
+  /// In zh, this message translates to:
+  /// **'正在思考...'**
+  String get ai_thinking;
+
+  /// No description provided for @ai_input_hint.
+  ///
+  /// In zh, this message translates to:
+  /// **'输入消息...'**
+  String get ai_input_hint;
+
+  /// No description provided for @ai_error_message.
+  ///
+  /// In zh, this message translates to:
+  /// **'抱歉，发生了错误。请稍后再试。'**
+  String get ai_error_message;
+
+  /// No description provided for @clear_chat.
+  ///
+  /// In zh, this message translates to:
+  /// **'清空对话'**
+  String get clear_chat;
 }
 
 class _AppLocalizationsDelegate

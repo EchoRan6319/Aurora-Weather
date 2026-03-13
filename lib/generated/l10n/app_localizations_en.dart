@@ -118,6 +118,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sunset => 'Sunset';
 
   @override
+  String get today => 'Today';
+
+  @override
   String get personalization => 'Personalization';
 
   @override
@@ -377,5 +380,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get condition_unknown => 'Unknown';
 
   @override
+  String get wind_dir_n => 'North';
+
+  @override
+  String get wind_dir_ne => 'Northeast';
+
+  @override
+  String get wind_dir_e => 'East';
+
+  @override
+  String get wind_dir_se => 'Southeast';
+
+  @override
+  String get wind_dir_s => 'South';
+
+  @override
+  String get wind_dir_sw => 'Southwest';
+
+  @override
+  String get wind_dir_w => 'West';
+
+  @override
+  String get wind_dir_nw => 'Northwest';
+
+  @override
+  String get wind_dir_calm => 'Calm';
+
+  @override
+  String get wind_dir_variable => 'Variable';
+
+  @override
+  String wind_scale(Object scale) {
+    return 'Force $scale';
+  }
+
+  @override
   String get main_pollutant => 'Main Pollutant';
+
+  @override
+  String get ai_assistant_title => 'Weather Assistant';
+
+  @override
+  String get ai_assistant_greeting => 'Hello, I\'m PureWeather Assistant';
+
+  @override
+  String get ai_assistant_description =>
+      'I can help you with weather-related questions, provide clothing advice, travel reminders, and more';
+
+  @override
+  String get ai_quick_action_1 => 'Is today suitable for outdoor sports?';
+
+  @override
+  String get ai_quick_action_2 => 'Do I need an umbrella tomorrow?';
+
+  @override
+  String get ai_quick_action_3 => 'What should I wear today?';
+
+  @override
+  String get ai_thinking => 'Thinking...';
+
+  @override
+  String get ai_input_hint => 'Type a message...';
+
+  @override
+  String get ai_error_message =>
+      'Sorry, an error occurred. Please try again later.';
+
+  @override
+  String get clear_chat => 'Clear Chat';
 }

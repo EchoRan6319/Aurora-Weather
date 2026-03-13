@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../generated/l10n/app_localizations.dart';
 
 /// 应用常量类
 /// 包含应用的基本配置和常量
@@ -92,11 +93,221 @@ class WeatherCode {
   };
 
   /// 根据天气代码获取描述
-  /// 
+  ///
   /// [code] 天气代码
   /// 返回对应的天气描述，如果没有找到则返回 '未知'
   static String getDescription(int code) {
     return descriptions[code] ?? '未知';
+  }
+
+  /// 中文天气描述到本地化键的映射
+  static const Map<String, String> _descriptionToKey = {
+    '晴': 'condition_sunny',
+    '多云': 'condition_cloudy',
+    '少云': 'condition_few_clouds',
+    '晴间多云': 'condition_partly_cloudy',
+    '阴': 'condition_overcast',
+    '阵雨': 'condition_shower',
+    '强阵雨': 'condition_heavy_shower',
+    '雷阵雨': 'condition_thundershower',
+    '强雷阵雨': 'condition_heavy_thundershower',
+    '雷阵雨伴有冰雹': 'condition_hail',
+    '小雨': 'condition_light_rain',
+    '中雨': 'condition_moderate_rain',
+    '大雨': 'condition_heavy_rain',
+    '极端降雨': 'condition_extreme_rain',
+    '毛毛雨': 'condition_drizzle',
+    '暴雨': 'condition_storm',
+    '大暴雨': 'condition_heavy_storm',
+    '特大暴雨': 'condition_extreme_storm',
+    '冻雨': 'condition_freezing_rain',
+    '小雪': 'condition_light_snow',
+    '中雪': 'condition_moderate_snow',
+    '大雪': 'condition_heavy_snow',
+    '暴雪': 'condition_blizzard',
+    '雨夹雪': 'condition_sleet',
+    '薄雾': 'condition_mist',
+    '雾': 'condition_fog',
+    '霾': 'condition_haze',
+    '扬沙': 'condition_dust',
+    '浮尘': 'condition_sand',
+    '沙尘暴': 'condition_sandstorm',
+    '强沙尘暴': 'condition_heavy_sandstorm',
+    '浓雾': 'condition_dense_fog',
+    '热': 'condition_heat',
+    '冷': 'condition_cold',
+    '未知': 'condition_unknown',
+    '雨': 'condition_light_rain',
+    '雪': 'condition_light_snow',
+    '小到中雨': 'condition_light_rain',
+    '中到大雨': 'condition_moderate_rain',
+    '大到暴雨': 'condition_heavy_rain',
+    '暴雨到大暴雨': 'condition_storm',
+    '大暴雨到特大暴雨': 'condition_extreme_storm',
+    '小到中雪': 'condition_light_snow',
+    '中到大雪': 'condition_moderate_snow',
+    '大到暴雪': 'condition_heavy_snow',
+    '阵雨夹雪': 'condition_sleet',
+    '阵雪': 'condition_light_snow',
+    '雨雪天气': 'condition_sleet',
+    '强浓雾': 'condition_dense_fog',
+    '中度霾': 'condition_haze',
+    '重度霾': 'condition_haze',
+    '严重霾': 'condition_haze',
+    '大雾': 'condition_fog',
+    '特强浓雾': 'condition_dense_fog',
+  };
+
+  /// 获取本地化的天气描述
+  ///
+  /// [context] BuildContext
+  /// [chineseDescription] 中文天气描述
+  /// 返回本地化的天气描述
+  static String getLocalizedDescription(BuildContext context, String chineseDescription) {
+    final l10n = AppLocalizations.of(context);
+    final key = _descriptionToKey[chineseDescription];
+    if (key == null) return chineseDescription;
+
+    switch (key) {
+      case 'condition_sunny':
+        return l10n.condition_sunny;
+      case 'condition_cloudy':
+        return l10n.condition_cloudy;
+      case 'condition_few_clouds':
+        return l10n.condition_few_clouds;
+      case 'condition_partly_cloudy':
+        return l10n.condition_partly_cloudy;
+      case 'condition_overcast':
+        return l10n.condition_overcast;
+      case 'condition_shower':
+        return l10n.condition_shower;
+      case 'condition_heavy_shower':
+        return l10n.condition_heavy_shower;
+      case 'condition_thundershower':
+        return l10n.condition_thundershower;
+      case 'condition_heavy_thundershower':
+        return l10n.condition_heavy_thundershower;
+      case 'condition_hail':
+        return l10n.condition_hail;
+      case 'condition_light_rain':
+        return l10n.condition_light_rain;
+      case 'condition_moderate_rain':
+        return l10n.condition_moderate_rain;
+      case 'condition_heavy_rain':
+        return l10n.condition_heavy_rain;
+      case 'condition_extreme_rain':
+        return l10n.condition_extreme_rain;
+      case 'condition_drizzle':
+        return l10n.condition_drizzle;
+      case 'condition_storm':
+        return l10n.condition_storm;
+      case 'condition_heavy_storm':
+        return l10n.condition_heavy_storm;
+      case 'condition_extreme_storm':
+        return l10n.condition_extreme_storm;
+      case 'condition_freezing_rain':
+        return l10n.condition_freezing_rain;
+      case 'condition_light_snow':
+        return l10n.condition_light_snow;
+      case 'condition_moderate_snow':
+        return l10n.condition_moderate_snow;
+      case 'condition_heavy_snow':
+        return l10n.condition_heavy_snow;
+      case 'condition_blizzard':
+        return l10n.condition_blizzard;
+      case 'condition_sleet':
+        return l10n.condition_sleet;
+      case 'condition_mist':
+        return l10n.condition_mist;
+      case 'condition_fog':
+        return l10n.condition_fog;
+      case 'condition_haze':
+        return l10n.condition_haze;
+      case 'condition_dust':
+        return l10n.condition_dust;
+      case 'condition_sand':
+        return l10n.condition_sand;
+      case 'condition_sandstorm':
+        return l10n.condition_sandstorm;
+      case 'condition_heavy_sandstorm':
+        return l10n.condition_heavy_sandstorm;
+      case 'condition_dense_fog':
+        return l10n.condition_dense_fog;
+      case 'condition_heat':
+        return l10n.condition_heat;
+      case 'condition_cold':
+        return l10n.condition_cold;
+      default:
+        return chineseDescription;
+    }
+  }
+
+  /// 中文风向到本地化键的映射
+  static const Map<String, String> _windDirToKey = {
+    '北': 'wind_dir_n',
+    '北风': 'wind_dir_n',
+    '东北': 'wind_dir_ne',
+    '东北风': 'wind_dir_ne',
+    '东': 'wind_dir_e',
+    '东风': 'wind_dir_e',
+    '东南': 'wind_dir_se',
+    '东南风': 'wind_dir_se',
+    '南': 'wind_dir_s',
+    '南风': 'wind_dir_s',
+    '西南': 'wind_dir_sw',
+    '西南风': 'wind_dir_sw',
+    '西': 'wind_dir_w',
+    '西风': 'wind_dir_w',
+    '西北': 'wind_dir_nw',
+    '西北风': 'wind_dir_nw',
+    '静风': 'wind_dir_calm',
+    '风向不定': 'wind_dir_variable',
+    'N': 'wind_dir_n',
+    'NE': 'wind_dir_ne',
+    'E': 'wind_dir_e',
+    'SE': 'wind_dir_se',
+    'S': 'wind_dir_s',
+    'SW': 'wind_dir_sw',
+    'W': 'wind_dir_w',
+    'NW': 'wind_dir_nw',
+    'Calm': 'wind_dir_calm',
+    'Variable': 'wind_dir_variable',
+  };
+
+  /// 获取本地化的风向描述
+  ///
+  /// [context] BuildContext
+  /// [chineseWindDir] 中文风向描述
+  /// 返回本地化的风向描述
+  static String getLocalizedWindDirection(BuildContext context, String chineseWindDir) {
+    final l10n = AppLocalizations.of(context);
+    final key = _windDirToKey[chineseWindDir];
+    if (key == null) return chineseWindDir;
+
+    switch (key) {
+      case 'wind_dir_n':
+        return l10n.wind_dir_n;
+      case 'wind_dir_ne':
+        return l10n.wind_dir_ne;
+      case 'wind_dir_e':
+        return l10n.wind_dir_e;
+      case 'wind_dir_se':
+        return l10n.wind_dir_se;
+      case 'wind_dir_s':
+        return l10n.wind_dir_s;
+      case 'wind_dir_sw':
+        return l10n.wind_dir_sw;
+      case 'wind_dir_w':
+        return l10n.wind_dir_w;
+      case 'wind_dir_nw':
+        return l10n.wind_dir_nw;
+      case 'wind_dir_calm':
+        return l10n.wind_dir_calm;
+      case 'wind_dir_variable':
+        return l10n.wind_dir_variable;
+      default:
+        return chineseWindDir;
+    }
   }
 
   /// 根据天气代码获取对应的图标
