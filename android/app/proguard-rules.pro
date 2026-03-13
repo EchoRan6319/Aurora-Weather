@@ -1,4 +1,4 @@
-# Flutter ProGuard rules - 优化版本
+# Flutter ProGuard rules - 平衡版本（混淆+轻度压缩）
 
 # Flutter wrapper - 保留核心类
 -keep class io.flutter.app.** { *; }
@@ -18,10 +18,18 @@
 # 保留 Dart VM 类
 -keep class com.dartlang.vm.** { *; }
 
-# 保留序列化相关的类和方法（用于 JSON 解析）
--keepclassmembers class * {
-    @com.google.gson.annotations.SerializedName <fields>;
-}
+# 保留所有 Flutter 插件类（防止被混淆）
+-keep class * implements io.flutter.embedding.engine.plugins.FlutterPlugin { *; }
+-keep class * implements io.flutter.plugin.common.ActivityAware { *; }
+-keep class * implements io.flutter.plugin.common.ServiceAware { *; }
+
+# 保留所有生成的类
+-keep class io.flutter.plugins.GeneratedPluginRegistrant { *; }
+
+# 保留所有 MethodChannel 相关类
+-keep class io.flutter.plugin.common.MethodChannel { *; }
+-keep class io.flutter.plugin.common.MethodCall { *; }
+-keep class io.flutter.plugin.common.MethodChannel$Result { *; }
 
 # 保留枚举类
 -keepclassmembers enum * {
@@ -39,29 +47,46 @@
     public static final android.os.Parcelable$Creator *;
 }
 
+# 保留 Serializable 实现类
+-keep class * implements java.io.Serializable { *; }
+
+# 保留 R 类
+-keep class **.R$* { *; }
+-keep class **.R { *; }
+
+# 保留 BuildConfig
+-keep class **.BuildConfig { *; }
+
+# 保留所有 Activity、Application
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+
+# 保留注解
+-keepattributes *Annotation*
+-keepattributes Signature
+-keepattributes Exceptions,InnerClasses,Synthetic
+-keepattributes SourceFile,LineNumberTable
+-keepattributes EnclosingMethod
+
+# 保留 Kotlin 元数据
+-keep class kotlin.Metadata { *; }
+-keepattributes RuntimeVisibleAnnotations
+
 # 忽略 Google Play Core 缺失类警告
 -dontwarn com.google.android.play.core.**
 -dontwarn com.google.android.play.core.tasks.**
 
-# 优化选项
--optimizationpasses 5
+# 优化配置 - 启用混淆和轻度压缩，但禁用激进优化
+# 混淆类名、方法名、字段名
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
--dontpreverify
 -verbose
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
-# 保留行号信息（便于调试）
+# 禁用可能导致崩溃的优化
+-optimizations !code/allocation/variable,!code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*
+
+# 保留行号信息（便于调试崩溃）
 -keepattributes SourceFile,LineNumberTable
-
-# 保留注解
--keepattributes *Annotation*
-
-# 保留泛型签名
--keepattributes Signature
-
-# 保留异常、内部类、合成类等
--keepattributes Exceptions,InnerClasses,Synthetic
 
 # 删除日志代码
 -assumenosideeffects class android.util.Log {
