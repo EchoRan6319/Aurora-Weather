@@ -91,34 +91,43 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
             _buildHandle(context),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '天气卡片排序',
-                      style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
+              child: SizedBox(
+                height: 40,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 48),
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          '天气卡片排序',
+                          style: textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.restore_outlined),
-                    tooltip: '恢复默认',
-                    onPressed: () {
-                      setState(() {
-                        _currentOrder = [
-                          'hourly',
-                          'daily',
-                          'airQuality',
-                          'details',
-                          'indices',
-                        ];
-                      });
-                      ref.read(settingsProvider.notifier).setWeatherCardOrder(_currentOrder);
-                    },
-                  ),
-                ],
+                    SizedBox(
+                      width: 48,
+                      child: IconButton(
+                        icon: const Icon(Icons.restore_outlined),
+                        tooltip: '恢复默认',
+                        onPressed: () {
+                          setState(() {
+                            _currentOrder = [
+                              'hourly',
+                              'daily',
+                              'airQuality',
+                              'details',
+                              'indices',
+                            ];
+                          });
+                          ref.read(settingsProvider.notifier).setWeatherCardOrder(_currentOrder);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
@@ -316,13 +325,6 @@ class _ReorderableCardItem extends StatelessWidget {
           ],
         ),
       ),
-    ).animate().fadeIn(
-      delay: Duration(milliseconds: index * 50),
-      duration: 200.ms,
-    ).slideX(
-      delay: Duration(milliseconds: index * 50),
-      begin: -0.1,
-      duration: 200.ms,
     );
   }
 }
