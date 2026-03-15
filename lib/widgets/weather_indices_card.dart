@@ -14,7 +14,11 @@ class WeatherIndicesCard extends StatelessWidget {
     // 只取前6个指数
     final displayIndices = indices.take(6).toList();
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

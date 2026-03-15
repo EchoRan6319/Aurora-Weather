@@ -24,7 +24,6 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
     final textColor = _getAlertTextColor(widget.alerts.first.level, colorScheme);
     final levelColor = _getLevelColor(widget.alerts.first.level, colorScheme);
     final backgroundColor = alertColor.withValues(alpha: 0.5);
-    final elevation = 2.0;
 
     // 响应式布局参数
     final screenWidth = MediaQuery.of(context).size.width;
@@ -33,16 +32,10 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
     final iconSize = isLargeScreen ? 24.0 : 20.0;
     final spacing = isLargeScreen ? 12.0 : 8.0;
 
-    return Card(
-      color: backgroundColor,
-      elevation: elevation,
-      shadowColor: colorScheme.shadow.withValues(alpha: 0.2),
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(isLargeScreen ? 20 : 16),
-        side: BorderSide(
-          color: alertColor.withValues(alpha: 0.5),
-          width: 1,
-        ),
       ),
       child: InkWell(
         onTap: () {

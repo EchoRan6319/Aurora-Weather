@@ -162,7 +162,7 @@ class SettingsSelectionItem extends StatelessWidget {
                       ? colorScheme.onSecondaryContainer
                       : enabled
                           ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSurface.withOpacity(0.38),
+                          : colorScheme.onSurface.withValues(alpha: 0.38),
                 ),
                 const SizedBox(width: 16),
                 // 中间内容
@@ -179,7 +179,7 @@ class SettingsSelectionItem extends StatelessWidget {
                               ? colorScheme.onSecondaryContainer
                               : enabled
                                   ? colorScheme.onSurface
-                                  : colorScheme.onSurface.withOpacity(0.38),
+                                  : colorScheme.onSurface.withValues(alpha: 0.38),
                         ),
                       ),
                       if (subtitle != null) ...[
@@ -188,10 +188,10 @@ class SettingsSelectionItem extends StatelessWidget {
                           subtitle!,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: isSelected
-                                ? colorScheme.onSecondaryContainer.withOpacity(0.7)
+                                ? colorScheme.onSecondaryContainer.withValues(alpha: 0.7)
                                 : enabled
                                     ? colorScheme.onSurfaceVariant
-                                    : colorScheme.onSurface.withOpacity(0.38),
+                                    : colorScheme.onSurface.withValues(alpha: 0.38),
                           ),
                         ),
                       ],

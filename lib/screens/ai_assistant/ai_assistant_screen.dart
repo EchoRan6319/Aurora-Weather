@@ -312,11 +312,8 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   Widget _buildQuickAction(String text) {
     return ActionChip(
       label: Text(text),
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
-      side: BorderSide(
-        color: Theme.of(context).colorScheme.outlineVariant,
-        width: 1,
-      ),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+      side: BorderSide.none,
       onPressed: () {
         _messageController.text = text;
         _sendMessage();
@@ -403,27 +400,18 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
               decoration: InputDecoration(
                 hintText: '输入消息...',
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.surfaceContainer,
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                    width: 1,
-                  ),
+                  borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 2,
-                  ),
+                  borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -488,21 +476,13 @@ class _ChatBubble extends StatelessWidget {
         decoration: BoxDecoration(
           color: isUser
               ? Theme.of(context).colorScheme.primaryContainer
-              : Theme.of(context).colorScheme.surfaceContainer,
+              : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
             bottomLeft: Radius.circular(isUser ? 16 : 4),
             bottomRight: Radius.circular(isUser ? 4 : 16),
           ),
-          border: isUser
-              ? null
-              : Border.all(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.outlineVariant.withValues(alpha: 0.5),
-                  width: 1,
-                ),
         ),
         child: Text(
           displayMessage,

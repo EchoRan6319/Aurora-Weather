@@ -498,7 +498,11 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   ///
   /// [rain]: 降雨预测数据
   Widget _buildRainPrediction(CaiyunMinuteRain rain) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -533,7 +537,11 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     CurrentWeather current,
     DailyWeather? todayDaily,
   ) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -893,8 +901,12 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
       itemCount: _searchResults.length,
       itemBuilder: (context, index) {
         final location = _searchResults[index];
-        return Card(
+        return Container(
           margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: ListTile(
             leading: const Icon(Icons.location_on_outlined),
             title: Text(location.name),
@@ -971,13 +983,16 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
         final isLocated = city.isLocated;
         final weatherAsync = ref.watch(weatherForCityProvider(city));
 
-        return Card(
+        return Container(
           margin: const EdgeInsets.only(bottom: 12),
-          color: isDefault
-              ? Theme.of(
-                  context,
-                ).colorScheme.primaryContainer.withValues(alpha: 0.3)
-              : null,
+          decoration: BoxDecoration(
+            color: isDefault
+                ? Theme.of(
+                    context,
+                  ).colorScheme.primaryContainer.withValues(alpha: 0.3)
+                : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            borderRadius: BorderRadius.circular(16),
+          ),
           child: ListTile(
             leading: Icon(
               isLocated ? Icons.location_on : Icons.star_outline,

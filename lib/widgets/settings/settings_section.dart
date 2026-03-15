@@ -77,10 +77,12 @@ class SettingsSection extends StatelessWidget {
               ],
             ),
           ),
-          // 内容卡片
-          Card(
-            margin: EdgeInsets.zero,
-            clipBehavior: Clip.antiAlias,
+          // 内容区域
+          Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: childrenWithDividers,

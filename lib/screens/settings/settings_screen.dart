@@ -209,7 +209,6 @@ class SettingsScreen extends ConsumerWidget {
                             title: '关于',
                             icon: Icons.info_outline,
                             animationDelay: 250,
-                            showDividers: false,
                             children: [
                               SettingsListTile(
                                 icon: Icons.apps_outlined,
@@ -311,94 +310,49 @@ class SettingsScreen extends ConsumerWidget {
       useSafeArea: true,
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
-        builder: (context, setState) => DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.7,
-          maxChildSize: 0.95,
-          expand: false,
-          builder: (context, scrollController) => Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            ),
-            child: Column(
-              children: [
-                _buildBottomSheetHandle(context),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Text(
-                    '选择主题颜色',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      _buildDynamicColorSection(context, ref, settings),
-                      const SizedBox(height: 20),
-                      _buildSectionTitle(context, '预设颜色'),
-                      const SizedBox(height: 12),
-                      _buildPresetColors(context, settings, selectedColor, (color) {
-                        setState(() {
-                          selectedColor = color;
-                          hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
-                        });
-                      }),
-                      const SizedBox(height: 20),
-                      _buildSectionTitle(context, '自定义颜色'),
-                      const SizedBox(height: 12),
-                      _buildCustomColorPicker(
-                        context,
-                        selectedColor,
-                        hexController,
-                        (color) {
-                          setState(() {
-                            selectedColor = color;
-                            hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      _buildHexInputSection(context, hexController, (color) {
-                        setState(() {
-                          selectedColor = color;
-                        });
-                      }),
-                      const SizedBox(height: 24),
-                      _buildSelectedColorPreview(context, selectedColor),
-                      const SizedBox(height: 24),
-                      _buildActionButtons(
-                        context,
-                        ref,
-                        ctx,
-                        selectedColor,
-                        settings,
-                      ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+        builder: (context, setState) => SettingsBottomSheet(
+          title: '选择主题颜色',
+          bottomAction: _buildActionButtons(
+            context,
+            ref,
+            ctx,
+            selectedColor,
+            settings,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomSheetHandle(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 32,
-        height: 4,
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          borderRadius: BorderRadius.circular(2),
+          children: [
+            _buildDynamicColorSection(context, ref, settings),
+            const SizedBox(height: 24),
+            _buildSectionTitle(context, '预设颜色'),
+            const SizedBox(height: 12),
+            _buildPresetColors(context, settings, selectedColor, (color) {
+              setState(() {
+                selectedColor = color;
+                hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+              });
+            }),
+            const SizedBox(height: 24),
+            _buildSectionTitle(context, '自定义颜色'),
+            const SizedBox(height: 12),
+            _buildCustomColorPicker(
+              context,
+              selectedColor,
+              hexController,
+              (color) {
+                setState(() {
+                  selectedColor = color;
+                  hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+                });
+              },
+            ),
+            const SizedBox(height: 24),
+            _buildHexInputSection(context, hexController, (color) {
+              setState(() {
+                selectedColor = color;
+              });
+            }),
+            const SizedBox(height: 24),
+            _buildSelectedColorPreview(context, selectedColor),
+          ],
         ),
       ),
     );
@@ -432,14 +386,17 @@ class SettingsScreen extends ConsumerWidget {
                 return _buildDynamicColorNotSupported(context);
               }
 
-              return Card(
-                margin: EdgeInsets.zero,
+              return Material(
+                color: isCurrentDynamic
+                    ? Theme.of(context).colorScheme.secondaryContainer
+                    : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(16),
                 child: InkWell(
                   onTap: () {
                     ref.read(themeProvider.notifier).setUseDynamicColor(true);
                     Navigator.pop(context);
                   },
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -456,13 +413,6 @@ class SettingsScreen extends ConsumerWidget {
                                     width: 2,
                                   )
                                 : null,
-                            boxShadow: [
-                              BoxShadow(
-                                color: (dynamicColor ?? Colors.grey).withValues(alpha: 0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -474,13 +424,18 @@ class SettingsScreen extends ConsumerWidget {
                                 '壁纸取色',
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.w500,
+                                  color: isCurrentDynamic
+                                      ? Theme.of(context).colorScheme.onSecondaryContainer
+                                      : Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 '检测颜色: #${dynamicColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: isCurrentDynamic
+                                      ? Theme.of(context).colorScheme.onSecondaryContainer.withValues(alpha: 0.7)
+                                      : Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontFamily: 'monospace',
                                 ),
                               ),
@@ -490,7 +445,7 @@ class SettingsScreen extends ConsumerWidget {
                         if (isCurrentDynamic)
                           Icon(
                             Icons.check_circle,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.onSecondaryContainer,
                           ),
                       ],
                     ),
@@ -501,14 +456,17 @@ class SettingsScreen extends ConsumerWidget {
           );
         }
 
-        return Card(
-          margin: EdgeInsets.zero,
+        return Material(
+          color: isCurrentDynamic
+              ? Theme.of(context).colorScheme.secondaryContainer
+              : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(16),
           child: InkWell(
             onTap: () {
               ref.read(themeProvider.notifier).setUseDynamicColor(true);
               Navigator.pop(context);
             },
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
@@ -525,13 +483,6 @@ class SettingsScreen extends ConsumerWidget {
                               width: 2,
                             )
                           : null,
-                      boxShadow: [
-                        BoxShadow(
-                          color: wallpaperColor.withValues(alpha: 0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -543,13 +494,18 @@ class SettingsScreen extends ConsumerWidget {
                           '壁纸取色',
                           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: FontWeight.w500,
+                            color: isCurrentDynamic
+                                ? Theme.of(context).colorScheme.onSecondaryContainer
+                                : Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '检测颜色: #${wallpaperColor.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: isCurrentDynamic
+                                ? Theme.of(context).colorScheme.onSecondaryContainer.withValues(alpha: 0.7)
+                                : Theme.of(context).colorScheme.onSurfaceVariant,
                             fontFamily: 'monospace',
                           ),
                         ),
@@ -559,7 +515,7 @@ class SettingsScreen extends ConsumerWidget {
                   if (isCurrentDynamic)
                     Icon(
                       Icons.check_circle,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
                     ),
                 ],
               ),
@@ -633,51 +589,45 @@ class SettingsScreen extends ConsumerWidget {
     Color selectedColor,
     Function(Color) onColorSelected,
   ) {
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 5,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          children: AppTheme.presetSeedColors.map((color) {
-            final isSelected = selectedColor.toARGB32() == color.toARGB32();
-            return InkWell(
-              onTap: () => onColorSelected(color),
-              borderRadius: BorderRadius.circular(24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  border: isSelected
-                      ? Border.all(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          width: 3,
-                        )
-                      : null,
-                  boxShadow: [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: isSelected
-                    ? Icon(
-                        Icons.check,
-                        color: ThemeData.estimateBrightnessForColor(color) == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 5,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        children: AppTheme.presetSeedColors.map((color) {
+          final isSelected = selectedColor.toARGB32() == color.toARGB32();
+          return InkWell(
+            onTap: () => onColorSelected(color),
+            borderRadius: BorderRadius.circular(24),
+            child: Container(
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: isSelected
+                    ? Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: 3,
                       )
                     : null,
               ),
-            );
-          }).toList(),
-        ),
+              child: isSelected
+                  ? Icon(
+                      Icons.check,
+                      color: ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    )
+                  : null,
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -688,19 +638,20 @@ class SettingsScreen extends ConsumerWidget {
     TextEditingController hexController,
     Function(Color) onColorSelected,
   ) {
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ColorPicker(
-          pickerColor: selectedColor,
-          onColorChanged: onColorSelected,
-          pickerAreaHeightPercent: 0.6,
-          enableAlpha: false,
-          labelTypes: const [],
-          portraitOnly: true,
-          pickerAreaBorderRadius: BorderRadius.circular(12),
-        ),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: ColorPicker(
+        pickerColor: selectedColor,
+        onColorChanged: onColorSelected,
+        pickerAreaHeightPercent: 0.6,
+        enableAlpha: false,
+        labelTypes: const [],
+        portraitOnly: true,
+        pickerAreaBorderRadius: BorderRadius.circular(12),
       ),
     );
   }
@@ -710,45 +661,46 @@ class SettingsScreen extends ConsumerWidget {
     TextEditingController hexController,
     Function(Color) onColorParsed,
   ) {
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '十六进制颜色代码',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '十六进制颜色代码',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: hexController,
+            decoration: InputDecoration(
+              hintText: '#RRGGBB',
+              prefixIcon: const Icon(Icons.tag),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.content_paste),
+                onPressed: () async {
+                  final data = await Clipboard.getData('text/plain');
+                  if (data?.text != null) {
+                    hexController.text = data!.text!;
+                    _parseHexColor(hexController.text, onColorParsed);
+                  }
+                },
               ),
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: hexController,
-              decoration: InputDecoration(
-                hintText: '#RRGGBB',
-                prefixIcon: const Icon(Icons.tag),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.content_paste),
-                  onPressed: () async {
-                    final data = await Clipboard.getData('text/plain');
-                    if (data?.text != null) {
-                      hexController.text = data!.text!;
-                      _parseHexColor(hexController.text, onColorParsed);
-                    }
-                  },
-                ),
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9a-fA-F#]')),
-              ],
-              onChanged: (value) {
-                _parseHexColor(value, onColorParsed);
-              },
-            ),
-          ],
-        ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9a-fA-F#]')),
+            ],
+            onChanged: (value) {
+              _parseHexColor(value, onColorParsed);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -769,71 +721,72 @@ class SettingsScreen extends ConsumerWidget {
       brightness: Theme.of(context).brightness,
     );
 
-    return Card(
-      margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '预览效果',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: colorScheme.onSurface,
-                fontWeight: FontWeight.w600,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '预览效果',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              color: colorScheme.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '主色',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: colorScheme.primary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '主色',
-                      style: TextStyle(color: colorScheme.onPrimary),
-                      textAlign: TextAlign.center,
-                    ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.secondary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '次色',
+                    style: TextStyle(color: colorScheme.onSecondary),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: colorScheme.secondary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '次色',
-                      style: TextStyle(color: colorScheme.onSecondary),
-                      textAlign: TextAlign.center,
-                    ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: colorScheme.tertiary,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '三色',
+                    style: TextStyle(color: colorScheme.onTertiary),
+                    textAlign: TextAlign.center,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: colorScheme.tertiary,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '三色',
-                      style: TextStyle(color: colorScheme.onTertiary),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -855,7 +808,10 @@ class SettingsScreen extends ConsumerWidget {
               Navigator.pop(dialogContext);
             },
             style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('重置'),
           ),
@@ -870,7 +826,10 @@ class SettingsScreen extends ConsumerWidget {
               Navigator.pop(dialogContext);
             },
             style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('应用'),
           ),
@@ -969,23 +928,42 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   void _showPermissionDeniedDialog(BuildContext context) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        title: const Text('需要通知权限'),
-        content: const Text('轻氧天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              openAppSettings();
-            },
-            child: const Text('去设置'),
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SettingsBottomSheet(
+        title: '需要通知权限',
+        bottomAction: Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('取消'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: FilledButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  openAppSettings();
+                },
+                child: const Text('去设置'),
+              ),
+            ),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Text(
+              '轻氧天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
         ],
       ),
@@ -1065,111 +1043,60 @@ class _ContentBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.7,
-      minChildSize: 0.4,
-      maxChildSize: 0.9,
-      expand: false,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return SettingsBottomSheet(
+      title: title,
+      bottomAction: SizedBox(
+        width: double.infinity,
+        child: FilledButton(
+          onPressed: () => Navigator.pop(context),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
-          child: Column(
-            children: [
-              _buildBottomSheetHandle(context),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
+          child: const Text('我知道了'),
+        ),
+      ),
+      children: content.map((item) {
+        if (item is String) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Text(
+              item,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                height: 1.5,
+              ),
+            ),
+          );
+        } else if (item is (String, String)) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.$1,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
                   ),
                 ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  controller: scrollController,
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  itemCount: content.length,
-                  itemBuilder: (context, index) {
-                    final item = content[index];
-                    if (item is String) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Text(
-                          item,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                            height: 1.5,
-                          ),
-                        ),
-                      );
-                    } else if (item is (String, String)) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.$1,
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              item.$2,
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                                height: 1.5,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text('我知道了'),
+                const SizedBox(height: 4),
+                Text(
+                  item.$2,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    height: 1.5,
                   ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBottomSheetHandle(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 32,
-        height: 4,
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          borderRadius: BorderRadius.circular(2),
-        ),
-      ),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      }).toList(),
     );
   }
 }
@@ -1181,150 +1108,101 @@ class _AboutBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.8,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      expand: false,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+    return SettingsBottomSheet(
+      title: '关于轻氧天气',
+      bottomAction: SizedBox(
+        width: double.infinity,
+        child: FilledButton(
+          onPressed: () => Navigator.pop(context),
+          style: FilledButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
+          child: const Text('我知道了'),
+        ),
+      ),
+      children: [
+        Center(
           child: Column(
             children: [
-              _buildBottomSheetHandle(context),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-                child: Text(
-                  '关于轻氧天气',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
+              const AppIcon(size: 80),
+              const SizedBox(height: 16),
+              Text(
+                '轻氧天气',
+                style: Theme.of(context).textTheme.headlineSmall,
               ),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [
-                          const AppIcon(size: 80),
-                          const SizedBox(height: 16),
-                          Text(
-                            '轻氧天气',
-                            style: Theme.of(context).textTheme.headlineSmall,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            '版本 ${AppConstants.appVersion}',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    _buildAboutItem(
-                      context,
-                      Icons.info_outline,
-                      '应用介绍',
-                      '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.code_outlined,
-                      '开源协议',
-                      'MIT License',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.people_outline,
-                      '开发者',
-                      'EchoRan',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.link_outlined,
-                      'GitHub',
-                      'https://github.com/EchoRan6319/PureWeather',
-                      isLink: true,
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      '特别鸣谢：',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _buildAboutItem(
-                      context,
-                      Icons.cloud_outlined,
-                      '和风天气',
-                      '提供天气数据',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.cloud_queue_outlined,
-                      '彩云天气',
-                      '提供分钟级降雨预报',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.location_on_outlined,
-                      '高德地图',
-                      '提供城市搜索和定位服务',
-                    ),
-                    _buildAboutItem(
-                      context,
-                      Icons.lightbulb_outlined,
-                      'DeepSeek',
-                      '提供天气助手的AI问答功能',
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: const Text('我知道了'),
-                  ),
+              const SizedBox(height: 8),
+              Text(
+                '版本 ${AppConstants.appVersion}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBottomSheetHandle(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 32,
-        height: 4,
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.outlineVariant,
-          borderRadius: BorderRadius.circular(2),
         ),
-      ),
+        const SizedBox(height: 24),
+        _buildAboutItem(
+          context,
+          Icons.info_outline,
+          '应用介绍',
+          '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。',
+        ),
+        _buildAboutItem(
+          context,
+          Icons.code_outlined,
+          '开源协议',
+          'MIT License',
+        ),
+        _buildAboutItem(
+          context,
+          Icons.people_outline,
+          '开发者',
+          'EchoRan',
+        ),
+        _buildAboutItem(
+          context,
+          Icons.link_outlined,
+          'GitHub',
+          'https://github.com/EchoRan6319/PureWeather',
+          isLink: true,
+        ),
+        const SizedBox(height: 24),
+        Text(
+          '特别鸣谢：',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w600,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 12),
+        _buildAboutItem(
+          context,
+          Icons.cloud_outlined,
+          '和风天气',
+          '提供天气数据',
+        ),
+        _buildAboutItem(
+          context,
+          Icons.cloud_queue_outlined,
+          '彩云天气',
+          '提供分钟级降雨预报',
+        ),
+        _buildAboutItem(
+          context,
+          Icons.location_on_outlined,
+          '高德地图',
+          '提供城市搜索和定位服务',
+        ),
+        _buildAboutItem(
+          context,
+          Icons.lightbulb_outlined,
+          'DeepSeek',
+          '提供天气助手的AI问答功能',
+        ),
+      ],
     );
   }
 

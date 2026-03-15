@@ -39,7 +39,11 @@ class DailyForecast extends StatelessWidget {
   Widget build(BuildContext context) {
     if (daily.isEmpty) return const SizedBox.shrink();
 
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
