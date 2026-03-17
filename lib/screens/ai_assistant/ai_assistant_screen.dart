@@ -281,7 +281,6 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
           decoration: BoxDecoration(
             color: context.uiTokens.cardBackground,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: context.uiTokens.cardBorder),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

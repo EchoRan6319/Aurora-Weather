@@ -74,9 +74,9 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
                     child: Text(
                       widget.alerts.first.title,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            fontSize: isLargeScreen ? 18 : null,
-                          ),
+                        fontWeight: FontWeight.w500,
+                        fontSize: isLargeScreen ? 18 : null,
+                      ),
                     ),
                   ),
                   Container(
@@ -94,9 +94,9 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
                     child: Text(
                       widget.alerts.first.level,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: levelColor,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        color: levelColor,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   SizedBox(width: spacing),
@@ -108,12 +108,15 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
                 ],
               ),
               SizedBox(height: spacing),
-              Text(
-                '${widget.alerts.length}条预警',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: isLargeScreen ? 14 : null,
-                    ),
+              Padding(
+                padding: EdgeInsets.only(left: iconSize + spacing),
+                child: Text(
+                  '${widget.alerts.length}条预警',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: isLargeScreen ? 14 : null,
+                  ),
+                ),
               ),
               if (_isExpanded) ...[
                 SizedBox(height: padding),
@@ -123,13 +126,17 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
                   color: colorScheme.outlineVariant.withValues(alpha: 0.3),
                 ).animate().fadeIn(duration: 300.ms),
                 SizedBox(height: padding),
-                ...widget.alerts.map((alert) => _AlertItem(
-                      alert: alert,
-                      isLargeScreen: isLargeScreen,
-                    )
-                    .animate()
-                    .fadeIn(duration: 300.ms, delay: 100.ms)
-                    .slideY(begin: 0.1, end: 0, duration: 300.ms, delay: 100.ms)
+                ...widget.alerts.map(
+                  (alert) =>
+                      _AlertItem(alert: alert, isLargeScreen: isLargeScreen)
+                          .animate()
+                          .fadeIn(duration: 300.ms, delay: 100.ms)
+                          .slideY(
+                            begin: 0.1,
+                            end: 0,
+                            duration: 300.ms,
+                            delay: 100.ms,
+                          ),
                 ),
               ],
             ],
@@ -189,16 +196,16 @@ class _AlertItem extends StatelessWidget {
           Text(
             alert.text,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: isLargeScreen ? 14 : null,
-                ),
+              fontSize: isLargeScreen ? 14 : null,
+            ),
           ),
           SizedBox(height: spacing),
           Text(
             '发布时间: ${_formatPubTime(alert.pubTime)}',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  fontSize: isLargeScreen ? 12 : 11,
-                ),
+              color: colorScheme.onSurfaceVariant,
+              fontSize: isLargeScreen ? 12 : 11,
+            ),
           ),
         ],
       ),
@@ -236,6 +243,4 @@ class _AlertItem extends StatelessWidget {
       return pubTime;
     }
   }
-
 }
-

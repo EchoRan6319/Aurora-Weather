@@ -140,9 +140,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   Widget _buildCurrentWeather(
     WeatherState state,
     Location? location,
-    AppSettings settings,
-    {required double viewportHeight}
-  ) {
+    AppSettings settings, {
+    required double viewportHeight,
+  }) {
     // 加载中状态
     if (state.isLoading && state.weatherData == null) {
       return Container(
@@ -154,7 +154,10 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     final weather = state.weatherData;
     if (weather == null) {
       if (state.errorMessage != null) {
-        return _buildErrorState(state.errorMessage!, viewportHeight: viewportHeight);
+        return _buildErrorState(
+          state.errorMessage!,
+          viewportHeight: viewportHeight,
+        );
       }
       return _buildEmptyState(viewportHeight: viewportHeight);
     }
@@ -198,9 +201,8 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                     ],
                     Text(
                       location?.name ?? '未知位置',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w500),
                     ),
                   ],
                 ),
@@ -503,7 +505,8 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 );
                 break;
               case 'indices':
-                if (state.weatherIndices != null && state.weatherIndices!.isNotEmpty) {
+                if (state.weatherIndices != null &&
+                    state.weatherIndices!.isNotEmpty) {
                   card = WeatherIndicesCard(indices: state.weatherIndices!);
                 }
                 break;
@@ -1054,7 +1057,9 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
             leading: Icon(
               isDefault
                   ? Icons.check_circle_rounded
-                  : (isLocated ? Icons.my_location_rounded : Icons.location_on_outlined),
+                  : (isLocated
+                        ? Icons.my_location_rounded
+                        : Icons.location_on_outlined),
               color: isDefault
                   ? context.uiTokens.selectedBorder
                   : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -1071,12 +1076,19 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                 ),
                 if (isLocated) ...[
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
-                      color: context.uiTokens.selectedForeground.withValues(alpha: 0.14),
+                      color: context.uiTokens.selectedForeground.withValues(
+                        alpha: 0.14,
+                      ),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: context.uiTokens.selectedBorder.withValues(alpha: 0.6),
+                        color: context.uiTokens.selectedBorder.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                     child: Row(
@@ -1090,7 +1102,8 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                         const SizedBox(width: 4),
                         Text(
                           '定位',
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
                                 color: context.uiTokens.selectedForeground,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -1102,20 +1115,27 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                 if (isDefault) ...[
                   const SizedBox(width: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
-                      color: context.uiTokens.selectedForeground.withValues(alpha: 0.14),
+                      color: context.uiTokens.selectedForeground.withValues(
+                        alpha: 0.14,
+                      ),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: context.uiTokens.selectedBorder.withValues(alpha: 0.6),
+                        color: context.uiTokens.selectedBorder.withValues(
+                          alpha: 0.6,
+                        ),
                       ),
                     ),
                     child: Text(
                       '默认',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: context.uiTokens.selectedForeground,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        color: context.uiTokens.selectedForeground,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import '../../providers/settings_provider.dart';
 import '../../core/theme/app_theme.dart';
 
@@ -11,7 +12,7 @@ class CardOrderScreen {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => const _CardOrderBottomSheet(),
     );
@@ -83,157 +84,195 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return SafeArea(
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildHandle(context),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
-              child: SizedBox(
-                height: 40,
-                child: Row(
-                  children: [
-                    const SizedBox(width: 48),
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          '天气卡片排序',
-                          style: textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme.onSurface,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final overlayStyle =
+        (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+            .copyWith(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: isDark
+                  ? Brightness.light
+                  : Brightness.dark,
+              statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+              systemNavigationBarColor: Colors.transparent,
+              systemNavigationBarDividerColor: Colors.transparent,
+              systemNavigationBarIconBrightness: isDark
+                  ? Brightness.light
+                  : Brightness.dark,
+              systemNavigationBarContrastEnforced: false,
+            );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: SafeArea(
+        top: true,
+        bottom: false,
+        left: false,
+        right: false,
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildHandle(context),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 8),
+                  child: SizedBox(
+                    height: 40,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 48),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              '天气卡片排序',
+                              style: textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 48,
-                      child: IconButton(
-                        icon: const Icon(Icons.restore_outlined),
-                        tooltip: '恢复默认',
-                        onPressed: () {
-                          setState(() {
-                            _currentOrder = [
-                              'hourly',
-                              'daily',
-                              'airQuality',
-                              'details',
-                              'indices',
-                            ];
-                          });
-                          ref
-                              .read(settingsProvider.notifier)
-                              .setWeatherCardOrder(_currentOrder);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.uiTokens.cardBackground,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: context.uiTokens.cardBorder),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 20,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        '按住并拖动卡片右侧的图标，调整它们在天气详情页中的显示顺序。',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                        SizedBox(
+                          width: 48,
+                          child: IconButton(
+                            icon: const Icon(Icons.restore_outlined),
+                            tooltip: '恢复默认',
+                            onPressed: () {
+                              setState(() {
+                                _currentOrder = [
+                                  'hourly',
+                                  'daily',
+                                  'airQuality',
+                                  'details',
+                                  'indices',
+                                ];
+                              });
+                              ref
+                                  .read(settingsProvider.notifier)
+                                  .setWeatherCardOrder(_currentOrder);
+                            },
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.55,
-              ),
-              child: ReorderableListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: context.uiTokens.cardBackground,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: context.uiTokens.cardBorder),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          size: 20,
+                          color: colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            '按住并拖动卡片右侧的图标，调整它们在天气详情页中的显示顺序。',
+                            style: textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                itemCount: _currentOrder.length,
-                onReorder: (oldIndex, newIndex) {
-                  setState(() {
-                    if (oldIndex < newIndex) {
-                      newIndex -= 1;
-                    }
-                    final item = _currentOrder.removeAt(oldIndex);
-                    _currentOrder.insert(newIndex, item);
-                  });
-                  ref
-                      .read(settingsProvider.notifier)
-                      .setWeatherCardOrder(_currentOrder);
-                },
-                proxyDecorator: (child, index, animation) {
-                  return AnimatedBuilder(
-                    animation: animation,
-                    builder: (context, child) {
-                      return Material(
-                        elevation: 0,
-                        color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(16),
+                const SizedBox(height: 8),
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: MediaQuery.of(context).size.height * 0.55,
+                  ),
+                  child: ReorderableListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    itemCount: _currentOrder.length,
+                    onReorder: (oldIndex, newIndex) {
+                      setState(() {
+                        if (oldIndex < newIndex) {
+                          newIndex -= 1;
+                        }
+                        final item = _currentOrder.removeAt(oldIndex);
+                        _currentOrder.insert(newIndex, item);
+                      });
+                      ref
+                          .read(settingsProvider.notifier)
+                          .setWeatherCardOrder(_currentOrder);
+                    },
+                    proxyDecorator: (child, index, animation) {
+                      return AnimatedBuilder(
+                        animation: animation,
+                        builder: (context, child) {
+                          return Material(
+                            elevation: 0,
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.circular(16),
+                            child: child,
+                          );
+                        },
                         child: child,
                       );
                     },
-                    child: child,
-                  );
-                },
-                itemBuilder: (context, index) {
-                  final key = _currentOrder[index];
-                  final info = _cardInfo[key]!;
+                    itemBuilder: (context, index) {
+                      final key = _currentOrder[index];
+                      final info = _cardInfo[key]!;
 
-                  return _ReorderableCardItem(
-                    key: ValueKey(key),
-                    index: index,
-                    title: info.title,
-                    description: info.description,
-                    icon: info.icon,
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      return _ReorderableCardItem(
+                        key: ValueKey(key),
+                        index: index,
+                        title: info.title,
+                        description: info.description,
+                        icon: info.icon,
+                      );
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    24,
+                    24,
+                    24,
+                    24 + MediaQuery.of(context).viewPadding.bottom,
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('完成'),
                     ),
                   ),
-                  child: const Text('完成'),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

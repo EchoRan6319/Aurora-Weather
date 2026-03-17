@@ -327,7 +327,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '主题模式',
@@ -361,7 +361,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setState) => SettingsBottomSheet(
@@ -947,7 +947,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '刷新间隔',
@@ -982,7 +982,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '温度单位',
@@ -1025,7 +1025,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '位置显示精度',
@@ -1051,7 +1051,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '需要通知权限',
@@ -1106,7 +1106,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => const _AboutBottomSheet(),
     );
@@ -1116,7 +1116,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => const _ContentBottomSheet(
         title: '隐私政策',
@@ -1144,7 +1144,7 @@ class SettingsScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => const _ContentBottomSheet(
         title: '用户协议',

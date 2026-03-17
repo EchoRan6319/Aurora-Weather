@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter/services.dart';
 import '../../core/theme/app_theme.dart';
 
 /// Material Design 3 风格的底部弹窗组件
-/// 
+///
 /// 遵循 Material 3 设计规范：
 /// - 使用简单的 Column 布局，自适应高度
 /// - 顶部圆角 28dp
@@ -30,43 +31,83 @@ class SettingsBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return SafeArea(
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // 拖动指示器
-            _buildHandle(context),
-            // 标题
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final overlayStyle =
+        (isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark)
+            .copyWith(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: isDark
+                  ? Brightness.light
+                  : Brightness.dark,
+              statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+              systemNavigationBarColor: Colors.transparent,
+              systemNavigationBarDividerColor: Colors.transparent,
+              systemNavigationBarIconBrightness: isDark
+                  ? Brightness.light
+                  : Brightness.dark,
+              systemNavigationBarContrastEnforced: false,
+            );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: SafeArea(
+        top: true,
+        bottom: false,
+        left: false,
+        right: false,
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 拖动指示器
+                _buildHandle(context),
+                // 标题
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 16),
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
                 ),
-              ),
+                // 内容区域 - 使用 Flexible 包裹 ListView 以适应不同高度
+                Flexible(
+                  child: ListView(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    children: children,
+                  ),
+                ),
+                // 底部操作按钮
+                if (bottomAction != null)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      24,
+                      24,
+                      24,
+                      24 + MediaQuery.of(context).viewPadding.bottom,
+                    ),
+                    child: bottomAction,
+                  )
+                else
+                  SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
+              ],
             ),
-            // 内容区域 - 使用 Flexible 包裹 ListView 以适应不同高度
-            Flexible(
-              child: ListView(
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: children,
-              ),
-            ),
-            // 底部操作按钮
-            if (bottomAction != null)
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: bottomAction,
-              ),
-          ],
+          ),
         ),
       ),
     );
@@ -88,7 +129,7 @@ class SettingsBottomSheet extends StatelessWidget {
 }
 
 /// Material Design 3 风格的选择项组件
-/// 
+///
 /// 使用 RadioListTile 实现，遵循 Material 3 规范：
 /// - 自适应高度（单行 56dp，双行 72dp）
 /// - 图标 24dp，与文字间距 16dp
@@ -145,9 +186,7 @@ class SettingsSelectionItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
-        color: isSelected 
-            ? tokens.selectedBackground
-            : Colors.transparent,
+        color: isSelected ? tokens.selectedBackground : Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
@@ -168,8 +207,8 @@ class SettingsSelectionItem extends StatelessWidget {
                   color: isSelected
                       ? tokens.selectedForeground
                       : enabled
-                          ? colorScheme.onSurfaceVariant
-                          : colorScheme.onSurface.withValues(alpha: 0.38),
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.onSurface.withValues(alpha: 0.38),
                 ),
                 const SizedBox(width: 16),
                 // 中间内容
@@ -181,25 +220,32 @@ class SettingsSelectionItem extends StatelessWidget {
                       Text(
                         title,
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                           color: isSelected
                               ? tokens.selectedForeground
                               : enabled
-                                  ? colorScheme.onSurface
-                                  : colorScheme.onSurface.withValues(alpha: 0.38),
+                              ? colorScheme.onSurface
+                              : colorScheme.onSurface.withValues(alpha: 0.38),
                         ),
                       ),
                       if (subtitle != null) ...[
                         const SizedBox(height: 4),
                         Text(
                           subtitle!,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isSelected
-                                ? tokens.selectedForeground.withValues(alpha: 0.78)
-                                : enabled
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: isSelected
+                                    ? tokens.selectedForeground.withValues(
+                                        alpha: 0.78,
+                                      )
+                                    : enabled
                                     ? colorScheme.onSurfaceVariant
-                                    : colorScheme.onSurface.withValues(alpha: 0.38),
-                          ),
+                                    : colorScheme.onSurface.withValues(
+                                        alpha: 0.38,
+                                      ),
+                              ),
                         ),
                       ],
                     ],
@@ -207,10 +253,7 @@ class SettingsSelectionItem extends StatelessWidget {
                 ),
                 // 右侧选中标记
                 if (isSelected)
-                  Icon(
-                    Icons.check_circle,
-                    color: tokens.selectedForeground,
-                  ),
+                  Icon(Icons.check_circle, color: tokens.selectedForeground),
               ],
             ),
           ),
@@ -224,7 +267,7 @@ class SettingsSelectionItem extends StatelessWidget {
 }
 
 /// 显示设置底部弹窗的便捷方法
-/// 
+///
 /// 使用 showModalBottomSheet 显示 Material 3 风格的弹窗
 Future<void> showSettingsBottomSheet({
   required BuildContext context,
@@ -235,7 +278,7 @@ Future<void> showSettingsBottomSheet({
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    useSafeArea: true,
+    useSafeArea: false,
     backgroundColor: Colors.transparent,
     builder: (ctx) => SettingsBottomSheet(
       title: title,

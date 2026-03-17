@@ -17,7 +17,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '定时播报',
@@ -82,11 +82,16 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
               final hasPermission = await _checkAndRequestPermissions(context);
               if (!hasPermission) return;
             }
-            await ref.read(scheduledBroadcastProvider.notifier).setEnabled(value);
+            await ref
+                .read(scheduledBroadcastProvider.notifier)
+                .setEnabled(value);
             if (value) {
-              await scheduledBroadcastServiceProvider.scheduleBroadcasts(settings);
+              await scheduledBroadcastServiceProvider.scheduleBroadcasts(
+                settings,
+              );
             } else {
-              await scheduledBroadcastServiceProvider.cancelAllScheduledBroadcasts();
+              await scheduledBroadcastServiceProvider
+                  .cancelAllScheduledBroadcasts();
             }
           },
         ),
@@ -112,7 +117,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           icon: Icons.wb_sunny_outlined,
           enabled: settings.enabled,
           onTimeChanged: (time) async {
-            await ref.read(scheduledBroadcastProvider.notifier).setMorningTime(time);
+            await ref
+                .read(scheduledBroadcastProvider.notifier)
+                .setMorningTime(time);
             if (settings.enabled) {
               await scheduledBroadcastServiceProvider.scheduleBroadcasts(
                 settings.copyWith(morningTime: time),
@@ -121,7 +128,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           },
           onEnabledChanged: (enabled) async {
             final newTime = settings.morningTime.copyWith(enabled: enabled);
-            await ref.read(scheduledBroadcastProvider.notifier).setMorningTime(newTime);
+            await ref
+                .read(scheduledBroadcastProvider.notifier)
+                .setMorningTime(newTime);
             if (settings.enabled) {
               await scheduledBroadcastServiceProvider.scheduleBroadcasts(
                 settings.copyWith(morningTime: newTime),
@@ -138,7 +147,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           icon: Icons.nightlight_outlined,
           enabled: settings.enabled,
           onTimeChanged: (time) async {
-            await ref.read(scheduledBroadcastProvider.notifier).setEveningTime(time);
+            await ref
+                .read(scheduledBroadcastProvider.notifier)
+                .setEveningTime(time);
             if (settings.enabled) {
               await scheduledBroadcastServiceProvider.scheduleBroadcasts(
                 settings.copyWith(eveningTime: time),
@@ -147,7 +158,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           },
           onEnabledChanged: (enabled) async {
             final newTime = settings.eveningTime.copyWith(enabled: enabled);
-            await ref.read(scheduledBroadcastProvider.notifier).setEveningTime(newTime);
+            await ref
+                .read(scheduledBroadcastProvider.notifier)
+                .setEveningTime(newTime);
             if (settings.enabled) {
               await scheduledBroadcastServiceProvider.scheduleBroadcasts(
                 settings.copyWith(eveningTime: newTime),
@@ -175,7 +188,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           value: settings.includeWindInfo,
           onChanged: settings.enabled
               ? (value) async {
-                  await ref.read(scheduledBroadcastProvider.notifier).setIncludeWindInfo(value);
+                  await ref
+                      .read(scheduledBroadcastProvider.notifier)
+                      .setIncludeWindInfo(value);
                 }
               : null,
         ),
@@ -186,7 +201,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           value: settings.includeAirQuality,
           onChanged: settings.enabled
               ? (value) async {
-                  await ref.read(scheduledBroadcastProvider.notifier).setIncludeAirQuality(value);
+                  await ref
+                      .read(scheduledBroadcastProvider.notifier)
+                      .setIncludeAirQuality(value);
                 }
               : null,
         ),
@@ -258,11 +275,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
               SizedBox(
                 width: 24,
                 height: 24,
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: iconColor,
-                ),
+                child: Icon(icon, size: 24, color: iconColor),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -309,7 +322,8 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
   }
 
   static Future<bool> _checkAndRequestPermissions(BuildContext context) async {
-    final notificationGranted = await notificationServiceProvider.requestNotificationPermission();
+    final notificationGranted = await notificationServiceProvider
+        .requestNotificationPermission();
     if (!notificationGranted) {
       if (context.mounted) {
         _showPermissionDeniedDialog(context, '通知权限', '定时播报需要通知权限才能推送天气信息');
@@ -341,7 +355,8 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
 
       // 检查电池优化
       if (defaultTargetPlatform == TargetPlatform.android) {
-        final batteryStatus = await Permission.ignoreBatteryOptimizations.status;
+        final batteryStatus =
+            await Permission.ignoreBatteryOptimizations.status;
         if (!batteryStatus.isGranted) {
           if (context.mounted) {
             final shouldRequest = await _showBatteryOptimizationDialog(context);
@@ -360,7 +375,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
     return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '改善后台稳定性',
@@ -430,7 +445,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
     return showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '重要提示',
@@ -485,7 +500,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -531,7 +548,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       builder: (ctx) => SettingsBottomSheet(
         title: '需要$title',
@@ -614,7 +631,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       backgroundColor: Colors.transparent,
       isDismissible: false,
       enableDrag: false,
