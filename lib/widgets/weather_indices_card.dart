@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../models/weather_models.dart';
+import '../core/theme/app_theme.dart';
 
 class WeatherIndicesCard extends StatelessWidget {
   final List<WeatherIndices> indices;
@@ -10,14 +11,16 @@ class WeatherIndicesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (indices.isEmpty) return const SizedBox.shrink();
+    final tokens = context.uiTokens;
 
     // 只取前6个指数
     final displayIndices = indices.take(6).toList();
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: tokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

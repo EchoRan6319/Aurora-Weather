@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme/app_theme.dart';
 
 /// Material Design 3 风格的底部弹窗组件
 /// 
@@ -133,6 +134,7 @@ class SettingsSelectionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final tokens = context.uiTokens;
 
     // 使用 Material 3 推荐的 RadioListTile
     // 它自动处理：
@@ -144,9 +146,14 @@ class SettingsSelectionItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Material(
         color: isSelected 
-            ? colorScheme.secondaryContainer 
+            ? tokens.selectedBackground
             : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(
+            color: isSelected ? tokens.selectedBorder : Colors.transparent,
+          ),
+        ),
         child: InkWell(
           onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(20),
@@ -159,7 +166,7 @@ class SettingsSelectionItem extends StatelessWidget {
                   icon,
                   size: 24,
                   color: isSelected
-                      ? colorScheme.onSecondaryContainer
+                      ? tokens.selectedForeground
                       : enabled
                           ? colorScheme.onSurfaceVariant
                           : colorScheme.onSurface.withValues(alpha: 0.38),
@@ -176,7 +183,7 @@ class SettingsSelectionItem extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                           color: isSelected
-                              ? colorScheme.onSecondaryContainer
+                              ? tokens.selectedForeground
                               : enabled
                                   ? colorScheme.onSurface
                                   : colorScheme.onSurface.withValues(alpha: 0.38),
@@ -188,7 +195,7 @@ class SettingsSelectionItem extends StatelessWidget {
                           subtitle!,
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: isSelected
-                                ? colorScheme.onSecondaryContainer.withValues(alpha: 0.7)
+                                ? tokens.selectedForeground.withValues(alpha: 0.78)
                                 : enabled
                                     ? colorScheme.onSurfaceVariant
                                     : colorScheme.onSurface.withValues(alpha: 0.38),
@@ -202,7 +209,7 @@ class SettingsSelectionItem extends StatelessWidget {
                 if (isSelected)
                   Icon(
                     Icons.check_circle,
-                    color: colorScheme.onSecondaryContainer,
+                    color: tokens.selectedForeground,
                   ),
               ],
             ),

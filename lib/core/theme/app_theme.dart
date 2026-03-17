@@ -1,5 +1,96 @@
 import 'package:flutter/material.dart';
 
+@immutable
+class AppUiTokens extends ThemeExtension<AppUiTokens> {
+  final Color cardBackground;
+  final Color cardBorder;
+  final Color selectedBackground;
+  final Color selectedBorder;
+  final Color selectedForeground;
+  final Color dangerBackground;
+  final Color dangerBorder;
+  final Color divider;
+  final Color pressedOverlay;
+
+  const AppUiTokens({
+    required this.cardBackground,
+    required this.cardBorder,
+    required this.selectedBackground,
+    required this.selectedBorder,
+    required this.selectedForeground,
+    required this.dangerBackground,
+    required this.dangerBorder,
+    required this.divider,
+    required this.pressedOverlay,
+  });
+
+  factory AppUiTokens.fromColorScheme(ColorScheme colorScheme) {
+    final isDark = colorScheme.brightness == Brightness.dark;
+    return AppUiTokens(
+      cardBackground: colorScheme.surfaceContainerHigh,
+      cardBorder: colorScheme.outlineVariant.withValues(alpha: isDark ? 0.6 : 0.75),
+      selectedBackground: colorScheme.secondaryContainer,
+      selectedBorder: colorScheme.secondary,
+      selectedForeground: colorScheme.onSecondaryContainer,
+      dangerBackground: colorScheme.errorContainer.withValues(alpha: isDark ? 0.45 : 0.35),
+      dangerBorder: colorScheme.error.withValues(alpha: isDark ? 0.75 : 0.6),
+      divider: colorScheme.outlineVariant.withValues(alpha: isDark ? 0.75 : 0.9),
+      pressedOverlay: colorScheme.primary.withValues(alpha: 0.08),
+    );
+  }
+
+  @override
+  AppUiTokens copyWith({
+    Color? cardBackground,
+    Color? cardBorder,
+    Color? selectedBackground,
+    Color? selectedBorder,
+    Color? selectedForeground,
+    Color? dangerBackground,
+    Color? dangerBorder,
+    Color? divider,
+    Color? pressedOverlay,
+  }) {
+    return AppUiTokens(
+      cardBackground: cardBackground ?? this.cardBackground,
+      cardBorder: cardBorder ?? this.cardBorder,
+      selectedBackground: selectedBackground ?? this.selectedBackground,
+      selectedBorder: selectedBorder ?? this.selectedBorder,
+      selectedForeground: selectedForeground ?? this.selectedForeground,
+      dangerBackground: dangerBackground ?? this.dangerBackground,
+      dangerBorder: dangerBorder ?? this.dangerBorder,
+      divider: divider ?? this.divider,
+      pressedOverlay: pressedOverlay ?? this.pressedOverlay,
+    );
+  }
+
+  @override
+  AppUiTokens lerp(ThemeExtension<AppUiTokens>? other, double t) {
+    if (other is! AppUiTokens) {
+      return this;
+    }
+    return AppUiTokens(
+      cardBackground: Color.lerp(cardBackground, other.cardBackground, t)!,
+      cardBorder: Color.lerp(cardBorder, other.cardBorder, t)!,
+      selectedBackground: Color.lerp(selectedBackground, other.selectedBackground, t)!,
+      selectedBorder: Color.lerp(selectedBorder, other.selectedBorder, t)!,
+      selectedForeground: Color.lerp(selectedForeground, other.selectedForeground, t)!,
+      dangerBackground: Color.lerp(dangerBackground, other.dangerBackground, t)!,
+      dangerBorder: Color.lerp(dangerBorder, other.dangerBorder, t)!,
+      divider: Color.lerp(divider, other.divider, t)!,
+      pressedOverlay: Color.lerp(pressedOverlay, other.pressedOverlay, t)!,
+    );
+  }
+}
+
+extension AppThemeContext on BuildContext {
+  AppUiTokens get uiTokens {
+    final theme = Theme.of(this);
+    return theme.extension<AppUiTokens>() ??
+        AppUiTokens.fromColorScheme(theme.colorScheme);
+  }
+}
+
 /// 自定义颜色类，封装了应用中使用的所有颜色
 /// 
 /// 这个类扩展了Flutter的ColorScheme，提供了更便捷的颜色访问方式
@@ -207,6 +298,9 @@ class AppTheme {
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
       fontFamily: fontFamily,
+      extensions: <ThemeExtension<dynamic>>[
+        AppUiTokens.fromColorScheme(colorScheme),
+      ],
       scaffoldBackgroundColor: colorScheme.surfaceContainer,
       
       // 应用栏主题

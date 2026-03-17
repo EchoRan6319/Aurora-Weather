@@ -44,6 +44,21 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["appName"] = "轻氧天气"
+    }
+
+    flavorDimensions += "edition"
+    productFlavors {
+        create("prod") {
+            dimension = "edition"
+            applicationId = "com.echoran.pureweather"
+            manifestPlaceholders["appName"] = "轻氧天气"
+        }
+        create("debugEdition") {
+            dimension = "edition"
+            applicationId = "com.echoran.pureweatherdebug"
+            manifestPlaceholders["appName"] = "轻氧天气Debug"
+        }
     }
 
     signingConfigs {

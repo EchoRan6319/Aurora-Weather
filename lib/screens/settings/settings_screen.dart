@@ -49,7 +49,10 @@ class SettingsScreen extends ConsumerWidget {
                       maxWidth: isWide ? 900 : double.infinity,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       child: Column(
                         children: [
                           // 个性化设置组
@@ -61,8 +64,14 @@ class SettingsScreen extends ConsumerWidget {
                               SettingsListTile(
                                 icon: Icons.brightness_6_outlined,
                                 title: '主题模式',
-                                subtitle: _getThemeModeName(themeSettings.themeMode),
-                                onTap: () => _showThemeModeDialog(context, ref, themeSettings),
+                                subtitle: _getThemeModeName(
+                                  themeSettings.themeMode,
+                                ),
+                                onTap: () => _showThemeModeDialog(
+                                  context,
+                                  ref,
+                                  themeSettings,
+                                ),
                               ),
                               // A屏黑主题开关（仅在深色模式下显示）
                               if (themeSettings.themeMode != AppThemeMode.light)
@@ -72,14 +81,22 @@ class SettingsScreen extends ConsumerWidget {
                                   subtitle: '纯黑背景，更适合AMOLED屏幕',
                                   value: themeSettings.useAmoledBlack,
                                   onChanged: (value) {
-                                    ref.read(themeProvider.notifier).setUseAmoledBlack(value);
+                                    ref
+                                        .read(themeProvider.notifier)
+                                        .setUseAmoledBlack(value);
                                   },
                                 ),
                               SettingsListTile(
                                 icon: Icons.color_lens_outlined,
                                 title: '主题颜色',
-                                subtitle: themeSettings.useDynamicColor ? '跟随壁纸' : '自定义颜色',
-                                onTap: () => _showColorPickerDialog(context, ref, themeSettings),
+                                subtitle: themeSettings.useDynamicColor
+                                    ? '跟随壁纸'
+                                    : '自定义颜色',
+                                onTap: () => _showColorPickerDialog(
+                                  context,
+                                  ref,
+                                  themeSettings,
+                                ),
                               ),
                               SettingsSwitchTile(
                                 icon: Icons.wallpaper_outlined,
@@ -87,7 +104,9 @@ class SettingsScreen extends ConsumerWidget {
                                 subtitle: '根据壁纸自动生成主题色',
                                 value: themeSettings.useDynamicColor,
                                 onChanged: (value) {
-                                  ref.read(themeProvider.notifier).setUseDynamicColor(value);
+                                  ref
+                                      .read(themeProvider.notifier)
+                                      .setUseDynamicColor(value);
                                 },
                               ),
                             ],
@@ -105,8 +124,9 @@ class SettingsScreen extends ConsumerWidget {
                                 value: appSettings.notificationsEnabled,
                                 onChanged: (value) async {
                                   if (value) {
-                                    final hasPermission = await notificationServiceProvider
-                                        .requestNotificationPermission();
+                                    final hasPermission =
+                                        await notificationServiceProvider
+                                            .requestNotificationPermission();
                                     if (!hasPermission) {
                                       if (context.mounted) {
                                         _showPermissionDeniedDialog(context);
@@ -114,14 +134,17 @@ class SettingsScreen extends ConsumerWidget {
                                       return;
                                     }
                                   }
-                                  ref.read(settingsProvider.notifier).setNotificationsEnabled(value);
+                                  ref
+                                      .read(settingsProvider.notifier)
+                                      .setNotificationsEnabled(value);
                                 },
                               ),
                               SettingsListTile(
                                 icon: Icons.schedule_outlined,
                                 title: '定时播报',
                                 subtitle: '设置每日定时推送天气信息',
-                                onTap: () => ScheduledBroadcastScreen.show(context, ref),
+                                onTap: () =>
+                                    ScheduledBroadcastScreen.show(context, ref),
                               ),
                             ],
                           ),
@@ -137,24 +160,37 @@ class SettingsScreen extends ConsumerWidget {
                                 subtitle: '在底部导航栏显示天气助手页面',
                                 value: appSettings.showAIAssistant,
                                 onChanged: (value) {
-                                  ref.read(settingsProvider.notifier).setShowAIAssistant(value);
+                                  ref
+                                      .read(settingsProvider.notifier)
+                                      .setShowAIAssistant(value);
                                 },
                               ),
                               SettingsListTile(
                                 icon: Icons.device_thermostat_outlined,
                                 title: '温度单位',
-                                subtitle: appSettings.temperatureUnit == 'celsius'
+                                subtitle:
+                                    appSettings.temperatureUnit == 'celsius'
                                     ? '摄氏度 (°C)'
                                     : '华氏度 (°F)',
-                                onTap: () => _showTemperatureUnitDialog(context, ref, appSettings),
+                                onTap: () => _showTemperatureUnitDialog(
+                                  context,
+                                  ref,
+                                  appSettings,
+                                ),
                               ),
                               SettingsListTile(
                                 icon: Icons.location_on_outlined,
                                 title: '位置显示精度',
-                                subtitle: appSettings.locationAccuracyLevel == LocationAccuracyLevel.street
+                                subtitle:
+                                    appSettings.locationAccuracyLevel ==
+                                        LocationAccuracyLevel.street
                                     ? '街道级别'
                                     : '区县级别',
-                                onTap: () => _showLocationAccuracyDialog(context, ref, appSettings),
+                                onTap: () => _showLocationAccuracyDialog(
+                                  context,
+                                  ref,
+                                  appSettings,
+                                ),
                               ),
                               SettingsListTile(
                                 icon: Icons.sort_rounded,
@@ -173,17 +209,24 @@ class SettingsScreen extends ConsumerWidget {
                               SettingsSwitchTile(
                                 icon: Icons.autorenew_outlined,
                                 title: '自动刷新',
-                                subtitle: '每 ${appSettings.refreshInterval} 分钟自动更新',
+                                subtitle:
+                                    '每 ${appSettings.refreshInterval} 分钟自动更新',
                                 value: appSettings.autoRefreshEnabled,
                                 onChanged: (value) {
-                                  ref.read(settingsProvider.notifier).setAutoRefreshEnabled(value);
+                                  ref
+                                      .read(settingsProvider.notifier)
+                                      .setAutoRefreshEnabled(value);
                                 },
                               ),
                               SettingsListTile(
                                 icon: Icons.timer_outlined,
                                 title: '刷新间隔',
                                 subtitle: '${appSettings.refreshInterval} 分钟',
-                                onTap: () => _showRefreshIntervalDialog(context, ref, appSettings),
+                                onTap: () => _showRefreshIntervalDialog(
+                                  context,
+                                  ref,
+                                  appSettings,
+                                ),
                               ),
                             ],
                           ),
@@ -199,7 +242,9 @@ class SettingsScreen extends ConsumerWidget {
                                 subtitle: '返回时显示预览动画（Android 14+）',
                                 value: appSettings.predictiveBackEnabled,
                                 onChanged: (value) {
-                                  ref.read(settingsProvider.notifier).setPredictiveBackEnabled(value);
+                                  ref
+                                      .read(settingsProvider.notifier)
+                                      .setPredictiveBackEnabled(value);
                                 },
                               ),
                             ],
@@ -268,7 +313,11 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
-  void _showThemeModeDialog(BuildContext context, WidgetRef ref, ThemeSettings settings) {
+  void _showThemeModeDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeSettings settings,
+  ) {
     final themeModes = [
       (AppThemeMode.system, '跟随系统', '自动切换浅色或深色主题'),
       (AppThemeMode.light, '浅色模式', '使用浅色主题显示'),
@@ -298,10 +347,15 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showColorPickerDialog(BuildContext context, WidgetRef ref, ThemeSettings settings) {
+  void _showColorPickerDialog(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeSettings settings,
+  ) {
     Color selectedColor = settings.seedColor ?? AppTheme.presetSeedColors.first;
     final hexController = TextEditingController(
-      text: '#${selectedColor.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
+      text:
+          '#${selectedColor.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
     );
 
     showModalBottomSheet(
@@ -327,23 +381,22 @@ class SettingsScreen extends ConsumerWidget {
             _buildPresetColors(context, settings, selectedColor, (color) {
               setState(() {
                 selectedColor = color;
-                hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+                hexController.text =
+                    '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
               });
             }),
             const SizedBox(height: 24),
             _buildSectionTitle(context, '自定义颜色'),
             const SizedBox(height: 12),
-            _buildCustomColorPicker(
-              context,
-              selectedColor,
-              hexController,
-              (color) {
-                setState(() {
-                  selectedColor = color;
-                  hexController.text = '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
-                });
-              },
-            ),
+            _buildCustomColorPicker(context, selectedColor, hexController, (
+              color,
+            ) {
+              setState(() {
+                selectedColor = color;
+                hexController.text =
+                    '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
+              });
+            }),
             const SizedBox(height: 24),
             _buildHexInputSection(context, hexController, (color) {
               setState(() {
@@ -369,7 +422,12 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildDynamicColorSection(BuildContext context, WidgetRef ref, ThemeSettings settings) {
+  Widget _buildDynamicColorSection(
+    BuildContext context,
+    WidgetRef ref,
+    ThemeSettings settings,
+  ) {
+    final tokens = context.uiTokens;
     return FutureBuilder<Color?>(
       future: _getWallpaperColor(),
       builder: (context, snapshot) {
@@ -388,9 +446,16 @@ class SettingsScreen extends ConsumerWidget {
 
               return Material(
                 color: isCurrentDynamic
-                    ? Theme.of(context).colorScheme.secondaryContainer
-                    : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(16),
+                    ? tokens.selectedBackground
+                    : tokens.cardBackground,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: isCurrentDynamic
+                        ? tokens.selectedBorder
+                        : tokens.cardBorder,
+                  ),
+                ),
                 child: InkWell(
                   onTap: () {
                     ref.read(themeProvider.notifier).setUseDynamicColor(true);
@@ -409,7 +474,9 @@ class SettingsScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(12),
                             border: isCurrentDynamic
                                 ? Border.all(
-                                    color: Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                     width: 2,
                                   )
                                 : null,
@@ -422,22 +489,29 @@ class SettingsScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 '壁纸取色',
-                                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w500,
-                                  color: isCurrentDynamic
-                                      ? Theme.of(context).colorScheme.onSecondaryContainer
-                                      : Theme.of(context).colorScheme.onSurface,
-                                ),
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      color: isCurrentDynamic
+                                          ? tokens.selectedForeground
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                    ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 '检测颜色: #${dynamicColor!.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: isCurrentDynamic
-                                      ? Theme.of(context).colorScheme.onSecondaryContainer.withValues(alpha: 0.7)
-                                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                                  fontFamily: 'monospace',
-                                ),
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: isCurrentDynamic
+                                          ? tokens.selectedForeground
+                                                .withValues(alpha: 0.7)
+                                          : Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                      fontFamily: 'monospace',
+                                    ),
                               ),
                             ],
                           ),
@@ -445,7 +519,7 @@ class SettingsScreen extends ConsumerWidget {
                         if (isCurrentDynamic)
                           Icon(
                             Icons.check_circle,
-                            color: Theme.of(context).colorScheme.onSecondaryContainer,
+                            color: tokens.selectedForeground,
                           ),
                       ],
                     ),
@@ -458,9 +532,16 @@ class SettingsScreen extends ConsumerWidget {
 
         return Material(
           color: isCurrentDynamic
-              ? Theme.of(context).colorScheme.secondaryContainer
-              : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(16),
+              ? tokens.selectedBackground
+              : tokens.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: isCurrentDynamic
+                  ? tokens.selectedBorder
+                  : tokens.cardBorder,
+            ),
+          ),
           child: InkWell(
             onTap: () {
               ref.read(themeProvider.notifier).setUseDynamicColor(true);
@@ -492,31 +573,34 @@ class SettingsScreen extends ConsumerWidget {
                       children: [
                         Text(
                           '壁纸取色',
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: isCurrentDynamic
-                                ? Theme.of(context).colorScheme.onSecondaryContainer
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                color: isCurrentDynamic
+                                    ? tokens.selectedForeground
+                                    : Theme.of(context).colorScheme.onSurface,
+                              ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           '检测颜色: #${wallpaperColor.toARGB32().toRadixString(16).substring(2).toUpperCase()}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isCurrentDynamic
-                                ? Theme.of(context).colorScheme.onSecondaryContainer.withValues(alpha: 0.7)
-                                : Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontFamily: 'monospace',
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: isCurrentDynamic
+                                    ? tokens.selectedForeground.withValues(
+                                        alpha: 0.7,
+                                      )
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                fontFamily: 'monospace',
+                              ),
                         ),
                       ],
                     ),
                   ),
                   if (isCurrentDynamic)
-                    Icon(
-                      Icons.check_circle,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                    ),
+                    Icon(Icons.check_circle, color: tokens.selectedForeground),
                 ],
               ),
             ),
@@ -531,7 +615,9 @@ class SettingsScreen extends ConsumerWidget {
 
     try {
       const channel = MethodChannel('com.echoran.pureweather/wallpaper');
-      final int? colorInt = await channel.invokeMethod<int>('getWallpaperPrimaryColor');
+      final int? colorInt = await channel.invokeMethod<int>(
+        'getWallpaperPrimaryColor',
+      );
       if (colorInt != null) {
         return Color(colorInt);
       }
@@ -542,15 +628,13 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildDynamicColorNotSupported(BuildContext context) {
+    final tokens = context.uiTokens;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.3),
+        color: tokens.dangerBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: tokens.dangerBorder, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -589,11 +673,13 @@ class SettingsScreen extends ConsumerWidget {
     Color selectedColor,
     Function(Color) onColorSelected,
   ) {
+    final tokens = context.uiTokens;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: tokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tokens.cardBorder),
       ),
       child: GridView.count(
         shrinkWrap: true,
@@ -620,7 +706,9 @@ class SettingsScreen extends ConsumerWidget {
               child: isSelected
                   ? Icon(
                       Icons.check,
-                      color: ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+                      color:
+                          ThemeData.estimateBrightnessForColor(color) ==
+                              Brightness.dark
                           ? Colors.white
                           : Colors.black,
                     )
@@ -638,11 +726,13 @@ class SettingsScreen extends ConsumerWidget {
     TextEditingController hexController,
     Function(Color) onColorSelected,
   ) {
+    final tokens = context.uiTokens;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: tokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tokens.cardBorder),
       ),
       child: ColorPicker(
         pickerColor: selectedColor,
@@ -661,11 +751,13 @@ class SettingsScreen extends ConsumerWidget {
     TextEditingController hexController,
     Function(Color) onColorParsed,
   ) {
+    final tokens = context.uiTokens;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: tokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tokens.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -716,6 +808,7 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildSelectedColorPreview(BuildContext context, Color color) {
+    final tokens = context.uiTokens;
     final colorScheme = ColorScheme.fromSeed(
       seedColor: color,
       brightness: Theme.of(context).brightness,
@@ -724,8 +817,9 @@ class SettingsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: tokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tokens.cardBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -838,7 +932,11 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showRefreshIntervalDialog(BuildContext context, WidgetRef ref, AppSettings settings) {
+  void _showRefreshIntervalDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     final intervals = [
       (15, '每15分钟自动更新天气数据'),
       (30, '每30分钟自动更新天气数据'),
@@ -860,7 +958,9 @@ class SettingsScreen extends ConsumerWidget {
             icon: Icons.timer_outlined,
             isSelected: settings.refreshInterval == interval.$1,
             onTap: () {
-              ref.read(settingsProvider.notifier).setRefreshInterval(interval.$1);
+              ref
+                  .read(settingsProvider.notifier)
+                  .setRefreshInterval(interval.$1);
               Navigator.pop(ctx);
             },
           );
@@ -869,7 +969,11 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showTemperatureUnitDialog(BuildContext context, WidgetRef ref, AppSettings settings) {
+  void _showTemperatureUnitDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     final units = [
       ('celsius', '摄氏度', '°C', '温度显示为摄氏度', Icons.device_thermostat_outlined),
       ('fahrenheit', '华氏度', '°F', '温度显示为华氏度', Icons.thermostat_outlined),
@@ -898,10 +1002,24 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  void _showLocationAccuracyDialog(BuildContext context, WidgetRef ref, AppSettings settings) {
+  void _showLocationAccuracyDialog(
+    BuildContext context,
+    WidgetRef ref,
+    AppSettings settings,
+  ) {
     final options = [
-      (LocationAccuracyLevel.district, '展示区/县', '定位到行政区级别', Icons.location_city),
-      (LocationAccuracyLevel.street, '展示附近地标/街道', '精确定位到街道级别', Icons.location_on_outlined),
+      (
+        LocationAccuracyLevel.district,
+        '展示区/县',
+        '定位到行政区级别',
+        Icons.location_city,
+      ),
+      (
+        LocationAccuracyLevel.street,
+        '展示附近地标/街道',
+        '精确定位到街道级别',
+        Icons.location_on_outlined,
+      ),
     ];
 
     showModalBottomSheet(
@@ -918,7 +1036,9 @@ class SettingsScreen extends ConsumerWidget {
             icon: option.$4,
             isSelected: settings.locationAccuracyLevel == option.$1,
             onTap: () {
-              ref.read(settingsProvider.notifier).setLocationAccuracyLevel(option.$1);
+              ref
+                  .read(settingsProvider.notifier)
+                  .setLocationAccuracyLevel(option.$1);
               Navigator.pop(ctx);
             },
           );
@@ -956,13 +1076,25 @@ class SettingsScreen extends ConsumerWidget {
           ],
         ),
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            child: Text(
-              '轻氧天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+          _BottomSheetTokenCard(
+            variant: _BottomSheetTokenCardVariant.danger,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.notifications_off_outlined,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    '轻氧天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -989,8 +1121,7 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => const _ContentBottomSheet(
         title: '隐私政策',
         content: [
-          '生效日期：2026年2月16日',
-          '轻氧天气（以下简称"我们"）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。',
+          '生效日期：2026年2月16日\n\n轻氧天气（以下简称"我们"）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。',
           (
             '1. 信息收集',
             '我们仅在您使用应用期间收集必要的信息，包括：\n• 位置信息：仅用于获取您当前位置的天气预报。您可以随时在系统中关闭该权限。\n• 天气查询历史：仅用于天气助手功能，帮助您获取更准确的天气相关回答。',
@@ -1020,12 +1151,18 @@ class SettingsScreen extends ConsumerWidget {
         content: [
           '欢迎使用轻氧天气！请在使用前阅读以下条款。',
           ('1. 服务内容', '轻氧天气为您提供天气查询、极端天气预警、定时播报、城市搜索定位及天气助手等非商业服务。'),
-          ('2. 使用规范', '您不得将本应用用于任何非法目的，或以任何方式干扰应用的正常运行。在使用天气助手功能时，您应遵守相关法律法规，不得发送违法或不当内容。'),
+          (
+            '2. 使用规范',
+            '您不得将本应用用于任何非法目的，或以任何方式干扰应用的正常运行。在使用天气助手功能时，您应遵守相关法律法规，不得发送违法或不当内容。',
+          ),
           (
             '3. 免责声明',
             '• 天气数据由第三方提供，受气象、地理、网络等多种因素影响，数据的准时性、准确性可能存在偏差。本应用不承担因天气数据错误导致的任何直接或间接损失。\n• 定位服务由高德地图提供，其准确性和可用性受设备硬件和网络环境影响。\n• 天气助手功能由DeepSeek提供，其回答基于AI模型，可能存在一定的局限性和误差，仅供参考。',
           ),
-          ('4. 第三方服务', '本应用使用和风天气、彩云天气、高德地图和DeepSeek等第三方服务，您在使用本应用时即表示同意这些第三方服务的相关条款。'),
+          (
+            '4. 第三方服务',
+            '本应用使用和风天气、彩云天气、高德地图和DeepSeek等第三方服务，您在使用本应用时即表示同意这些第三方服务的相关条款。',
+          ),
           ('5. 协议变更', '我们保留随时修改本协议的权利，修改后的协议将在应用内公布。'),
         ],
       ),
@@ -1036,13 +1173,10 @@ class SettingsScreen extends ConsumerWidget {
 class _ContentBottomSheet extends StatelessWidget {
   final String title;
   final List<dynamic> content;
-
   const _ContentBottomSheet({required this.title, required this.content});
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-
     return SettingsBottomSheet(
       title: title,
       bottomAction: SizedBox(
@@ -1060,8 +1194,7 @@ class _ContentBottomSheet extends StatelessWidget {
       ),
       children: content.map((item) {
         if (item is String) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 12),
+          return _BottomSheetTokenCard(
             child: Text(
               item,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -1070,9 +1203,9 @@ class _ContentBottomSheet extends StatelessWidget {
               ),
             ),
           );
-        } else if (item is (String, String)) {
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16),
+        }
+        if (item is (String, String)) {
+          return _BottomSheetTokenCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1124,83 +1257,100 @@ class _AboutBottomSheet extends StatelessWidget {
         ),
       ),
       children: [
-        Center(
-          child: Column(
-            children: [
-              const AppIcon(size: 80),
-              const SizedBox(height: 16),
-              Text(
-                '轻氧天气',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '版本 ${AppConstants.appVersion}',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+        _BottomSheetTokenCard(
+          child: Center(
+            child: Column(
+              children: [
+                const AppIcon(size: 80),
+                const SizedBox(height: 16),
+                Text('轻氧天气', style: Theme.of(context).textTheme.headlineSmall),
+                const SizedBox(height: 8),
+                Text(
+                  '版本 ${AppConstants.appVersion}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
+              ],
+            ),
+          ),
+        ),
+        _BottomSheetTokenCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildAboutItem(
+                context,
+                Icons.info_outline,
+                '应用介绍',
+                '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。',
+              ),
+              const SizedBox(height: 16),
+              _buildAboutItem(
+                context,
+                Icons.code_outlined,
+                '开源协议',
+                'MIT License',
+              ),
+              const SizedBox(height: 16),
+              _buildAboutItem(context, Icons.people_outline, '开发者', 'EchoRan'),
+              const SizedBox(height: 16),
+              _buildAboutItem(
+                context,
+                Icons.link_outlined,
+                'GitHub',
+                'https://github.com/EchoRan6319/PureWeather',
+                isLink: true,
               ),
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        _buildAboutItem(
-          context,
-          Icons.info_outline,
-          '应用介绍',
-          '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。',
-        ),
-        _buildAboutItem(
-          context,
-          Icons.code_outlined,
-          '开源协议',
-          'MIT License',
-        ),
-        _buildAboutItem(
-          context,
-          Icons.people_outline,
-          '开发者',
-          'EchoRan',
-        ),
-        _buildAboutItem(
-          context,
-          Icons.link_outlined,
-          'GitHub',
-          'https://github.com/EchoRan6319/PureWeather',
-          isLink: true,
-        ),
-        const SizedBox(height: 24),
-        Text(
-          '特别鸣谢：',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: colorScheme.onSurface,
+        _BottomSheetTokenCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.favorite_outline,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    '特别鸣谢',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildAboutItem(context, Icons.cloud_outlined, '和风天气', '提供天气数据'),
+              const SizedBox(height: 16),
+              _buildAboutItem(
+                context,
+                Icons.cloud_queue_outlined,
+                '彩云天气',
+                '提供分钟级降雨预报',
+              ),
+              const SizedBox(height: 16),
+              _buildAboutItem(
+                context,
+                Icons.location_on_outlined,
+                '高德地图',
+                '提供城市搜索和定位服务',
+              ),
+              const SizedBox(height: 16),
+              _buildAboutItem(
+                context,
+                Icons.lightbulb_outlined,
+                'DeepSeek',
+                '提供天气助手的 AI 问答功能',
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 12),
-        _buildAboutItem(
-          context,
-          Icons.cloud_outlined,
-          '和风天气',
-          '提供天气数据',
-        ),
-        _buildAboutItem(
-          context,
-          Icons.cloud_queue_outlined,
-          '彩云天气',
-          '提供分钟级降雨预报',
-        ),
-        _buildAboutItem(
-          context,
-          Icons.location_on_outlined,
-          '高德地图',
-          '提供城市搜索和定位服务',
-        ),
-        _buildAboutItem(
-          context,
-          Icons.lightbulb_outlined,
-          'DeepSeek',
-          '提供天气助手的AI问答功能',
         ),
       ],
     );
@@ -1214,50 +1364,79 @@ class _AboutBottomSheet extends StatelessWidget {
     bool isLink = false,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 20, color: colorScheme.primary),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 20, color: colorScheme.primary),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
                 ),
-                const SizedBox(height: 4),
-                if (isLink)
-                  InkWell(
-                    onTap: () => launchUrl(
-                      Uri.parse(content),
-                      mode: LaunchMode.externalApplication,
-                    ),
-                    child: Text(
-                      content,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.primary,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  )
-                else
-                  Text(
+              ),
+              const SizedBox(height: 4),
+              if (isLink)
+                InkWell(
+                  onTap: () => launchUrl(
+                    Uri.parse(content),
+                    mode: LaunchMode.externalApplication,
+                  ),
+                  child: Text(
                     content,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
+                      color: colorScheme.primary,
+                      decoration: TextDecoration.underline,
                     ),
                   ),
-              ],
-            ),
+                )
+              else
+                Text(
+                  content,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+            ],
           ),
-        ],
+        ),
+      ],
+    );
+  }
+}
+
+enum _BottomSheetTokenCardVariant { normal, danger }
+
+class _BottomSheetTokenCard extends StatelessWidget {
+  final Widget child;
+  final _BottomSheetTokenCardVariant variant;
+  const _BottomSheetTokenCard({
+    required this.child,
+    this.variant = _BottomSheetTokenCardVariant.normal,
+  });
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.uiTokens;
+    final isDanger = variant == _BottomSheetTokenCardVariant.danger;
+    final background = isDanger
+        ? tokens.dangerBackground
+        : tokens.cardBackground;
+    final border = isDanger ? tokens.dangerBorder : tokens.cardBorder;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: border),
+        ),
+        child: child,
       ),
     );
   }

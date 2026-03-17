@@ -6,6 +6,7 @@ import '../../providers/scheduled_broadcast_provider.dart';
 import '../../services/scheduled_broadcast_service.dart';
 import '../../services/notification_service.dart';
 import '../../widgets/settings/settings.dart';
+import '../../core/theme/app_theme.dart';
 
 class ScheduledBroadcastScreen extends ConsumerWidget {
   const ScheduledBroadcastScreen({super.key});
@@ -36,8 +37,9 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Row(
         children: [

@@ -59,6 +59,33 @@ flutter run -d windows
 flutter run -d web
 ```
 
+### 正式版 / 调试版（Flavors）
+
+#### 构建验证（已通过）
+
+- 调试版 APK：`app-debugedition-debug.apk`
+- 正式版 APK：`app-prod-debug.apk`
+- 合并清单验证通过：
+  - 调试版 `AndroidManifest.xml`：line 3（`package`）/ line 52（`android:label`）
+  - 正式版 `AndroidManifest.xml`：line 3（`package`）/ line 52（`android:label`）
+- `flutter analyze` 已通过
+
+#### 使用方式
+
+```bash
+# 运行正式版
+flutter run --flavor prod -t lib/main.dart
+
+# 运行调试版
+flutter run --flavor debugEdition -t lib/main.dart
+
+# 打正式版包
+flutter build apk --release --flavor prod -t lib/main.dart
+
+# 打调试版包
+flutter build apk --release --flavor debugEdition -t lib/main.dart
+```
+
 ### 构建发布版
 
 ```bash

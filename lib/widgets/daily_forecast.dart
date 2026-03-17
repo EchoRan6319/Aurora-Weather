@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../models/weather_models.dart';
 import '../core/constants/app_constants.dart';
+import '../core/theme/app_theme.dart';
 
 /// 7天天气预报组件
 /// 
@@ -38,11 +39,13 @@ class DailyForecast extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (daily.isEmpty) return const SizedBox.shrink();
+    final tokens = context.uiTokens;
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: tokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: tokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),

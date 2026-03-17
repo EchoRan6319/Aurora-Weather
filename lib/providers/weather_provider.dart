@@ -253,11 +253,8 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
       final keys = prefs.getKeys();
       
       // 获取当前所有保存的城市ID
-      final citiesJson = prefs.getString('saved_cities');
-      if (citiesJson == null) return;
-      
-      final List<dynamic> decoded = jsonDecode(citiesJson);
-      final currentCityIds = decoded.map((e) => e['id'].toString()).toSet();
+      final cityStore = await _ref.read(cityRepositoryProvider).loadStore();
+      final currentCityIds = cityStore.cities.map((city) => city.id).toSet();
       
       // 扫描并删除孤儿缓存
       for (final key in keys) {

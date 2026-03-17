@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import '../models/weather_models.dart';
 import '../core/constants/app_constants.dart';
+import '../core/theme/app_theme.dart';
 
 /// 24小时天气预报组件
 /// 
@@ -52,8 +53,9 @@ class HourlyForecast extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -72,8 +74,9 @@ class HourlyForecast extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context, {String subtitle = '暂无小时预报数据'}) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -206,55 +209,79 @@ class HourlyForecast extends StatelessWidget {
     List<HourlyWeather> hourly,
     DateTime now,
   ) {
-    // 计算开始时间（下一小时）和结束时间（24小时后）
-    final nextHour = DateTime(
-      now.year,
-      now.month,
-      now.day,
-      now.hour,
-    ).add(const Duration(hours: 1));
-    final endHour = nextHour.add(const Duration(hours: 24));
-
-    final result = <HourlyWeather>[];
+    final parsed = <MapEntry<HourlyWeather, DateTime>>[];
     var invalidTimeCount = 0;
 
     for (final h in hourly) {
-      final hourTime = DateTime.tryParse(h.fxTime);
+      final hourTime = _parseFxTime(h.fxTime);
       if (hourTime == null) {
         invalidTimeCount++;
         continue;
       }
-
-      final localHourTime = hourTime.toLocal();
-      final compareTime = DateTime(
-        localHourTime.year,
-        localHourTime.month,
-        localHourTime.day,
-        localHourTime.hour,
-      );
-
-      // 筛选出在开始时间和结束时间之间的数据
-      if ((compareTime.isAtSameMomentAs(nextHour) ||
-              compareTime.isAfter(nextHour)) &&
-          compareTime.isBefore(endHour)) {
-        result.add(h);
-      }
+      parsed.add(MapEntry(h, hourTime));
     }
 
-    // 按时间排序
-    result.sort((a, b) {
-      final timeA = DateTime.tryParse(a.fxTime) ?? DateTime(2000);
-      final timeB = DateTime.tryParse(b.fxTime) ?? DateTime(2000);
-      return timeA.compareTo(timeB);
-    });
+    // 按时间排序后优先取“当前时刻之后”的24条
+    parsed.sort((a, b) => a.value.compareTo(b.value));
+    final upcoming = parsed
+        .where((entry) => entry.value.isAfter(now.subtract(const Duration(minutes: 30))))
+        .take(24)
+        .map((entry) => entry.key)
+        .toList();
+    if (upcoming.isNotEmpty) {
+      if (kDebugMode) {
+        final firstTime = _parseFxTime(upcoming.first.fxTime);
+        final lastTime = _parseFxTime(upcoming.last.fxTime);
+        debugPrint(
+          '[HourlyFilter] mode=upcoming invalidFxTime=$invalidTimeCount kept=${upcoming.length} first=$firstTime last=$lastTime now=$now',
+        );
+      }
+      return upcoming;
+    }
+
+    // 回退：若时间基本接近当前但窗口筛选为空，至少展示可解析的前24条
+    if (parsed.isNotEmpty &&
+        parsed.last.value.isAfter(now.subtract(const Duration(hours: 6)))) {
+      final fallback = parsed.take(24).map((entry) => entry.key).toList();
+      if (kDebugMode) {
+        debugPrint(
+          '[HourlyFilter] mode=fallback invalidFxTime=$invalidTimeCount kept=${fallback.length} now=$now',
+        );
+      }
+      return fallback;
+    }
 
     if (kDebugMode) {
       debugPrint(
-        '[HourlyFilter] nextHour=$nextHour endHour=$endHour invalidFxTime=$invalidTimeCount kept=${result.length}',
+        '[HourlyFilter] mode=empty invalidFxTime=$invalidTimeCount parsed=${parsed.length} now=$now',
       );
     }
 
-    return result;
+    return const <HourlyWeather>[];
+  }
+
+  static DateTime? _parseFxTime(String raw) {
+    final value = raw.trim();
+    if (value.isEmpty) return null;
+
+    var parsed = DateTime.tryParse(value);
+    if (parsed != null) return parsed.toLocal();
+
+    final normalized = value.replaceFirst(' ', 'T');
+    parsed = DateTime.tryParse(normalized);
+    if (parsed != null) return parsed.toLocal();
+
+    final tzNoColon = RegExp(r'([+-]\d{2})(\d{2})$');
+    if (tzNoColon.hasMatch(normalized)) {
+      final withColon = normalized.replaceFirstMapped(
+        tzNoColon,
+        (m) => '${m.group(1)}:${m.group(2)}',
+      );
+      parsed = DateTime.tryParse(withColon);
+      if (parsed != null) return parsed.toLocal();
+    }
+
+    return null;
   }
 }
 
@@ -324,8 +351,7 @@ class _HourlyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time = DateTime.tryParse(weather.fxTime);
-    final localTime = time?.toLocal();
+    final localTime = HourlyForecast._parseFxTime(weather.fxTime);
     final isNight = localTime != null ? _isNightTime(localTime) : false;
     final iconCode = int.tryParse(weather.icon) ?? 100;
     final hasPrecipitation =

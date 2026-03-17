@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme/app_theme.dart';
 
 /// Material You 风格的设置分组组件
 ///
@@ -33,6 +34,7 @@ class SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final tokens = context.uiTokens;
 
     // 构建带分隔线的子组件列表
     final List<Widget> childrenWithDividers = [];
@@ -44,7 +46,7 @@ class SettingsSection extends StatelessWidget {
             height: 1,
             indent: 56, // 与图标对齐
             endIndent: 16,
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: tokens.divider,
           ),
         );
       }
@@ -80,8 +82,9 @@ class SettingsSection extends StatelessWidget {
           // 内容区域
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+              color: tokens.cardBackground,
               borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: tokens.cardBorder),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

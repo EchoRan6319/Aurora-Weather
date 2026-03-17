@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import '../../providers/settings_provider.dart';
+import '../../core/theme/app_theme.dart';
 
 /// 天气卡片排序页面
 ///
@@ -135,8 +135,9 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: colorScheme.primaryContainer.withValues(alpha: 0.3),
+                  color: context.uiTokens.cardBackground,
                   borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: context.uiTokens.cardBorder),
                 ),
                 child: Row(
                   children: [
@@ -261,8 +262,9 @@ class _ReorderableCardItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

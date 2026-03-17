@@ -6,6 +6,7 @@ import '../../providers/weather_provider.dart';
 import '../../providers/city_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_theme.dart';
 import '../../services/caiyun_service.dart';
 import '../../widgets/hourly_forecast.dart';
 import '../../widgets/daily_forecast.dart';
@@ -105,6 +106,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                         weatherState,
                         defaultCity,
                         ref.watch(settingsProvider),
+                        viewportHeight: constraints.maxHeight,
                       ),
                     ),
                   ),
@@ -139,6 +141,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     WeatherState state,
     Location? location,
     AppSettings settings,
+    {required double viewportHeight}
   ) {
     // 加载中状态
     if (state.isLoading && state.weatherData == null) {
@@ -151,9 +154,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     final weather = state.weatherData;
     if (weather == null) {
       if (state.errorMessage != null) {
-        return _buildErrorState(state.errorMessage!);
+        return _buildErrorState(state.errorMessage!, viewportHeight: viewportHeight);
       }
-      return _buildEmptyState();
+      return _buildEmptyState(viewportHeight: viewportHeight);
     }
 
     // 获取今日天气和昼夜状态
@@ -204,9 +207,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 Positioned(
                   right: 0,
                   child: IconButton(
-                    icon: const Icon(Icons.add_location_outlined),
+                    icon: const Icon(Icons.navigation_outlined),
                     onPressed: _showCitySelector,
-                    tooltip: '添加城市',
+                    tooltip: '导航',
                   ),
                 ),
               ],
@@ -319,99 +322,115 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   /// 构建错误状态
   ///
   /// [message]: 错误信息
-  Widget _buildErrorState(String message) {
+  Widget _buildErrorState(String message, {required double viewportHeight}) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            colorScheme.errorContainer.withValues(alpha: 0.7),
-            colorScheme.surface,
-          ],
-        ),
-      ),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                '加载天气失败',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: _onRefresh,
-                icon: const Icon(Icons.refresh),
-                label: const Text('重试'),
-              ),
-            ],
+    return SizedBox(
+      height: viewportHeight,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(color: colorScheme.surfaceContainer),
           ),
-        ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            right: 12,
+            child: _buildEmptyStateAction(),
+          ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '加载天气失败',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.error,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  FilledButton.icon(
+                    onPressed: _onRefresh,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text('重试'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
   /// 构建空状态
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState({required double viewportHeight}) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            colorScheme.primaryContainer.withValues(alpha: 0.7),
-            colorScheme.surface,
-          ],
-        ),
+    return SizedBox(
+      height: viewportHeight,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(color: colorScheme.surfaceContainer),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 8,
+            right: 12,
+            child: _buildEmptyStateAction(),
+          ),
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.location_city,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  '请先添加城市',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '点击右上角“导航”按钮手动添加城市',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.location_city,
-              size: 64,
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '请先添加城市',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '点击右上角“导航”图标添加城市',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
+    );
+  }
+
+  Widget _buildEmptyStateAction() {
+    return IconButton.filledTonal(
+      onPressed: _showCitySelector,
+      tooltip: '导航',
+      icon: const Icon(Icons.navigation_outlined),
     );
   }
 
@@ -508,8 +527,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   Widget _buildRainPrediction(CaiyunMinuteRain rain) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -552,8 +572,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -822,6 +843,27 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
     }
   }
 
+  Future<bool> _confirmRemoveCity(Location city) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('删除城市'),
+        content: Text('确定删除 ${city.name} 吗？'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('取消'),
+          ),
+          FilledButton.tonal(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('删除'),
+          ),
+        ],
+      ),
+    );
+    return confirmed == true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final cities = ref.watch(cityManagerProvider);
@@ -846,9 +888,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                 height: 4,
                 margin: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.outline.withValues(alpha: 0.5),
+                  color: context.uiTokens.divider,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -917,8 +957,9 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+            color: context.uiTokens.cardBackground,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: context.uiTokens.cardBorder),
           ),
           child: ListTile(
             leading: const Icon(Icons.location_on_outlined),
@@ -1000,24 +1041,85 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
             color: isDefault
-                ? Theme.of(
-                    context,
-                  ).colorScheme.primaryContainer.withValues(alpha: 0.3)
-                : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                ? context.uiTokens.selectedBackground
+                : context.uiTokens.cardBackground,
             borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isDefault
+                  ? context.uiTokens.selectedBorder
+                  : context.uiTokens.cardBorder,
+            ),
           ),
           child: ListTile(
             leading: Icon(
-              isLocated ? Icons.location_on : Icons.star_outline,
+              isDefault
+                  ? Icons.check_circle_rounded
+                  : (isLocated ? Icons.my_location_rounded : Icons.location_on_outlined),
               color: isDefault
-                  ? Theme.of(context).colorScheme.primary
+                  ? context.uiTokens.selectedBorder
                   : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            title: Text(
-              city.name,
-              style: isDefault
-                  ? const TextStyle(fontWeight: FontWeight.w600)
-                  : null,
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    city.name,
+                    style: isDefault
+                        ? const TextStyle(fontWeight: FontWeight.w600)
+                        : null,
+                  ),
+                ),
+                if (isLocated) ...[
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: context.uiTokens.selectedForeground.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: context.uiTokens.selectedBorder.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.my_location_rounded,
+                          size: 14,
+                          color: context.uiTokens.selectedForeground,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '定位',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: context.uiTokens.selectedForeground,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                if (isDefault) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: context.uiTokens.selectedForeground.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: context.uiTokens.selectedBorder.withValues(alpha: 0.6),
+                      ),
+                    ),
+                    child: Text(
+                      '默认',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: context.uiTokens.selectedForeground,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ),
+                ],
+              ],
             ),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
@@ -1050,6 +1152,11 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                 IconButton(
                   icon: const Icon(Icons.delete_outline, size: 20),
                   onPressed: () async {
+                    final confirmed = await _confirmRemoveCity(city);
+                    if (!confirmed) {
+                      return;
+                    }
+
                     await ref
                         .read(cityManagerProvider.notifier)
                         .removeCity(city.id);
@@ -1057,9 +1164,19 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                     // 如果所有城市都被删除，自动重新初始化位置
                     final cities = ref.read(cityManagerProvider);
                     if (cities.isEmpty) {
-                      ref
+                      await ref
                           .read(locationInitProvider.notifier)
                           .initLocation(force: true);
+
+                      final locationState = ref.read(locationInitProvider);
+                      if (locationState.error != null && context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('已删除全部城市，定位失败。请搜索城市或检查定位权限。'),
+                            behavior: SnackBarBehavior.floating,
+                          ),
+                        );
+                      }
                     }
                   },
                   color: Theme.of(context).colorScheme.error,

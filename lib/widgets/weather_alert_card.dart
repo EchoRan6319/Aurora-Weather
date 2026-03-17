@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../models/weather_models.dart';
+import '../core/theme/app_theme.dart';
 
 class WeatherAlertCard extends StatefulWidget {
   final List<WeatherAlert> alerts;
@@ -20,10 +21,13 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
     if (widget.alerts.isEmpty) return const SizedBox.shrink();
 
     final colorScheme = Theme.of(context).colorScheme;
+    final tokens = context.uiTokens;
     final alertColor = _getAlertColor(widget.alerts.first.level, colorScheme);
-    final textColor = _getAlertTextColor(widget.alerts.first.level, colorScheme);
     final levelColor = _getLevelColor(widget.alerts.first.level, colorScheme);
-    final backgroundColor = alertColor.withValues(alpha: 0.5);
+    final backgroundColor = Color.alphaBlend(
+      alertColor.withValues(alpha: 0.16),
+      tokens.dangerBackground,
+    );
 
     // 响应式布局参数
     final screenWidth = MediaQuery.of(context).size.width;
@@ -36,6 +40,10 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(isLargeScreen ? 20 : 16),
+        border: Border.all(
+          color: levelColor.withValues(alpha: 0.75),
+          width: 1.2,
+        ),
       ),
       child: InkWell(
         onTap: () {
@@ -71,6 +79,26 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
                           ),
                     ),
                   ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: spacing,
+                      vertical: isLargeScreen ? 6 : 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: levelColor.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(999),
+                      border: Border.all(
+                        color: levelColor.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: Text(
+                      widget.alerts.first.level,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: levelColor,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                  ),
                   SizedBox(width: spacing),
                   Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -83,7 +111,7 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
               Text(
                 '${widget.alerts.length}条预警',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: textColor.withValues(alpha: 0.7),
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: isLargeScreen ? 14 : null,
                     ),
               ),
@@ -138,21 +166,6 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
         return colorScheme.primary;
       default:
         return colorScheme.outline;
-    }
-  }
-
-  Color _getAlertTextColor(String level, ColorScheme colorScheme) {
-    switch (level) {
-      case '红色':
-        return colorScheme.onErrorContainer;
-      case '橙色':
-        return colorScheme.onTertiaryContainer;
-      case '黄色':
-        return colorScheme.onSecondaryContainer;
-      case '蓝色':
-        return colorScheme.onPrimaryContainer;
-      default:
-        return colorScheme.onSurfaceVariant;
     }
   }
 }

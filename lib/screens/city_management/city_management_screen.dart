@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme/app_theme.dart';
 import '../../models/weather_models.dart';
 import '../../providers/city_provider.dart';
 import '../../providers/weather_provider.dart';
@@ -111,6 +112,19 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
 
     if (confirmed == true) {
       await ref.read(cityManagerProvider.notifier).removeCity(city.id);
+      final cities = ref.read(cityManagerProvider);
+      if (cities.isEmpty) {
+        await ref.read(locationInitProvider.notifier).initLocation(force: true);
+        final locationState = ref.read(locationInitProvider);
+        if (locationState.error != null && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('已删除全部城市，定位失败。请搜索城市或检查定位权限。'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -231,13 +245,21 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
       itemBuilder: (context, index) {
         final location = _searchResults[index];
         final subtitle = _buildSubtitle(location.adm1, location.adm2);
-        return ListTile(
-          leading: const Icon(Icons.location_on_outlined),
-          title: Text(location.name),
-          subtitle: subtitle.isEmpty ? null : Text(subtitle),
-          trailing: IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () => _addCity(location),
+        return Container(
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          decoration: BoxDecoration(
+            color: context.uiTokens.cardBackground,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: context.uiTokens.cardBorder),
+          ),
+          child: ListTile(
+            leading: const Icon(Icons.location_on_outlined),
+            title: Text(location.name),
+            subtitle: subtitle.isEmpty ? null : Text(subtitle),
+            trailing: FilledButton.tonal(
+              onPressed: () => _addCity(location),
+              child: const Text('添加'),
+            ),
           ),
         ).animate().fadeIn(delay: Duration(milliseconds: 50 * index));
       },
@@ -347,38 +369,60 @@ class _CityListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final weatherAsync = ref.watch(weatherForCityProvider(city));
+    final isDefault = city.isDefault;
 
-    return Card(
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDefault
+            ? context.uiTokens.selectedBackground
+            : context.uiTokens.cardBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDefault
+              ? context.uiTokens.selectedBorder
+              : context.uiTokens.cardBorder,
+        ),
+      ),
       child: ListTile(
-        leading: city.isDefault
-            ? Icon(
-                Icons.star,
-                color: Theme.of(context).colorScheme.primary,
-              )
-            : const Icon(Icons.location_on_outlined),
-        title: Text(city.name),
-        subtitle: _buildSubtitle(city.adm1, city.adm2).isEmpty ? null : Text(_buildSubtitle(city.adm1, city.adm2)),
+        leading: Icon(
+          isDefault
+              ? Icons.check_circle_rounded
+              : (city.isLocated ? Icons.my_location_rounded : Icons.location_on_outlined),
+          color: isDefault
+              ? context.uiTokens.selectedBorder
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+        title: Text(
+          city.name,
+          style: isDefault ? const TextStyle(fontWeight: FontWeight.w600) : null,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_buildSubtitle(city.adm1, city.adm2).isNotEmpty)
+              Text(_buildSubtitle(city.adm1, city.adm2)),
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                if (city.isLocated) _StatusTag(label: '定位', icon: Icons.my_location_rounded),
+                if (isDefault) _StatusTag(label: '默认', icon: Icons.check_circle_rounded),
+              ],
+            ),
+          ],
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             weatherAsync.when(
               data: (weather) {
                 if (weather == null) return const SizedBox();
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '${weather.current.temp}°',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      weather.current.text,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
-                  ],
+                return Text(
+                  '${weather.current.temp}°',
+                  style: Theme.of(context).textTheme.titleLarge,
                 );
               },
               loading: () => const SizedBox(
@@ -399,5 +443,40 @@ class _CityListItem extends ConsumerWidget {
         onTap: onTap,
       ),
     ).animate().fadeIn(delay: Duration(milliseconds: 50 * index));
+  }
+}
+
+class _StatusTag extends StatelessWidget {
+  final String label;
+  final IconData icon;
+
+  const _StatusTag({required this.label, required this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: context.uiTokens.selectedForeground.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(
+          color: context.uiTokens.selectedBorder.withValues(alpha: 0.6),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: context.uiTokens.selectedForeground),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: context.uiTokens.selectedForeground,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+        ],
+      ),
+    );
   }
 }

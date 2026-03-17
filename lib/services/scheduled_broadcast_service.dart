@@ -9,6 +9,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'qweather_service.dart';
 import 'notification_service.dart';
+import '../providers/city_repository.dart';
 import '../providers/scheduled_broadcast_provider.dart';
 import '../models/weather_models.dart';
 
@@ -469,25 +470,19 @@ class ScheduledBroadcastService {
     debugPrint('[ScheduledBroadcast] Fetching default city weather...');
 
     final prefs = await SharedPreferences.getInstance();
-    final citiesJson = prefs.getString('saved_cities');
+    final cityStore = await CityRepository().loadStore();
+    final cities = cityStore.cities;
 
-    if (citiesJson == null) {
+    if (cities.isEmpty) {
       throw Exception('未找到保存的城市，请先打开应用获取位置');
     }
 
-    final List<dynamic> decoded = jsonDecode(citiesJson);
-    final cities = decoded.map((e) => Location.fromJson(e)).toList();
-
-    Location? defaultCity;
-    try {
-      defaultCity = cities.firstWhere((city) => city.isDefault);
-    } catch (_) {
-      defaultCity = cities.isNotEmpty ? cities.first : null;
-    }
-
-    if (defaultCity == null) {
-      throw Exception('未找到默认城市，请先打开应用获取位置');
-    }
+    final defaultCity = cityStore.defaultCityId == null
+        ? cities.first
+        : cities.firstWhere(
+            (city) => city.id == cityStore.defaultCityId,
+            orElse: () => cities.first,
+          );
 
     debugPrint(
       '[ScheduledBroadcast] Default city: ${defaultCity.name} (ID: ${defaultCity.id})',
@@ -496,7 +491,7 @@ class ScheduledBroadcastService {
     try {
       // 尝试获取最新的天气数据（带重试机制）
       final weatherData = await _fetchWithRetry(() => _weatherService.getFullWeatherData(
-        defaultCity!.id,
+        defaultCity.id,
         defaultCity,
       ));
       debugPrint('[ScheduledBroadcast] Weather data retrieved successfully');

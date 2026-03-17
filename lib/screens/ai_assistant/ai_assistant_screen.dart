@@ -6,6 +6,7 @@ import '../../services/deepseek_service.dart';
 import '../../providers/weather_provider.dart';
 import '../../providers/city_provider.dart';
 import '../../models/weather_models.dart';
+import '../../core/theme/app_theme.dart';
 
 /// 天气助手屏幕
 class AIAssistantScreen extends ConsumerStatefulWidget {
@@ -212,93 +213,118 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
       appBar: AppBar(
         title: const Text('天气助手'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.delete_outline),
-            onPressed: () {
-              ref.read(chatProvider.notifier).clearHistory();
-            },
-            tooltip: '清空对话',
-          ),
+          if (chatSession.messages.isNotEmpty)
+            IconButton.filledTonal(
+              icon: const Icon(Icons.delete_outline),
+              onPressed: () {
+                ref.read(chatProvider.notifier).clearHistory();
+              },
+              tooltip: '清空对话',
+            ),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Column(
-            children: [
-              Expanded(
-                child: ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context).copyWith(
-                    dragDevices: {
-                      PointerDeviceKind.touch,
-                      PointerDeviceKind.mouse,
-                      PointerDeviceKind.stylus,
-                      PointerDeviceKind.invertedStylus,
-                      PointerDeviceKind.trackpad,
-                    },
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 900;
+          return Container(
+            color: Theme.of(context).colorScheme.surfaceContainer,
+            child: SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isWide ? 900 : double.infinity,
                   ),
-                  child: chatSession.messages.isEmpty
-                      ? _buildEmptyState()
-                      : _buildChatList(chatSession),
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ScrollConfiguration(
+                            behavior: ScrollConfiguration.of(context).copyWith(
+                              dragDevices: {
+                                PointerDeviceKind.touch,
+                                PointerDeviceKind.mouse,
+                                PointerDeviceKind.stylus,
+                                PointerDeviceKind.invertedStylus,
+                                PointerDeviceKind.trackpad,
+                              },
+                            ),
+                            child: chatSession.messages.isEmpty
+                                ? _buildEmptyState()
+                                : _buildChatList(chatSession),
+                          ),
+                        ),
+                        if (_isTyping) _buildTypingIndicator(),
+                        _buildInputArea(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-              if (_isTyping) _buildTypingIndicator(),
-              _buildInputArea(),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
   /// 构建空状态
   Widget _buildEmptyState() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.psychology,
-                size: 40,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
-            ).animate().scale(duration: 400.ms),
-            const SizedBox(height: 24),
-            Text(
-              '你好，我是轻氧天气助手',
-              style: Theme.of(context).textTheme.titleLarge,
-            ).animate().fadeIn(delay: 200.ms),
-            const SizedBox(height: 8),
-            Text(
-              '我可以帮你解答天气相关问题，提供穿衣建议、出行提醒等',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              textAlign: TextAlign.center,
-            ).animate().fadeIn(delay: 300.ms),
-            const SizedBox(height: 32),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: [
-                _buildQuickAction('今天适合户外运动吗？'),
-                _buildQuickAction('明天需要带伞吗？'),
-                _buildQuickAction('今天穿什么合适？'),
-              ],
-            ).animate().fadeIn(delay: 400.ms),
-          ],
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: context.uiTokens.cardBackground,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: context.uiTokens.cardBorder),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.psychology,
+                  size: 40,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              ).animate().scale(duration: 400.ms),
+              const SizedBox(height: 24),
+              Text(
+                '你好，我是轻氧天气助手',
+                style: Theme.of(context).textTheme.titleLarge,
+              ).animate().fadeIn(delay: 200.ms),
+              const SizedBox(height: 8),
+              Text(
+                '我可以帮你解答天气相关问题，提供穿衣建议、出行提醒等',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ).animate().fadeIn(delay: 300.ms),
+              const SizedBox(height: 32),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  _buildQuickAction('今天适合户外运动吗？'),
+                  _buildQuickAction('明天需要带伞吗？'),
+                  _buildQuickAction('今天穿什么合适？'),
+                ],
+              ).animate().fadeIn(delay: 400.ms),
+            ],
+          ),
         ),
       ),
     );
@@ -311,9 +337,16 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   /// 返回ActionChip实例
   Widget _buildQuickAction(String text) {
     return ActionChip(
-      label: Text(text),
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-      side: BorderSide.none,
+      label: Text(
+        text,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: context.uiTokens.selectedForeground,
+        ),
+      ),
+      backgroundColor: context.uiTokens.selectedBackground,
+      side: BorderSide(
+        color: context.uiTokens.selectedBorder,
+      ),
       onPressed: () {
         _messageController.text = text;
         _sendMessage();
@@ -329,7 +362,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   Widget _buildChatList(ChatSession session) {
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       itemCount:
           session.messages.length + (_currentResponse.isNotEmpty ? 1 : 0),
       itemBuilder: (context, index) {
@@ -349,7 +382,13 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   /// 构建输入指示器
   Widget _buildTypingIndicator() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: context.uiTokens.cardBackground,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: context.uiTokens.cardBorder),
+      ),
       child: Row(
         children: [
           Container(
@@ -380,16 +419,12 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   /// 构建输入区域
   Widget _buildInputArea() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        boxShadow: [
-          BoxShadow(
-            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
+        color: context.uiTokens.cardBackground,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: context.uiTokens.cardBorder),
       ),
       child: Row(
         children: [
@@ -400,18 +435,18 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
               decoration: InputDecoration(
                 hintText: '输入消息...',
                 filled: true,
-                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                fillColor: Theme.of(context).colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.uiTokens.cardBorder),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: context.uiTokens.selectedBorder),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -465,6 +500,7 @@ class _ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final displayMessage = isUser ? message : _formatAssistantMessage(message);
+    final tokens = context.uiTokens;
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -475,8 +511,11 @@ class _ChatBubble extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isUser
-              ? Theme.of(context).colorScheme.primaryContainer
-              : Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              ? tokens.selectedBackground
+              : tokens.cardBackground,
+          border: Border.all(
+            color: isUser ? tokens.selectedBorder : tokens.cardBorder,
+          ),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
@@ -491,7 +530,7 @@ class _ChatBubble extends StatelessWidget {
           textWidthBasis: TextWidthBasis.parent,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: isUser
-                ? Theme.of(context).colorScheme.onPrimaryContainer
+                ? tokens.selectedForeground
                 : Theme.of(context).colorScheme.onSurface,
           ),
         ),
