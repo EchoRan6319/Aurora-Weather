@@ -15,7 +15,7 @@ env:
 
 jobs:
   # ============================================================================
-  # Android Builds (Matrix: prod release + debugEdition debug/release)
+  # Android Builds (single matrix flow: prod release per ABI + prod universal + debugEdition debug universal)
   # ============================================================================
   build-android-matrix:
     runs-on: ubuntu-latest
@@ -28,19 +28,33 @@ jobs:
             mode_flag: --release
             target_platform: android-arm64
             apk_file: app-prod-release.apk
-            artifact_name: android-apk-prod-release
-            output_suffix: android-prod-release
-          - flavor: debugEdition
+            artifact_name: android-apk-prod-arm64v8a-release
+            output_suffix: android-prod-arm64v8a-release
+          - flavor: prod
             mode: release
             mode_flag: --release
-            target_platform: android-arm64
-            apk_file: app-debugedition-release.apk
-            artifact_name: android-apk-debugedition-release
-            output_suffix: android-debugedition-release
+            target_platform: android-arm
+            apk_file: app-prod-release.apk
+            artifact_name: android-apk-prod-armv7a-release
+            output_suffix: android-prod-armv7a-release
+          - flavor: prod
+            mode: release
+            mode_flag: --release
+            target_platform: android-x64
+            apk_file: app-prod-release.apk
+            artifact_name: android-apk-prod-x86_64-release
+            output_suffix: android-prod-x86_64-release
+          - flavor: prod
+            mode: release
+            mode_flag: --release
+            target_platform: android-arm,android-arm64,android-x64
+            apk_file: app-prod-release.apk
+            artifact_name: android-apk-prod-universal-release
+            output_suffix: android-prod-universal-release
           - flavor: debugEdition
             mode: debug
             mode_flag: --debug
-            target_platform: android-arm64
+            target_platform: android-arm,android-arm64,android-x64
             apk_file: app-debugedition-debug.apk
             artifact_name: android-apk-debugedition-debug
             output_suffix: android-debugedition-debug
