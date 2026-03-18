@@ -83,6 +83,17 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.viewPadding.top;
+    final bottomInset = mediaQuery.viewPadding.bottom;
+    final keyboardInset = mediaQuery.viewInsets.bottom;
+    const topExtraClearance = 30.0;
+    final topSafeOffset = topInset + topExtraClearance;
+    final maxSheetHeight = mediaQuery.size.height * 0.9;
+    final cardBorderSide = BorderSide(
+      color: context.uiTokens.cardBorder,
+      width: 1,
+    );
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final overlayStyle =
@@ -103,18 +114,23 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle,
-      child: SafeArea(
-        top: true,
-        bottom: false,
-        left: false,
-        right: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: topSafeOffset,
+          left: mediaQuery.viewPadding.left,
+          right: mediaQuery.viewPadding.right,
+        ),
         child: AnimatedPadding(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
+          padding: EdgeInsets.only(bottom: keyboardInset),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: maxSheetHeight > 0
+                  ? maxSheetHeight
+                  : mediaQuery.size.height,
+            ),
+            child: Container(
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: const BorderRadius.vertical(
@@ -175,7 +191,7 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
                     decoration: BoxDecoration(
                       color: context.uiTokens.cardBackground,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: context.uiTokens.cardBorder),
+                      border: Border.fromBorderSide(cardBorderSide),
                     ),
                     child: Row(
                       children: [
@@ -198,55 +214,57 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.of(context).size.height * 0.55,
-                  ),
-                  child: ReorderableListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                Flexible(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.9,
                     ),
-                    itemCount: _currentOrder.length,
-                    onReorder: (oldIndex, newIndex) {
-                      setState(() {
-                        if (oldIndex < newIndex) {
-                          newIndex -= 1;
-                        }
-                        final item = _currentOrder.removeAt(oldIndex);
-                        _currentOrder.insert(newIndex, item);
-                      });
-                      ref
-                          .read(settingsProvider.notifier)
-                          .setWeatherCardOrder(_currentOrder);
-                    },
-                    proxyDecorator: (child, index, animation) {
-                      return AnimatedBuilder(
-                        animation: animation,
-                        builder: (context, child) {
-                          return Material(
-                            elevation: 0,
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(16),
-                            child: child,
-                          );
-                        },
-                        child: child,
-                      );
-                    },
-                    itemBuilder: (context, index) {
-                      final key = _currentOrder[index];
-                      final info = _cardInfo[key]!;
+                    child: ReorderableListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      itemCount: _currentOrder.length,
+                      onReorder: (oldIndex, newIndex) {
+                        setState(() {
+                          if (oldIndex < newIndex) {
+                            newIndex -= 1;
+                          }
+                          final item = _currentOrder.removeAt(oldIndex);
+                          _currentOrder.insert(newIndex, item);
+                        });
+                        ref
+                            .read(settingsProvider.notifier)
+                            .setWeatherCardOrder(_currentOrder);
+                      },
+                      proxyDecorator: (child, index, animation) {
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            return Material(
+                              elevation: 0,
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(16),
+                              child: child,
+                            );
+                          },
+                          child: child,
+                        );
+                      },
+                      itemBuilder: (context, index) {
+                        final key = _currentOrder[index];
+                        final info = _cardInfo[key]!;
 
-                      return _ReorderableCardItem(
-                        key: ValueKey(key),
-                        index: index,
-                        title: info.title,
-                        description: info.description,
-                        icon: info.icon,
-                      );
-                    },
+                        return _ReorderableCardItem(
+                          key: ValueKey(key),
+                          index: index,
+                          title: info.title,
+                          description: info.description,
+                          icon: info.icon,
+                        );
+                      },
+                    ),
                   ),
                 ),
                 Padding(
@@ -254,7 +272,7 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
                     24,
                     24,
                     24,
-                    24 + MediaQuery.of(context).viewPadding.bottom,
+                    24 + bottomInset,
                   ),
                   child: SizedBox(
                     width: double.infinity,
@@ -271,6 +289,7 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
                   ),
                 ),
               ],
+            ),
             ),
           ),
         ),
@@ -312,13 +331,17 @@ class _ReorderableCardItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final cardBorderSide = BorderSide(
+      color: context.uiTokens.cardBorder,
+      width: 1,
+    );
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.uiTokens.cardBorder),
+        border: Border.fromBorderSide(cardBorderSide),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

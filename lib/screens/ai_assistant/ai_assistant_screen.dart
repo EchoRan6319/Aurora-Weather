@@ -276,12 +276,8 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: context.uiTokens.cardBackground,
-            borderRadius: BorderRadius.circular(20),
-          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -339,12 +335,12 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
       label: Text(
         text,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: context.uiTokens.selectedForeground,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
-      backgroundColor: context.uiTokens.selectedBackground,
+      backgroundColor: Colors.transparent,
       side: BorderSide(
-        color: context.uiTokens.selectedBorder,
+        color: context.uiTokens.cardBorder,
       ),
       onPressed: () {
         _messageController.text = text;

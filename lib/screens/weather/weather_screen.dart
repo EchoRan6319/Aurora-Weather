@@ -52,7 +52,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useSafeArea: true,
+      useSafeArea: false,
       builder: (context) => _CitySelectorSheet(
         onCitySelected: (location, {bool isLocated = false}) async {
           Navigator.pop(context);
@@ -871,81 +871,97 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
   Widget build(BuildContext context) {
     final cities = ref.watch(cityManagerProvider);
     final defaultCity = ref.watch(defaultCityProvider);
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.viewPadding.top;
+    final keyboardInset = mediaQuery.viewInsets.bottom;
+    const topExtraClearance = 30.0;
+    final topSafeOffset = topInset + topExtraClearance;
+    final sheetMax =
+        ((mediaQuery.size.height - topSafeOffset) / mediaQuery.size.height)
+            .clamp(0.5, 0.92)
+            .toDouble();
+    final sheetInitial = sheetMax < 0.6 ? sheetMax : 0.6;
+    final sheetMin = sheetInitial < 0.4 ? sheetInitial : 0.4;
 
-    return AnimatedPadding(
+    return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        top: topSafeOffset,
+        left: mediaQuery.viewPadding.left,
+        right: mediaQuery.viewPadding.right,
       ),
-      duration: const Duration(milliseconds: 100),
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.4,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) {
-          return Column(
-            children: [
-              // 拖拽指示器
-              Container(
-                width: 40,
-                height: 4,
-                margin: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: context.uiTokens.divider,
-                  borderRadius: BorderRadius.circular(2),
+      child: AnimatedPadding(
+        padding: EdgeInsets.only(bottom: keyboardInset),
+        duration: const Duration(milliseconds: 100),
+        child: DraggableScrollableSheet(
+          initialChildSize: sheetInitial,
+          minChildSize: sheetMin,
+          maxChildSize: sheetMax,
+          expand: false,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                // 拖拽指示器
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: context.uiTokens.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              // 搜索栏和定位按钮
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: '搜索城市',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: _searchController.text.isNotEmpty
-                            ? IconButton(
-                                icon: const Icon(Icons.clear),
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() {
-                                    _searchResults = [];
-                                  });
-                                },
-                              )
-                            : null,
+                // 搜索栏和定位按钮
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          hintText: '搜索城市',
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _searchController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchResults = [];
+                                    });
+                                  },
+                                )
+                              : null,
+                        ),
+                        onChanged: (value) {
+                          setState(() {});
+                          _searchCities(value);
+                        },
                       ),
-                      onChanged: (value) {
-                        setState(() {});
-                        _searchCities(value);
-                      },
-                    ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton.icon(
-                        icon: const Icon(Icons.my_location),
-                        label: const Text('定位当前位置'),
-                        onPressed: _getCurrentLocation,
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          icon: const Icon(Icons.my_location),
+                          label: const Text('定位当前位置'),
+                          onPressed: _getCurrentLocation,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              // 搜索结果或城市列表
-              Expanded(
-                child: _isSearching
-                    ? const Center(child: CircularProgressIndicator())
-                    : _searchResults.isNotEmpty
-                    ? _buildSearchResults()
-                    : _buildCityList(cities, defaultCity, scrollController),
-              ),
-            ],
-          );
-        },
+                const SizedBox(height: 8),
+                // 搜索结果或城市列表
+                Expanded(
+                  child: _isSearching
+                      ? const Center(child: CircularProgressIndicator())
+                      : _searchResults.isNotEmpty
+                      ? _buildSearchResults()
+                      : _buildCityList(cities, defaultCity, scrollController),
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

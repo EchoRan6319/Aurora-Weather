@@ -34,12 +34,16 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
   }
 
   static Widget _buildDescriptionCard(BuildContext context) {
+    final cardBorderSide = BorderSide(
+      color: context.uiTokens.cardBorder,
+      width: 1,
+    );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: context.uiTokens.cardBackground,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.uiTokens.cardBorder),
+        border: Border.fromBorderSide(cardBorderSide),
       ),
       child: Row(
         children: [

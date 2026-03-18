@@ -89,10 +89,14 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         return FutureBuilder<ColorScheme?>(
-          future: _getBypassedColorScheme(lightDynamic, themeSettings.useDynamicColor),
+          future: _getBypassedColorScheme(
+            lightDynamic,
+            themeSettings.useDynamicColor,
+          ),
           builder: (context, snapshot) {
-            final ColorScheme? finalLightDynamic = snapshot.data ?? lightDynamic;
-            
+            final ColorScheme? finalLightDynamic =
+                snapshot.data ?? lightDynamic;
+
             ColorScheme lightColorScheme;
             ColorScheme darkColorScheme;
 
@@ -133,10 +137,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
               ],
-              supportedLocales: const [
-                Locale('zh', 'CN'),
-                Locale('en', 'US'),
-              ],
+              supportedLocales: const [Locale('zh', 'CN'), Locale('en', 'US')],
               theme: AppTheme.createTheme(
                 colorScheme: lightColorScheme,
                 useMaterial3: themeSettings.useMaterial3,
@@ -148,10 +149,26 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
               ),
               themeMode: themeNotifier.flutterThemeMode,
               builder: (context, child) {
-                if (appSettings.predictiveBackEnabled) {
-                  return PredictiveBackGestureHandler(child: child!);
-                }
-                return child!;
+                final isDark = Theme.of(context).brightness == Brightness.dark;
+                final overlayStyle =
+                    (isDark
+                            ? SystemUiOverlayStyle.light
+                            : SystemUiOverlayStyle.dark)
+                        .copyWith(
+                          statusBarColor: Colors.transparent,
+                          systemNavigationBarColor: Colors.transparent,
+                          systemNavigationBarDividerColor: Colors.transparent,
+                          systemNavigationBarContrastEnforced: false,
+                        );
+
+                final content = appSettings.predictiveBackEnabled
+                    ? PredictiveBackGestureHandler(child: child!)
+                    : child!;
+
+                return AnnotatedRegion<SystemUiOverlayStyle>(
+                  value: overlayStyle,
+                  child: content,
+                );
               },
               home: const MainScreen(),
             );
@@ -162,18 +179,27 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   }
 
   /// 针对 ColorOS 等系统的动态取色绕过逻辑
-  Future<ColorScheme?> _getBypassedColorScheme(ColorScheme? dynamic, bool enabled) async {
+  Future<ColorScheme?> _getBypassedColorScheme(
+    ColorScheme? dynamic,
+    bool enabled,
+  ) async {
     if (!enabled || dynamic == null) return null;
     if (defaultTargetPlatform != TargetPlatform.android) return null;
 
     // 直接尝试获取壁纸颜色，绕过系统限制
-    debugPrint('[DynamicColor] Attempting native bypass to get wallpaper color...');
+    debugPrint(
+      '[DynamicColor] Attempting native bypass to get wallpaper color...',
+    );
     try {
       const channel = MethodChannel('com.echoran.pureweather/wallpaper');
-      final int? colorInt = await channel.invokeMethod<int>('getWallpaperPrimaryColor');
+      final int? colorInt = await channel.invokeMethod<int>(
+        'getWallpaperPrimaryColor',
+      );
       if (colorInt != null) {
         final color = Color(colorInt);
-        debugPrint('[DynamicColor] Native bypass successful. Extracted color: $color');
+        debugPrint(
+          '[DynamicColor] Native bypass successful. Extracted color: $color',
+        );
         return ColorScheme.fromSeed(
           seedColor: color,
           brightness: Brightness.light,

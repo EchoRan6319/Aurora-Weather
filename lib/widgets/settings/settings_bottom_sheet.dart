@@ -30,6 +30,14 @@ class SettingsBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+    final topInset = mediaQuery.viewPadding.top;
+    final bottomInset = mediaQuery.viewPadding.bottom;
+    final keyboardInset = mediaQuery.viewInsets.bottom;
+    const topExtraClearance = 30.0;
+    final topSafeOffset = topInset + topExtraClearance;
+    final maxSheetHeight = mediaQuery.size.height * 0.9;
+    final contentMaxHeight = mediaQuery.size.height * 0.9;
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final overlayStyle =
@@ -50,18 +58,23 @@ class SettingsBottomSheet extends StatelessWidget {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle,
-      child: SafeArea(
-        top: true,
-        bottom: false,
-        left: false,
-        right: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: topSafeOffset,
+          left: mediaQuery.viewPadding.left,
+          right: mediaQuery.viewPadding.right,
+        ),
         child: AnimatedPadding(
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOut,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
+          padding: EdgeInsets.only(bottom: keyboardInset),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: maxSheetHeight > 0
+                  ? maxSheetHeight
+                  : mediaQuery.size.height,
+            ),
+            child: Container(
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: const BorderRadius.vertical(
@@ -86,10 +99,17 @@ class SettingsBottomSheet extends StatelessWidget {
                 ),
                 // 内容区域 - 使用 Flexible 包裹 ListView 以适应不同高度
                 Flexible(
-                  child: ListView(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: children,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: contentMaxHeight > 0
+                          ? contentMaxHeight
+                          : mediaQuery.size.height,
+                    ),
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      children: children,
+                    ),
                   ),
                 ),
                 // 底部操作按钮
@@ -99,14 +119,15 @@ class SettingsBottomSheet extends StatelessWidget {
                       24,
                       24,
                       24,
-                      24 + MediaQuery.of(context).viewPadding.bottom,
+                      24 + bottomInset,
                     ),
                     child: bottomAction,
                   )
                 else
-                  SizedBox(height: MediaQuery.of(context).viewPadding.bottom),
+                  SizedBox(height: bottomInset),
               ],
             ),
+          ),
           ),
         ),
       ),
@@ -190,7 +211,8 @@ class SettingsSelectionItem extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
           side: BorderSide(
-            color: isSelected ? tokens.selectedBorder : Colors.transparent,
+            color: isSelected ? tokens.selectedBorder : tokens.cardBorder,
+            width: 1,
           ),
         ),
         child: InkWell(

@@ -450,11 +450,7 @@ class SettingsScreen extends ConsumerWidget {
                     : tokens.cardBackground,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(
-                    color: isCurrentDynamic
-                        ? tokens.selectedBorder
-                        : tokens.cardBorder,
-                  ),
+                  side: BorderSide(color: tokens.cardBorder, width: 1),
                 ),
                 child: InkWell(
                   onTap: () {
@@ -472,14 +468,7 @@ class SettingsScreen extends ConsumerWidget {
                           decoration: BoxDecoration(
                             color: dynamicColor,
                             borderRadius: BorderRadius.circular(12),
-                            border: isCurrentDynamic
-                                ? Border.all(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    width: 2,
-                                  )
-                                : null,
+                            border: null,
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -536,11 +525,7 @@ class SettingsScreen extends ConsumerWidget {
               : tokens.cardBackground,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(
-              color: isCurrentDynamic
-                  ? tokens.selectedBorder
-                  : tokens.cardBorder,
-            ),
+            side: BorderSide(color: tokens.cardBorder, width: 1),
           ),
           child: InkWell(
             onTap: () {
@@ -558,12 +543,7 @@ class SettingsScreen extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: wallpaperColor,
                       borderRadius: BorderRadius.circular(12),
-                      border: isCurrentDynamic
-                          ? Border.all(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            )
-                          : null,
+                      border: null,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -698,8 +678,8 @@ class SettingsScreen extends ConsumerWidget {
                 shape: BoxShape.circle,
                 border: isSelected
                     ? Border.all(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        width: 3,
+                        color: tokens.selectedBorder,
+                        width: 2,
                       )
                     : null,
               ),
