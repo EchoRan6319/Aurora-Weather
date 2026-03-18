@@ -39,35 +39,41 @@ class HourlyForecast extends StatelessWidget {
       return _buildEmptyState(context);
     }
 
-    final now = DateTime.now();
-    // 过滤出未来24小时的数据
-    final filteredHourly = _filterHourlyData(hourly, now);
+    return StreamBuilder<int>(
+      stream: Stream<int>.periodic(const Duration(minutes: 1), (count) => count),
+      initialData: 0,
+      builder: (context, _) {
+        final now = DateTime.now();
+        // 过滤出未来24小时的数据
+        final filteredHourly = _filterHourlyData(hourly, now);
 
-    if (kDebugMode) {
-      debugPrint('[HourlyCard] input=${hourly.length} filtered=${filteredHourly.length} now=$now');
-    }
+        if (kDebugMode) {
+          debugPrint('[HourlyCard] input=${hourly.length} filtered=${filteredHourly.length} now=$now');
+        }
 
-    if (filteredHourly.isEmpty) {
-      return _buildEmptyState(context, subtitle: '小时数据已过期或时间解析失败');
-    }
+        if (filteredHourly.isEmpty) {
+          return _buildEmptyState(context, subtitle: '小时数据已过期或时间解析失败');
+        }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: context.uiTokens.cardBackground,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: context.uiTokens.cardBorder),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(context),
-            const SizedBox(height: 10),
-            _buildHourlyList(context, filteredHourly, now),
-          ],
-        ),
-      ),
+        return Container(
+          decoration: BoxDecoration(
+            color: context.uiTokens.cardBackground,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: context.uiTokens.cardBorder),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context),
+                const SizedBox(height: 10),
+                _buildHourlyList(context, filteredHourly, now),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -223,9 +229,13 @@ class HourlyForecast extends StatelessWidget {
 
     // 按时间排序后优先取“当前时刻之后”的24条
     parsed.sort((a, b) => a.value.compareTo(b.value));
+    final windowEnd = now.add(const Duration(hours: 24));
     final upcoming = parsed
-        .where((entry) => entry.value.isAfter(now.subtract(const Duration(minutes: 30))))
-        .take(24)
+        .where(
+          (entry) =>
+              !entry.value.isBefore(now) &&
+              !entry.value.isAfter(windowEnd),
+        )
         .map((entry) => entry.key)
         .toList();
     if (upcoming.isNotEmpty) {
@@ -233,19 +243,31 @@ class HourlyForecast extends StatelessWidget {
         final firstTime = _parseFxTime(upcoming.first.fxTime);
         final lastTime = _parseFxTime(upcoming.last.fxTime);
         debugPrint(
-          '[HourlyFilter] mode=upcoming invalidFxTime=$invalidTimeCount kept=${upcoming.length} first=$firstTime last=$lastTime now=$now',
+          '[HourlyFilter] mode=window invalidFxTime=$invalidTimeCount kept=${upcoming.length} first=$firstTime last=$lastTime now=$now end=$windowEnd',
         );
       }
       return upcoming;
     }
 
-    // 回退：若时间基本接近当前但窗口筛选为空，至少展示可解析的前24条
-    if (parsed.isNotEmpty &&
-        parsed.last.value.isAfter(now.subtract(const Duration(hours: 6)))) {
-      final fallback = parsed.take(24).map((entry) => entry.key).toList();
+    // 回退：若数据按整点返回，允许从当前小时整点开始显示
+    final alignedWindowStart = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+    );
+    final fallback = parsed
+        .where(
+          (entry) =>
+              !entry.value.isBefore(alignedWindowStart) &&
+              !entry.value.isAfter(windowEnd),
+        )
+        .map((entry) => entry.key)
+        .toList();
+    if (fallback.isNotEmpty) {
       if (kDebugMode) {
         debugPrint(
-          '[HourlyFilter] mode=fallback invalidFxTime=$invalidTimeCount kept=${fallback.length} now=$now',
+          '[HourlyFilter] mode=alignedWindow invalidFxTime=$invalidTimeCount kept=${fallback.length} now=$now start=$alignedWindowStart end=$windowEnd',
         );
       }
       return fallback;
@@ -253,7 +275,7 @@ class HourlyForecast extends StatelessWidget {
 
     if (kDebugMode) {
       debugPrint(
-        '[HourlyFilter] mode=empty invalidFxTime=$invalidTimeCount parsed=${parsed.length} now=$now',
+        '[HourlyFilter] mode=empty invalidFxTime=$invalidTimeCount parsed=${parsed.length} now=$now end=$windowEnd',
       );
     }
 
