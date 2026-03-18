@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/weather_models.dart';
 import '../../providers/city_provider.dart';
+import '../../providers/settings_provider.dart';
 import '../../providers/weather_provider.dart';
 
 /// 城市管理屏幕
@@ -132,12 +133,15 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
   Future<void> _getCurrentLocation() async {
     try {
       final locationService = ref.read(locationServiceProvider);
+      final accuracyLevel =
+          ref.read(settingsProvider).locationAccuracyLevel;
       final position = await locationService.getCurrentPosition();
       
       if (position != null) {
         final location = await locationService.getLocationFromCoords(
           position.latitude,
           position.longitude,
+          accuracyLevel: accuracyLevel,
         );
         await _addCity(location);
       } else {

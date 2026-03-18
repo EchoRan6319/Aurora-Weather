@@ -477,6 +477,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                   sunset: weather.daily.isNotEmpty
                       ? weather.daily.first.sunset
                       : null,
+                  nextSunrise: weather.daily.length > 1
+                      ? weather.daily[1].sunrise
+                      : null,
                   temperatureUnit: settings.temperatureUnit,
                 );
                 break;
@@ -816,12 +819,15 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
   Future<void> _getCurrentLocation() async {
     try {
       final locationService = ref.read(locationServiceProvider);
+      final accuracyLevel =
+          ref.read(settingsProvider).locationAccuracyLevel;
       final position = await locationService.getCurrentPosition();
 
       if (position != null) {
         final location = await locationService.getLocationFromCoords(
           position.latitude,
           position.longitude,
+          accuracyLevel: accuracyLevel,
         );
         widget.onCitySelected(location, isLocated: true);
       } else {

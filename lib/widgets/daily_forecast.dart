@@ -124,11 +124,12 @@ class _DailyItem extends StatelessWidget {
 
   /// 判断是否为夜间
   bool _isNightTime() {
+    final now = DateTime.now();
+
     if (sunrise == null ||
         sunset == null ||
         sunrise!.isEmpty ||
         sunset!.isEmpty) {
-      final now = DateTime.now();
       return now.hour >= 18 || now.hour < 6;
     }
 
@@ -136,7 +137,7 @@ class _DailyItem extends StatelessWidget {
     final sunsetParts = sunset!.split(':');
 
     if (sunriseParts.length < 2 || sunsetParts.length < 2) {
-      return false;
+      return now.hour >= 18 || now.hour < 6;
     }
 
     final sunriseHour = int.tryParse(sunriseParts[0]) ?? 6;
@@ -144,7 +145,6 @@ class _DailyItem extends StatelessWidget {
     final sunsetHour = int.tryParse(sunsetParts[0]) ?? 18;
     final sunsetMinute = int.tryParse(sunsetParts[1]) ?? 0;
 
-    final now = DateTime.now();
     final sunriseMinutes = sunriseHour * 60 + sunriseMinute;
     final sunsetMinutes = sunsetHour * 60 + sunsetMinute;
     final currentMinutes = now.hour * 60 + now.minute;

@@ -1015,11 +1015,13 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: option.$3,
             icon: option.$4,
             isSelected: settings.locationAccuracyLevel == option.$1,
-            onTap: () {
-              ref
+            onTap: () async {
+              await ref
                   .read(settingsProvider.notifier)
                   .setLocationAccuracyLevel(option.$1);
-              Navigator.pop(ctx);
+              if (ctx.mounted) {
+                Navigator.pop(ctx);
+              }
             },
           );
         }).toList(),

@@ -16,6 +16,8 @@ class HourlyForecast extends StatelessWidget {
   final String? sunrise;
   /// 日落时间
   final String? sunset;
+  /// 次日日出时间
+  final String? nextSunrise;
   /// 温度单位
   final String temperatureUnit;
 
@@ -24,12 +26,14 @@ class HourlyForecast extends StatelessWidget {
   /// [hourly]: 小时天气预报数据
   /// [sunrise]: 日出时间
   /// [sunset]: 日落时间
+  /// [nextSunrise]: 次日日出时间
   /// [temperatureUnit]: 温度单位，默认摄氏度
   const HourlyForecast({
     super.key,
     required this.hourly,
     this.sunrise,
     this.sunset,
+    this.nextSunrise,
     this.temperatureUnit = 'celsius',
   });
 
@@ -192,6 +196,7 @@ class HourlyForecast extends StatelessWidget {
                       now: now,
                       sunrise: sunrise,
                       sunset: sunset,
+                      nextSunrise: nextSunrise,
                       showPrecipitation: hasAnyPrecipitation,
                       temperatureUnit: temperatureUnit,
                     ),
@@ -319,6 +324,8 @@ class _HourlyItem extends StatelessWidget {
   final String? sunrise;
   /// 日落时间
   final String? sunset;
+  /// 次日日出时间
+  final String? nextSunrise;
   /// 是否显示降水概率
   final bool showPrecipitation;
   /// 温度单位
@@ -330,6 +337,7 @@ class _HourlyItem extends StatelessWidget {
   /// [now]: 当前时间
   /// [sunrise]: 日出时间
   /// [sunset]: 日落时间
+  /// [nextSunrise]: 次日日出时间
   /// [showPrecipitation]: 是否显示降水概率
   /// [temperatureUnit]: 温度单位
   const _HourlyItem({
@@ -337,6 +345,7 @@ class _HourlyItem extends StatelessWidget {
     required this.now,
     this.sunrise,
     this.sunset,
+    this.nextSunrise,
     this.showPrecipitation = true,
     this.temperatureUnit = 'celsius',
   });
@@ -345,30 +354,43 @@ class _HourlyItem extends StatelessWidget {
   /// 
   /// [time]: 时间
   bool _isNightTime(DateTime time) {
-    if (sunrise != null &&
-        sunset != null &&
-        sunrise!.isNotEmpty &&
-        sunset!.isNotEmpty) {
-      final sunriseParts = sunrise!.split(':');
-      final sunsetParts = sunset!.split(':');
+    final sunriseMinutes = _parseMinutes(sunrise);
+    final sunsetMinutes = _parseMinutes(sunset);
+    final nextSunriseMinutes = _parseMinutes(nextSunrise);
+    final currentMinutes = time.hour * 60 + time.minute;
 
-      if (sunriseParts.length >= 2 && sunsetParts.length >= 2) {
-        final sunriseHour = int.tryParse(sunriseParts[0]) ?? 6;
-        final sunriseMinute = int.tryParse(sunriseParts[1]) ?? 0;
-        final sunsetHour = int.tryParse(sunsetParts[0]) ?? 18;
-        final sunsetMinute = int.tryParse(sunsetParts[1]) ?? 0;
+    if (sunriseMinutes != null && sunsetMinutes != null) {
+      final forecastDate = DateTime(time.year, time.month, time.day);
+      final todayDate = DateTime(now.year, now.month, now.day);
 
-        final sunriseMinutes = sunriseHour * 60 + sunriseMinute;
-        final sunsetMinutes = sunsetHour * 60 + sunsetMinute;
-        final currentMinutes = time.hour * 60 + time.minute;
-
+      // 今天：日出前或日落后为夜间
+      if (!forecastDate.isAfter(todayDate)) {
         return currentMinutes < sunriseMinutes ||
             currentMinutes >= sunsetMinutes;
       }
+
+      // 明天（及未来）：优先使用次日日出，保证“日落后到次日日出”始终夜间
+      final sunriseForFutureDay = nextSunriseMinutes ?? sunriseMinutes;
+      if (currentMinutes < sunriseForFutureDay) {
+        return true;
+      }
+
+      // 未来天的日落时间没有单独透传时，复用当日日落时刻判断
+      return currentMinutes >= sunsetMinutes;
     }
 
     // 默认规则：18点后或6点前为夜间
     return time.hour >= 18 || time.hour < 6;
+  }
+
+  int? _parseMinutes(String? hhmm) {
+    if (hhmm == null || hhmm.isEmpty) return null;
+    final parts = hhmm.split(':');
+    if (parts.length < 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return null;
+    return hour * 60 + minute;
   }
 
   @override
