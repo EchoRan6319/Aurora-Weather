@@ -92,13 +92,13 @@ flutter build apk --release --flavor debugEdition -t lib/main.dart
 
 ```bash
 # Android (arm64)
-flutter build apk --release --target-platform=android-arm64
+flutter build apk --release --flavor prod --target-platform=android-arm64
 
 # Android (arm32)
-flutter build apk --release --target-platform=android-arm
+flutter build apk --release --flavor prod --target-platform=android-arm
 
 # Android (x86_64，模拟器)
-flutter build apk --release --target-platform=android-x64
+flutter build apk --release --flavor prod --target-platform=android-x64
 
 # Windows
 flutter build windows --release

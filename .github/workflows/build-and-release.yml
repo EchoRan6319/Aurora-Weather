@@ -26,18 +26,21 @@ jobs:
           - flavor: prod
             mode: release
             mode_flag: --release
+            target_platform: android-arm64
             apk_file: app-prod-release.apk
             artifact_name: android-apk-prod-release
             output_suffix: android-prod-release
           - flavor: debugEdition
             mode: release
             mode_flag: --release
+            target_platform: android-arm64
             apk_file: app-debugedition-release.apk
             artifact_name: android-apk-debugedition-release
             output_suffix: android-debugedition-release
           - flavor: debugEdition
             mode: debug
             mode_flag: --debug
+            target_platform: android-arm64
             apk_file: app-debugedition-debug.apk
             artifact_name: android-apk-debugedition-debug
             output_suffix: android-debugedition-debug
@@ -86,6 +89,7 @@ jobs:
           BUILD_NAME="${GITHUB_REF_NAME#v}"
           flutter build apk ${{ matrix.mode_flag }} \
             --flavor=${{ matrix.flavor }} \
+            --target-platform=${{ matrix.target_platform }} \
             -t lib/main.dart \
             --build-name="$BUILD_NAME" \
             --build-number="$GITHUB_RUN_NUMBER" \
