@@ -21,16 +21,16 @@ class AIAssistantScreen extends ConsumerStatefulWidget {
 class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   /// 消息输入控制器
   final _messageController = TextEditingController();
-  
+
   /// 滚动控制器
   final _scrollController = ScrollController();
-  
+
   /// 焦点节点
   final _focusNode = FocusNode();
-  
+
   /// 是否正在输入
   bool _isTyping = false;
-  
+
   /// 当前响应内容
   String _currentResponse = '';
 
@@ -84,7 +84,8 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         _scrollToBottom();
       }
 
-      ref.read(chatProvider.notifier).addAssistantMessage(_currentResponse);
+      final cleanedResponse = service.sanitizeResponse(_currentResponse);
+      ref.read(chatProvider.notifier).addAssistantMessage(cleanedResponse);
     } catch (e) {
       ref
           .read(chatProvider.notifier)
@@ -98,10 +99,10 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   }
 
   /// 构建天气上下文信息
-  /// 
+  ///
   /// [weatherState] 天气状态
   /// [location] 位置信息
-  /// 
+  ///
   /// 返回天气上下文字符串
   String _buildWeatherContext(WeatherState weatherState, Location? location) {
     final weather = weatherState.weatherData;
@@ -115,7 +116,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         'adm2': location.adm2,
         'country': location.country,
         'lat': location.lat,
-        'lon': location.lon
+        'lon': location.lon,
       },
       'current': {
         'temp': weather.current.temp,
@@ -129,57 +130,76 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         'pressure': weather.current.pressure,
         'vis': weather.current.vis,
         'cloud': weather.current.cloud,
-        'obsTime': weather.current.obsTime
+        'obsTime': weather.current.obsTime,
       },
-      'daily': weather.daily.map((day) => {
-        'fxDate': day.fxDate,
-        'tempMax': day.tempMax,
-        'tempMin': day.tempMin,
-        'textDay': day.textDay,
-        'textNight': day.textNight,
-        'windDirDay': day.windDirDay,
-        'windScaleDay': day.windScaleDay,
-        'windDirNight': day.windDirNight,
-        'windScaleNight': day.windScaleNight,
-        'humidity': day.humidity,
-        'precip': day.precip,
-        'uvIndex': day.uvIndex
-      }).toList(),
-      'hourly': weather.hourly.take(24).map((hour) => {
-        'fxTime': hour.fxTime,
-        'temp': hour.temp,
-        'text': hour.text,
-        'windDir': hour.windDir,
-        'windScale': hour.windScale,
-        'pop': hour.pop,
-        'precip': hour.precip
-      }).toList(),
-      'alerts': weather.alerts.map((alert) => {
-        'title': alert.title,
-        'level': alert.level,
-        'typeName': alert.typeName,
-        'text': alert.text,
-        'pubTime': alert.pubTime
-      }).toList(),
-      'airQuality': weatherState.airQuality != null ? {
-        'aqi': weatherState.airQuality!.aqi,
-        'level': weatherState.airQuality!.level,
-        'category': weatherState.airQuality!.category,
-        'pm2p5': weatherState.airQuality!.pm2p5,
-        'pm10': weatherState.airQuality!.pm10,
-        'no2': weatherState.airQuality!.no2,
-        'so2': weatherState.airQuality!.so2,
-        'co': weatherState.airQuality!.co,
-        'o3': weatherState.airQuality!.o3
-      } : null,
-      'indices': weatherState.weatherIndices?.map((index) => {
-        'type': index.type,
-        'name': index.name,
-        'level': index.level,
-        'category': index.category,
-        'text': index.text,
-      }).toList(),
-      'lastUpdated': weather.lastUpdated.toIso8601String()
+      'daily': weather.daily
+          .map(
+            (day) => {
+              'fxDate': day.fxDate,
+              'tempMax': day.tempMax,
+              'tempMin': day.tempMin,
+              'textDay': day.textDay,
+              'textNight': day.textNight,
+              'windDirDay': day.windDirDay,
+              'windScaleDay': day.windScaleDay,
+              'windDirNight': day.windDirNight,
+              'windScaleNight': day.windScaleNight,
+              'humidity': day.humidity,
+              'precip': day.precip,
+              'uvIndex': day.uvIndex,
+            },
+          )
+          .toList(),
+      'hourly': weather.hourly
+          .take(24)
+          .map(
+            (hour) => {
+              'fxTime': hour.fxTime,
+              'temp': hour.temp,
+              'text': hour.text,
+              'windDir': hour.windDir,
+              'windScale': hour.windScale,
+              'pop': hour.pop,
+              'precip': hour.precip,
+            },
+          )
+          .toList(),
+      'alerts': weather.alerts
+          .map(
+            (alert) => {
+              'title': alert.title,
+              'level': alert.level,
+              'typeName': alert.typeName,
+              'text': alert.text,
+              'pubTime': alert.pubTime,
+            },
+          )
+          .toList(),
+      'airQuality': weatherState.airQuality != null
+          ? {
+              'aqi': weatherState.airQuality!.aqi,
+              'level': weatherState.airQuality!.level,
+              'category': weatherState.airQuality!.category,
+              'pm2p5': weatherState.airQuality!.pm2p5,
+              'pm10': weatherState.airQuality!.pm10,
+              'no2': weatherState.airQuality!.no2,
+              'so2': weatherState.airQuality!.so2,
+              'co': weatherState.airQuality!.co,
+              'o3': weatherState.airQuality!.o3,
+            }
+          : null,
+      'indices': weatherState.weatherIndices
+          ?.map(
+            (index) => {
+              'type': index.type,
+              'name': index.name,
+              'level': index.level,
+              'category': index.category,
+              'text': index.text,
+            },
+          )
+          .toList(),
+      'lastUpdated': weather.lastUpdated.toIso8601String(),
     };
 
     // 将天气数据转换为字符串表示
@@ -329,9 +349,9 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   }
 
   /// 构建快速操作按钮
-  /// 
+  ///
   /// [text] 按钮文本
-  /// 
+  ///
   /// 返回ActionChip实例
   Widget _buildQuickAction(String text) {
     return ActionChip(
@@ -342,9 +362,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         ),
       ),
       backgroundColor: Colors.transparent,
-      side: BorderSide(
-        color: context.uiTokens.cardBorder,
-      ),
+      side: BorderSide(color: context.uiTokens.cardBorder),
       onPressed: () {
         _messageController.text = text;
         _sendMessage();
@@ -353,9 +371,9 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
   }
 
   /// 构建聊天列表
-  /// 
+  ///
   /// [session] 聊天会话
-  /// 
+  ///
   /// 返回ListView.builder实例
   Widget _buildChatList(ChatSession session) {
     return ListView.builder(
@@ -444,7 +462,9 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide(color: context.uiTokens.selectedBorder),
+                  borderSide: BorderSide(
+                    color: context.uiTokens.selectedBorder,
+                  ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -471,12 +491,12 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
 class _ChatBubble extends StatelessWidget {
   /// 消息内容
   final String message;
-  
+
   /// 是否是用户消息
   final bool isUser;
 
   /// 创建聊天气泡实例
-  /// 
+  ///
   /// [message] 消息内容
   /// [isUser] 是否是用户消息
   const _ChatBubble({required this.message, required this.isUser});
@@ -484,11 +504,31 @@ class _ChatBubble extends StatelessWidget {
   String _formatAssistantMessage(String input) {
     var text = input.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
 
-    // Keep numbered items readable even when model returns one long line.
-    text = text.replaceAll(RegExp(r'(?<!\n)(\d+[.、])\s*'), '\n\$1 ');
+    // Remove hidden control characters that sometimes appear in streamed text.
+    text = text.replaceAll(
+      RegExp(r'[\u0000-\u0008\u000B-\u001F\u007F\u200B-\u200D\uFEFF]'),
+      '',
+    );
 
-    // Break long paragraphs at sentence punctuation for readability.
-    text = text.replaceAll(RegExp(r'(?<=[。！？；.!?;])(?=[^\n])'), '\n');
+    // Keep numbered items readable, but only when numbering starts a line.
+    text = text.replaceAllMapped(
+      RegExp(r'(^|\n)\s*(\d+[.、)])\s*', multiLine: true),
+      (m) => '${m.group(1)}${m.group(2)} ',
+    );
+
+    // Ensure section labels are on their own lines for readability.
+    text = text.replaceAllMapped(
+      RegExp(
+        r'(?<!\n)(Conclusion:|Reasons:|Suggestions:|Extra:|结论：|原因：|建议：|补充：)',
+      ),
+      (m) => '\n${m.group(1)}',
+    );
+
+    // Only split at Chinese sentence punctuation to avoid breaking decimals like PM2.5.
+    text = text.replaceAll(RegExp(r'(?<=[。！？；])(?=[^\n])'), '\n');
+
+    // Remove accidental section marks from malformed replacements.
+    text = text.replaceAll('§', '');
 
     // Avoid too many blank lines after formatting.
     text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n').trim();
@@ -508,9 +548,7 @@ class _ChatBubble extends StatelessWidget {
           maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         decoration: BoxDecoration(
-          color: isUser
-              ? tokens.selectedBackground
-              : tokens.cardBackground,
+          color: isUser ? tokens.selectedBackground : tokens.cardBackground,
           border: Border.all(
             color: isUser ? tokens.selectedBorder : tokens.cardBorder,
           ),

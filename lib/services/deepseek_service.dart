@@ -12,26 +12,23 @@ class DeepSeekService {
   final String _apiKey;
   final String _baseUrl;
 
-  DeepSeekService({
-    Dio? dio,
-    String? apiKey,
-    String? baseUrl,
-  })  : _dio = dio ??
-            Dio(
-              BaseOptions(
-                connectTimeout: const Duration(seconds: 60),
-                receiveTimeout: const Duration(seconds: 120),
-                headers: const {
-                  'Content-Type': 'application/json',
-                },
-              ),
+  DeepSeekService({Dio? dio, String? apiKey, String? baseUrl})
+    : _dio =
+          dio ??
+          Dio(
+            BaseOptions(
+              connectTimeout: const Duration(seconds: 60),
+              receiveTimeout: const Duration(seconds: 120),
+              headers: const {'Content-Type': 'application/json'},
             ),
-        _apiKey = apiKey ?? ApiConfig.deepseekApiKey,
-        _baseUrl = baseUrl ?? ApiConfig.deepseekBaseUrl;
+          ),
+      _apiKey = apiKey ?? ApiConfig.deepseekApiKey,
+      _baseUrl = baseUrl ?? ApiConfig.deepseekBaseUrl;
 
   String _buildSystemPrompt(String? weatherContext) {
     final isEnglish = AppLocalizations.isEnglishCurrentLocale;
-    final hasWeather = weatherContext != null && weatherContext.trim().isNotEmpty;
+    final hasWeather =
+        weatherContext != null && weatherContext.trim().isNotEmpty;
 
     final dataSection = hasWeather
         ? (isEnglish
@@ -78,7 +75,7 @@ $dataSection''';
 $dataSection''';
   }
 
-  String _sanitizeAiResponse(String input) {
+  String _sanitizeAiResponse(String input, {bool trim = true}) {
     var text = input;
 
     text = text.replaceAll(RegExp(r'```[\s\S]*?```'), '');
@@ -93,9 +90,16 @@ $dataSection''';
     text = text.replaceAll(RegExp(r'!\[([^\]]*)\]\(([^)]*)\)'), r'$1');
     text = text.replaceAll(RegExp(r'\[([^\]]+)\]\(([^)]*)\)'), r'$1');
 
+    // Remove hidden control characters that may be rendered as garbled symbols.
+    text = text.replaceAll(
+      RegExp(r'[\u0000-\u0008\u000B-\u001F\u007F\u200B-\u200D\uFEFF]'),
+      '',
+    );
+    text = text.replaceAll('§', '');
+
     text = text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
 
-    return text.trim();
+    return trim ? text.trim() : text;
   }
 
   Stream<String> chatStream({
@@ -104,10 +108,7 @@ $dataSection''';
     String? weatherContext,
   }) async* {
     final messages = <Map<String, String>>[
-      {
-        'role': 'system',
-        'content': _buildSystemPrompt(weatherContext),
-      },
+      {'role': 'system', 'content': _buildSystemPrompt(weatherContext)},
       ...history.map((m) => {'role': m.role, 'content': m.content}),
       {'role': 'user', 'content': userMessage},
     ];
@@ -123,9 +124,7 @@ $dataSection''';
           'max_tokens': 2048,
         },
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $_apiKey',
-          },
+          headers: {'Authorization': 'Bearer $_apiKey'},
           responseType: ResponseType.stream,
         ),
       );
@@ -154,7 +153,8 @@ $dataSection''';
             final json = jsonDecode(data);
             final content = json['choices']?[0]?['delta']?['content'];
             if (content != null) {
-              yield _sanitizeAiResponse(content);
+              // Keep whitespace between streamed chunks; trim only at final stage.
+              yield _sanitizeAiResponse(content, trim: false);
             }
           } catch (_) {
             continue;
@@ -162,7 +162,10 @@ $dataSection''';
         }
       }
     } catch (e) {
-      yield AppLocalizations.tr('抱歉，发生了错误：{error}', args: {'error': e.toString()});
+      yield AppLocalizations.tr(
+        '抱歉，发生了错误：{error}',
+        args: {'error': e.toString()},
+      );
     }
   }
 
@@ -181,6 +184,10 @@ $dataSection''';
     }
     return _sanitizeAiResponse(buffer.toString());
   }
+
+  String sanitizeResponse(String input) {
+    return _sanitizeAiResponse(input);
+  }
 }
 
 class ChatMessage {
@@ -188,22 +195,13 @@ class ChatMessage {
   final String content;
   final DateTime timestamp;
 
-  ChatMessage({
-    required this.role,
-    required this.content,
-    DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now();
+  ChatMessage({required this.role, required this.content, DateTime? timestamp})
+    : timestamp = timestamp ?? DateTime.now();
 
-  Map<String, dynamic> toJson() => {
-        'role': role,
-        'content': content,
-      };
+  Map<String, dynamic> toJson() => {'role': role, 'content': content};
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    return ChatMessage(
-      role: json['role'],
-      content: json['content'],
-    );
+    return ChatMessage(role: json['role'], content: json['content']);
   }
 }
 
@@ -226,13 +224,19 @@ class ChatNotifier extends StateNotifier<ChatSession> {
 
   void addUserMessage(String content) {
     state = state.copyWith(
-      messages: [...state.messages, ChatMessage(role: 'user', content: content)],
+      messages: [
+        ...state.messages,
+        ChatMessage(role: 'user', content: content),
+      ],
     );
   }
 
   void addAssistantMessage(String content) {
     state = state.copyWith(
-      messages: [...state.messages, ChatMessage(role: 'assistant', content: content)],
+      messages: [
+        ...state.messages,
+        ChatMessage(role: 'assistant', content: content),
+      ],
     );
   }
 
