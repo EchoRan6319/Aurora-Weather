@@ -56,24 +56,58 @@ class LocationService {
   }
 
   /// 获取当前位置
-  /// 
+  ///
   /// 返回当前位置信息，失败返回null
-  Future<Position?> getCurrentPosition() async {
-    try {
-      final hasPermission = await checkAndRequestPermission();
-      if (!hasPermission) {
-        return null;
+  /// 包含重试机制以应对冷启动时GPS未就绪的情况
+  Future<Position?> getCurrentPosition({
+    int maxRetries = 3,
+    Duration initialDelay = const Duration(seconds: 1),
+    Duration maxDelay = const Duration(seconds: 5),
+  }) async {
+    for (int attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        final hasPermission = await checkAndRequestPermission();
+        if (!hasPermission) {
+          if (attempt == maxRetries - 1) {
+            return null;
+          }
+          final delay = Duration(
+            milliseconds: initialDelay.inMilliseconds * (attempt + 1),
+          );
+          await Future.delayed(delay);
+          continue;
+        }
+
+        final position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 30),
+          ),
+        );
+
+        if (position != null &&
+            position.latitude != 0.0 &&
+            position.longitude != 0.0) {
+          return position;
+        }
+
+        if (attempt == maxRetries - 1) {
+          return position;
+        }
+      } catch (e) {
+        if (attempt == maxRetries - 1) {
+          return null;
+        }
       }
 
-      return await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          timeLimit: Duration(seconds: 30),
-        ),
-      );
-    } catch (e) {
-      return null;
+      if (attempt < maxRetries - 1) {
+        final delay = Duration(
+          milliseconds: initialDelay.inMilliseconds * (attempt + 1),
+        );
+        await Future.delayed(delay);
+      }
     }
+    return null;
   }
 
   /// 检查字段是否有效
