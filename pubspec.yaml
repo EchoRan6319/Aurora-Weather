@@ -47,6 +47,7 @@ dev_dependencies:
   freezed: ^2.5.7
   riverpod_generator: ^2.6.2
   flutter_launcher_icons: ^0.13.1
+  msix: ^3.16.0
 
 flutter:
   uses-material-design: true
@@ -62,3 +63,12 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/app_icon.svg"
   remove_alpha_ios: true
+
+msix_config:
+  display_name: 轻氧天气
+  publisher_display_name: EchoRan
+  identity_name: com.echoran.pureweather
+  logo_path: assets/icons/app_icon.svg
+  architecture: x64
+  capabilities: internetClient, location
+  store: false

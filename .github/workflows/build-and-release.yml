@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*.*.*'
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -151,14 +153,23 @@ jobs:
             --dart-define=AMAP_API_KEY="$env:AMAP_API_KEY" `
             --dart-define=AMAP_WEB_KEY="$env:AMAP_WEB_KEY" `
             --dart-define=DEEPSEEK_API_KEY="$env:DEEPSEEK_API_KEY"
-      - name: Package artifact
+      - name: Package artifact (portable ZIP)
         shell: pwsh
         run: Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "build/windows/x64/runner/PureWeather-$env:GITHUB_REF_NAME-windows-x86_64-release.zip" -Force
-      - name: Upload artifact
+      - name: Create MSIX installer
+        shell: pwsh
+        run: dart run msix:create --build-windows=false
+      - name: Upload portable ZIP artifact
         uses: actions/upload-artifact@v4.6.1
         with:
           name: windows-package-x86_64
           path: build/windows/x64/runner/PureWeather-*-windows-x86_64-release.zip
+          if-no-files-found: error
+      - name: Upload MSIX installer artifact
+        uses: actions/upload-artifact@v4.6.1
+        with:
+          name: windows-msix-x86_64
+          path: build/windows/x64/runner/Release/*.msix
           if-no-files-found: error
 
   # ============================================================================
@@ -183,6 +194,12 @@ jobs:
           path: dist/windows
           pattern: windows-package-*
           merge-multiple: true
+      - name: Download MSIX artifacts
+        uses: actions/download-artifact@v4.1.9
+        with:
+          path: dist/windows
+          pattern: windows-msix-*
+          merge-multiple: true
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -190,3 +207,4 @@ jobs:
           files: |
             dist/android/*.apk
             dist/windows/*.zip
+            dist/windows/*.msix
