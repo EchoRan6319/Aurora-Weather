@@ -68,7 +68,7 @@ msix_config:
   display_name: 轻氧天气
   publisher_display_name: EchoRan
   identity_name: com.echoran.pureweather
-  logo_path: assets/icons/app_icon.svg
+  logo_path: assets/icons/app_icon.png
   architecture: x64
   capabilities: internetClient, location
   store: false

@@ -159,6 +159,10 @@ jobs:
       - name: Create MSIX installer
         shell: pwsh
         run: |
+          # Ensure PNG icon exists for MSIX packaging
+          if (-not (Test-Path "assets/icons/app_icon.png")) {
+            dart run scripts/generate_msix_icon.dart
+          }
           # Create a self-signed certificate for MSIX signing
           $cert = New-SelfSignedCertificate -Type Custom `
             -Subject "CN=PureWeather, O=EchoRan, C=CN" `
