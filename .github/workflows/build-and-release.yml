@@ -186,6 +186,8 @@ jobs:
       - name: Create Inno Setup installer
         shell: pwsh
         run: |
+          # Refresh PATH to include iscc from Chocolatey
+          $env:Path = [System.Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [System.Environment]::GetEnvironmentVariable('Path','User')
           # Determine version from git tag or use dev build
           $version = "$env:GITHUB_REF_NAME" -replace '^v', ''
           if ($version -eq "main") {
