@@ -189,15 +189,15 @@ jobs:
       - name: Build Inno Setup installer
         shell: pwsh
         run: |
-          # Download Inno Setup portable
-          $innoUrl = "https://github.com/jrsoftware/issrc/releases/download/is-6_4_2/InnoSetup-6.4.2.exe"
-          $installer = "$env:TEMP\innosetup.exe"
-          Invoke-WebRequest -Uri $innoUrl -OutFile $installer -UseBasicParsing
-          # Extract without installing (Inno Setup supports /VERYSILENT /SUPPRESSMSGBOXES)
-          $innoDir = "$env:TEMP\InnoSetup"
-          Start-Process -Wait -FilePath $installer -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /DIR=`"$innoDir`""
-          $iscc = "$innoDir\iscc.exe"
-          if (-not (Test-Path $iscc)) { throw "iscc.exe not found at $iscc" }
+          # Install Inno Setup via Chocolatey
+          choco install innosetup --no-progress -y
+          # Locate iscc
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe"
+          if (-not (Test-Path $iscc)) {
+            $iscc = "${env:ProgramFiles}\Inno Setup 6\iscc.exe"
+          }
+          Write-Host "Using iscc: $iscc"
+          if (-not (Test-Path $iscc)) { throw "iscc.exe not found" }
           # Determine version from git tag or use dev build
           $ref = "$env:GITHUB_REF_NAME" -replace '^v', ''
           if ($ref -eq "main") {
@@ -205,8 +205,8 @@ jobs:
           } else {
             $version = $ref
           }
-          Write-Host "Building installer for version: $version"
-          & $iscc scripts/setup.iss /DMyAppVersion="$version"
+          # Run iscc and capture output
+          & $iscc scripts/setup.iss /DMyAppVersion="$version" 2>&1
           if ($LASTEXITCODE -ne 0) { throw "iscc failed with exit code $LASTEXITCODE" }
       - name: Upload Inno Setup installer artifact
         uses: actions/upload-artifact@v4.6.1

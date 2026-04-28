@@ -1,17 +1,13 @@
-; PureWeather Inno Setup Script
+; PureWeather Setup Script
 ; Usage: iscc /DMyAppVersion=1.0.0 scripts/setup.iss
 
-#define MyAppName "轻氧天气"
+#define MyAppName "PureWeather"
 #define MyAppPublisher "EchoRan"
-#define MyAppURL "https://github.com/EchoRan6319/PureWeather"
 #define MyAppExeName "pureweather.exe"
 
 [Setup]
 AppName={#MyAppName}
 AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
-AppSupportURL={#MyAppURL}
-AppUpdatesURL={#MyAppURL}
 AppVersion={#MyAppVersion}
 VersionInfoVersion={#MyAppVersion}
 DefaultDirName={autopf}\{#MyAppName}
@@ -21,15 +17,11 @@ OutputBaseFilename=PureWeather_{#MyAppVersion}_Setup
 Compression=lzma2
 SolidCompression=yes
 DisableProgramGroupPage=yes
-PrivilegesRequired=admin
+PrivilegesRequired=none
 ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
-Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
 Name: "english"; MessagesFile: "compiler:Default.isl"
-
-[Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: checkedonce
 
 [Files]
 Source: "..\build\windows\x64\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
@@ -39,5 +31,8 @@ Source: "..\build\windows\x64\runner\Release\*"; DestDir: "{app}"; Flags: ignore
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
+[Tasks]
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional icons:"
+
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "Launch PureWeather"; Flags: nowait postinstall skipifsilent
