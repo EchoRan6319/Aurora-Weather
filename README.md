@@ -1,7 +1,7 @@
 # ☁️ 轻氧天气 (PureWeather)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Windows-brightgreen)
+![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20iOS%20%7C%20Web-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.41+-02569B?logo=flutter)
 
 一款使用 **Material You Design** 构建的现代化跨平台天气应用，支持动态主题色、多城市管理和 AI 天气助手。
@@ -21,10 +21,16 @@
 
 ## 平台支持
 
-| 平台 | 状态 |
-|------|------|
-| Android | ✅ 
-| Windows | ✅ 
+| 平台 | 安装包 | 状态 |
+|------|--------|------|
+| Android | APK (arm64-v8a) | ✅ |
+| Windows | MSIX / Inno Setup EXE | ✅ |
+| Linux | tar.gz | ✅ |
+| macOS | DMG (universal) | ✅ |
+| iOS | IPA（未签名） | ✅ |
+| Web | ZIP | ✅ |
+
+> 所有平台构建产物均由 GitHub Actions 自动发布到 [Releases](https://github.com/EchoRan6319/PureWeather/releases)。 
 
 ---
 
@@ -33,7 +39,7 @@
 ### 环境要求
 
 - Flutter SDK >= 3.41
-- Android Studio 或 VS Code
+- VS Code
 
 ```bash
 # 克隆项目
@@ -66,6 +72,15 @@ flutter run
 
 # Windows
 flutter run -d windows
+
+# Linux
+flutter run -d linux
+
+# macOS
+flutter run -d macos
+
+# Web
+flutter run -d chrome
 ```
 
 > 调试版使用 `applicationId` 后缀 `.debug`，可与正式版同时安装在手机上互不冲突。
@@ -74,47 +89,49 @@ flutter run -d windows
 
 ## 构建
 
-### Android
+### 本地构建
 
 ```bash
-# 通用 APK（包含所有架构）
-flutter build apk --release
+# Android（arm64-v8a）
+flutter build apk --release --target-platform=android-arm64
 
-# 按架构拆分（推荐正式版使用）
-flutter build apk --release --split-per-abi
-
-# 调试版 APK
-flutter build apk --debug
-
-# 安装到设备
-flutter install
-```
-
-输出文件：
-```
-build/app/outputs/flutter-apk/
-├── app-release.apk                # 通用包（所有架构）
-├── app-arm64-v8a-release.apk      # 拆分包：现代设备
-├── app-armeabi-v7a-release.apk    # 拆分包：老旧设备
-├── app-x86_64-release.apk         # 拆分包：模拟器
-└── app-debug.apk                  # 调试包（未签名）
-```
-
-> **提示**：使用 `--split-per-abi` 可大幅减小 APK 体积（arm64-v8a 约 22MB vs 通用包 56MB）。
-
-### Windows
-
-```bash
+# Windows
 flutter build windows --release
+
+# Linux
+flutter build linux --release
+
+# macOS
+flutter build macos --release
+
+# iOS（需 Xcode，不签名）
+flutter build ios --release --no-codesign
+
+# Web
+flutter build web --release
 ```
 
-### 自动版本号
+### CI 自动构建（推荐）
 
-使用 `build_with_version.bat` 自动从 Git 标签同步版本号：
+推送 Git 标签即可触发 GitHub Actions 构建并发布 Release：
 
 ```bash
-build_with_version.bat --release --split-per-abi
+git tag v5.4.1-1
+git push origin v5.4.1-1
 ```
+
+自动生成的安装包：
+
+| 平台 | 产物 |
+|------|------|
+| Android | `PureWeather-{version}-android-arm64-v8a-release.apk` |
+| Android | `PureWeather-{version}-android-arm64-v8a-debug.apk` |
+| Windows | `PureWeather-{version}-windows-x64-installer.msix` |
+| Windows | `PureWeather-{version}-windows-x64-setup.exe` |
+| Linux | `PureWeather-{version}-linux-x64.tar.gz` |
+| macOS | `PureWeather-{version}-macos-universal.dmg` |
+| iOS | `PureWeather-{version}-ios-unsigned.ipa` |
+| Web | `PureWeather-{version}-web-release.zip` |
 
 ---
 
