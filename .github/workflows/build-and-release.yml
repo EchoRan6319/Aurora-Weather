@@ -26,12 +26,10 @@ jobs:
           - mode: release
             mode_flag: --release
             apk_file: app-release.apk
-            artifact_name: android-apk-release
             output_suffix: android-release
           - mode: debug
             mode_flag: --debug
             apk_file: app-debug.apk
-            artifact_name: android-apk-debug
             output_suffix: android-debug
     steps:
       - name: Checkout code
@@ -42,11 +40,24 @@ jobs:
         id: version
         run: |
           LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
-          echo "raw=$LATEST_TAG"
-          echo "raw=$LATEST_TAG" >> $GITHUB_OUTPUT
           VERSION="${LATEST_TAG#v}"
-          echo "version=$VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Determine release tag
+        id: release_tag
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=dev-build-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          fi
+      - name: Create release
+        run: |
+          TAG="${{ steps.release_tag.outputs.tag }}"
+          ARGS=(--title "PureWeather $TAG" --generate-notes)
+          [[ "${{ github.ref_type }}" != "tag" ]] && ARGS+=(--prerelease)
+          gh release create "$TAG" "${ARGS[@]}" 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -109,21 +120,18 @@ jobs:
             --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
             --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
             --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
-      - name: Prepare artifact
+      - name: Upload APK to Release
         run: |
-          APK_PATH="build/app/outputs/flutter-apk/${{ matrix.apk_file }}"
-          if [ ! -f "$APK_PATH" ]; then
-            echo "APK not found: $APK_PATH"
+          APK="build/app/outputs/flutter-apk/${{ matrix.apk_file }}"
+          if [ ! -f "$APK" ]; then
+            echo "APK not found: $APK"
             ls -la build/app/outputs/flutter-apk || true
             exit 1
           fi
-          cp "$APK_PATH" "build/app/outputs/flutter-apk/PureWeather-${{ steps.version.outputs.version }}-${{ matrix.output_suffix }}.apk"
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4.6.1
-        with:
-          name: ${{ matrix.artifact_name }}
-          path: build/app/outputs/flutter-apk/PureWeather-*-${{ matrix.output_suffix }}.apk
-          if-no-files-found: error
+          gh release upload "${{ steps.release_tag.outputs.tag }}" \
+            "$APK" --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   # ============================================================================
   # Windows Builds
@@ -142,9 +150,28 @@ jobs:
           $raw = git describe --tags --abbrev=0
           if (-not $raw) { $raw = "0.0.0" }
           $version = $raw -replace '^v', ''
-          echo "raw=$raw" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding UTF8 -Append
           echo "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding UTF8 -Append
-          echo "Using version: $version"
+      - name: Determine release tag
+        id: release_tag
+        shell: pwsh
+        run: |
+          if ("$env:GITHUB_REF_TYPE" -eq "tag") {
+            $tag = "$env:GITHUB_REF_NAME"
+          } else {
+            $tag = "dev-build-$env:GITHUB_RUN_NUMBER"
+          }
+          echo "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding UTF8 -Append
+      - name: Create release
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.release_tag.outputs.tag }}"
+          $args = @("create", $tag, "--title", "PureWeather $tag", "--generate-notes")
+          if ("$env:GITHUB_REF_TYPE" -ne "tag") { $args += "--prerelease" }
+          gh release create @args 2>$null
+          $ok = 0,1 -contains $LASTEXITCODE
+          if (-not $ok) { throw "gh release create failed with $LASTEXITCODE" }
+        env:
+          GH_TOKEN: ${{ github.token }}
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -177,14 +204,12 @@ jobs:
           AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
         run: |
-          # Parse version from git describe output
           $ref = "${{ steps.version.outputs.version }}"
           $parts = $ref -split '-'
           $displayVersion = $ref
           $baseVersion = $parts[0]
           $buildPart = if ($parts.Count -gt 1) { $parts[1] } else { "0" }
           $numericVersion = "$baseVersion.$buildPart"
-          echo "Display: $displayVersion, Numeric: $numericVersion"
           flutter build windows --release `
             --build-name="$displayVersion" `
             --build-number="$env:GITHUB_RUN_NUMBER" `
@@ -193,20 +218,14 @@ jobs:
             --dart-define=AMAP_API_KEY="$env:AMAP_API_KEY" `
             --dart-define=AMAP_WEB_KEY="$env:AMAP_WEB_KEY" `
             --dart-define=DEEPSEEK_API_KEY="$env:DEEPSEEK_API_KEY"
-      - name: Package artifact (portable ZIP)
-        shell: pwsh
-        run: Compress-Archive -Path "build/windows/x64/runner/Release/*" -DestinationPath "build/windows/x64/runner/PureWeather-${{ steps.version.outputs.version }}-windows-x86_64-release.zip" -Force
       - name: Create MSIX installer
         shell: pwsh
         run: |
-          # Parse numeric version from git describe output
           $ref = "${{ steps.version.outputs.version }}"
           $parts = $ref -split '-'
           $baseVersion = $parts[0]
           $buildPart = if ($parts.Count -gt 1) { $parts[1] } else { "0" }
           $version = "$baseVersion.$buildPart"
-          echo "MSIX version: $version"
-          # Create a self-signed certificate for MSIX signing
           $cert = New-SelfSignedCertificate -Type Custom `
             -Subject "CN=PureWeather, O=EchoRan, C=CN" `
             -KeyUsage DigitalSignature `
@@ -215,98 +234,35 @@ jobs:
           $password = ConvertTo-SecureString -String "PureWeather@2026" -Force -AsPlainText
           Export-PfxCertificate -Cert $cert -FilePath "cert.pfx" -Password $password
           dart run msix:create --build-windows=false --certificate-path=cert.pfx --certificate-password=PureWeather@2026 --install-certificate=false --version="$version"
-      - name: Upload portable ZIP artifact
-        uses: actions/upload-artifact@v4.6.1
-        with:
-          name: windows-package-x86_64
-          path: build/windows/x64/runner/PureWeather-*-windows-x86_64-release.zip
-          if-no-files-found: error
-      - name: Upload MSIX installer artifact
-        uses: actions/upload-artifact@v4.6.1
-        with:
-          name: windows-msix-x86_64
-          path: build/windows/x64/runner/Release/*.msix
-          if-no-files-found: error
       - name: Build Inno Setup installer
         shell: pwsh
         run: |
-          # Install Inno Setup via Chocolatey
           choco install innosetup --no-progress -y
-          # Locate iscc
           $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\iscc.exe"
-          if (-not (Test-Path $iscc)) {
-            $iscc = "${env:ProgramFiles}\Inno Setup 6\iscc.exe"
-          }
-          Write-Host "Using iscc: $iscc"
+          if (-not (Test-Path $iscc)) { $iscc = "${env:ProgramFiles}\Inno Setup 6\iscc.exe" }
           if (-not (Test-Path $iscc)) { throw "iscc.exe not found" }
-          # Parse numeric version from git describe output
           $ref = "${{ steps.version.outputs.version }}"
           $parts = $ref -split '-'
           $baseVersion = $parts[0]
           $buildPart = if ($parts.Count -gt 1) { $parts[1] } else { "0" }
           $appVersion = "$baseVersion.$buildPart"
-          echo "Inno Setup version: $appVersion"
-          # Run iscc and capture output
           & $iscc scripts/setup.iss /DMyAppVersion="$appVersion" 2>&1
           if ($LASTEXITCODE -ne 0) { throw "iscc failed with exit code $LASTEXITCODE" }
-      - name: Upload Inno Setup installer artifact
-        uses: actions/upload-artifact@v4.6.1
-        with:
-          name: windows-innosetup-x86_64
-          path: build/windows/installer/*.exe
-          if-no-files-found: error
-
-  # ============================================================================
-  # Release
-  # ============================================================================
-  release:
-    if: needs.build-windows-x86_64.result == 'success'
-    runs-on: ubuntu-latest
-    needs:
-      - build-windows-x86_64
-    steps:
-      - name: Determine release tag and name
-        id: release
+      - name: Upload MSIX to Release
+        shell: pwsh
         run: |
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-            echo "name=Release ${{ github.ref_name }}" >> $GITHUB_OUTPUT
-          else
-            echo "tag=dev-build-${{ github.run_number }}" >> $GITHUB_OUTPUT
-            echo "name=Dev Build #${{ github.run_number }}" >> $GITHUB_OUTPUT
-          fi
-      - name: Download Android artifacts
-        uses: actions/download-artifact@v4.1.9
-        with:
-          path: dist/android
-          pattern: android-apk-*
-          merge-multiple: true
-      - name: Download Windows artifacts
-        uses: actions/download-artifact@v4.1.9
-        with:
-          path: dist/windows
-          pattern: windows-package-*
-          merge-multiple: true
-      - name: Download MSIX artifacts
-        uses: actions/download-artifact@v4.1.9
-        with:
-          path: dist/windows
-          pattern: windows-msix-*
-          merge-multiple: true
-      - name: Download Inno Setup artifacts
-        uses: actions/download-artifact@v4.1.9
-        with:
-          path: dist/windows
-          pattern: windows-innosetup-*
-          merge-multiple: true
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.release.outputs.tag }}
-          name: ${{ steps.release.outputs.name }}
-          generate_release_notes: true
-          files: |
-            dist/android/*.apk
-            dist/windows/*.zip
-            dist/windows/*.msix
-            dist/windows/*.exe
+          $tag = "${{ steps.release_tag.outputs.tag }}"
+          Get-ChildItem "build/windows/x64/runner/Release/*.msix" | ForEach-Object {
+            gh release upload $tag $_.FullName --clobber
+          }
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Upload Inno Setup EXE to Release
+        shell: pwsh
+        run: |
+          $tag = "${{ steps.release_tag.outputs.tag }}"
+          Get-ChildItem "build/windows/installer/*.exe" | ForEach-Object {
+            gh release upload $tag $_.FullName --clobber
+          }
+        env:
+          GH_TOKEN: ${{ github.token }}
