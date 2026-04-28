@@ -257,7 +257,7 @@ jobs:
           $ver = "${{ steps.version.outputs.version }}"
           Get-ChildItem "build/windows/x64/runner/Release/*.msix" | ForEach-Object {
             $newName = "build/windows/x64/runner/Release/PureWeather-$ver-windows-x64-installer.msix"
-            Rename-Item $_.FullName $newName -Force
+            Move-Item $_.FullName $newName -Force
             gh release upload $tag $newName --clobber
           }
         env:
