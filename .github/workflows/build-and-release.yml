@@ -120,16 +120,17 @@ jobs:
             --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
             --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
             --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
-      - name: Upload APK to Release
+      - name: Rename and upload APK
         run: |
-          APK="build/app/outputs/flutter-apk/${{ matrix.apk_file }}"
-          if [ ! -f "$APK" ]; then
-            echo "APK not found: $APK"
+          SRC="build/app/outputs/flutter-apk/${{ matrix.apk_file }}"
+          if [ ! -f "$SRC" ]; then
+            echo "APK not found: $SRC"
             ls -la build/app/outputs/flutter-apk || true
             exit 1
           fi
-          gh release upload "${{ steps.release_tag.outputs.tag }}" \
-            "$APK" --clobber
+          DST="build/app/outputs/flutter-apk/PureWeather-${{ steps.version.outputs.version }}-android-arm64-v8a-${{ matrix.mode }}.apk"
+          cp "$SRC" "$DST"
+          gh release upload "${{ steps.release_tag.outputs.tag }}" "$DST" --clobber
         env:
           GH_TOKEN: ${{ github.token }}
 
@@ -253,8 +254,11 @@ jobs:
         shell: pwsh
         run: |
           $tag = "${{ steps.release_tag.outputs.tag }}"
+          $ver = "${{ steps.version.outputs.version }}"
           Get-ChildItem "build/windows/x64/runner/Release/*.msix" | ForEach-Object {
-            gh release upload $tag $_.FullName --clobber
+            $newName = "build/windows/x64/runner/Release/PureWeather-$ver-windows-x64-installer.msix"
+            Rename-Item $_.FullName $newName -Force
+            gh release upload $tag $newName --clobber
           }
         env:
           GH_TOKEN: ${{ github.token }}
@@ -441,7 +445,7 @@ jobs:
           hdiutil create -volname "PureWeather" \
             -srcfolder "build/macos/Build/Products/Release/PureWeather.app" \
             -ov -format UDZO \
-            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos.dmg"
+            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos-universal.dmg"
       - name: Build iOS
         env:
           QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
@@ -463,16 +467,16 @@ jobs:
           cd build/ios/iphoneos
           mkdir -p Payload
           cp -r Runner.app Payload/
-          zip -r "PureWeather-${{ steps.version.outputs.version }}-ios.ipa" Payload
+          zip -r "PureWeather-${{ steps.version.outputs.version }}-ios-unsigned.ipa" Payload
           rm -rf Payload
       - name: Upload macOS + iOS to Release
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
           gh release upload "$TAG" \
-            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos.dmg" \
+            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos-universal.dmg" \
             --clobber || true
           gh release upload "$TAG" \
-            "build/ios/iphoneos/PureWeather-${{ steps.version.outputs.version }}-ios.ipa" \
+            "build/ios/iphoneos/PureWeather-${{ steps.version.outputs.version }}-ios-unsigned.ipa" \
             --clobber || true
         env:
           GH_TOKEN: ${{ github.token }}
