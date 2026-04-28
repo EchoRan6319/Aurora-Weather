@@ -267,3 +267,212 @@ jobs:
           }
         env:
           GH_TOKEN: ${{ github.token }}
+
+  # ============================================================================
+  # Linux + Web Builds
+  # ============================================================================
+  build-linux-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Get version from git tag
+        id: version
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+      - name: Determine release tag
+        id: release_tag
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=dev-build-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          fi
+      - name: Create release
+        run: |
+          TAG="${{ steps.release_tag.outputs.tag }}"
+          ARGS=(--title "PureWeather $TAG" --generate-notes)
+          [[ "${{ github.ref_type }}" != "tag" ]] && ARGS+=(--prerelease)
+          gh release create "$TAG" "${ARGS[@]}" 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - name: Install Linux build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - run: flutter pub get
+      - name: Generate .env
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          cat > .env << EOF
+          QWEATHER_API_KEY=$QWEATHER_API_KEY
+          CAIYUN_API_KEY=$CAIYUN_API_KEY
+          AMAP_API_KEY=$AMAP_API_KEY
+          AMAP_WEB_KEY=$AMAP_WEB_KEY
+          DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY
+          EOF
+      - name: Build Linux
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          flutter build linux --release \
+            --build-name="${{ steps.version.outputs.version }}" \
+            --build-number="$GITHUB_RUN_NUMBER" \
+            --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
+            --dart-define=CAIYUN_API_KEY="$CAIYUN_API_KEY" \
+            --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
+            --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
+            --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+      - name: Package Linux
+        run: tar -C build/linux/x64/release -czf "build/linux/x64/release/PureWeather-${{ steps.version.outputs.version }}-linux-x64.tar.gz" bundle
+      - name: Build Web
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          flutter build web --release \
+            --build-name="${{ steps.version.outputs.version }}" \
+            --build-number="$GITHUB_RUN_NUMBER" \
+            --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
+            --dart-define=CAIYUN_API_KEY="$CAIYUN_API_KEY" \
+            --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
+            --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
+            --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+      - name: Package Web
+        run: cd build && zip -r "PureWeather-${{ steps.version.outputs.version }}-web-release.zip" web
+      - name: Upload to Release
+        run: |
+          TAG="${{ steps.release_tag.outputs.tag }}"
+          gh release upload "$TAG" \
+            "build/linux/x64/release/PureWeather-${{ steps.version.outputs.version }}-linux-x64.tar.gz" \
+            --clobber
+          gh release upload "$TAG" \
+            "build/PureWeather-${{ steps.version.outputs.version }}-web-release.zip" \
+            --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+  # ============================================================================
+  # Apple Builds (macOS + iOS)
+  # ============================================================================
+  build-apple:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Get version from git tag
+        id: version
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+      - name: Determine release tag
+        id: release_tag
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "tag=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=dev-build-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          fi
+      - name: Create release
+        run: |
+          TAG="${{ steps.release_tag.outputs.tag }}"
+          ARGS=(--title "PureWeather $TAG" --generate-notes)
+          [[ "${{ github.ref_type }}" != "tag" ]] && ARGS+=(--prerelease)
+          gh release create "$TAG" "${ARGS[@]}" 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - run: flutter pub get
+      - name: Generate .env
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          cat > .env << EOF
+          QWEATHER_API_KEY=$QWEATHER_API_KEY
+          CAIYUN_API_KEY=$CAIYUN_API_KEY
+          AMAP_API_KEY=$AMAP_API_KEY
+          AMAP_WEB_KEY=$AMAP_WEB_KEY
+          DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY
+          EOF
+      - name: Build macOS
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          flutter build macos --release \
+            --build-name="${{ steps.version.outputs.version }}" \
+            --build-number="$GITHUB_RUN_NUMBER" \
+            --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
+            --dart-define=CAIYUN_API_KEY="$CAIYUN_API_KEY" \
+            --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
+            --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
+            --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+      - name: Package macOS DMG
+        run: |
+          hdiutil create -volname "PureWeather" \
+            -srcfolder "build/macos/Build/Products/Release/PureWeather.app" \
+            -ov -format UDZO \
+            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos.dmg"
+      - name: Build iOS
+        env:
+          QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
+          CAIYUN_API_KEY: ${{ secrets.CAIYUN_API_KEY }}
+          AMAP_API_KEY: ${{ secrets.AMAP_API_KEY }}
+          AMAP_WEB_KEY: ${{ secrets.AMAP_WEB_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          flutter build ios --release --no-codesign \
+            --build-name="${{ steps.version.outputs.version }}" \
+            --build-number="$GITHUB_RUN_NUMBER" \
+            --dart-define=QWEATHER_API_KEY="$QWEATHER_API_KEY" \
+            --dart-define=CAIYUN_API_KEY="$CAIYUN_API_KEY" \
+            --dart-define=AMAP_API_KEY="$AMAP_API_KEY" \
+            --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
+            --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+      - name: Package IPA
+        run: |
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload/
+          zip -r "PureWeather-${{ steps.version.outputs.version }}-ios.ipa" Payload
+          rm -rf Payload
+      - name: Upload macOS + iOS to Release
+        run: |
+          TAG="${{ steps.release_tag.outputs.tag }}"
+          gh release upload "$TAG" \
+            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos.dmg" \
+            --clobber || true
+          gh release upload "$TAG" \
+            "build/ios/iphoneos/PureWeather-${{ steps.version.outputs.version }}-ios.ipa" \
+            --clobber || true
+        env:
+          GH_TOKEN: ${{ github.token }}
