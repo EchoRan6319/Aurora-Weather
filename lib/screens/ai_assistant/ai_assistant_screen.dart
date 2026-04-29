@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -202,8 +203,8 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
       'lastUpdated': weather.lastUpdated.toIso8601String(),
     };
 
-    // 将天气数据转换为字符串表示
-    final weatherJson = weatherData.toString();
+    // 将天气数据转换为标准 JSON 格式，便于 AI 模型解析
+    final weatherJson = const JsonEncoder.withIndent('  ').convert(weatherData);
 
     // 构建系统提示，告诉AI如何使用这些数据
     return '''

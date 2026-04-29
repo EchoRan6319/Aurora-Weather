@@ -113,14 +113,14 @@ class LocationService {
           ),
         );
 
-        if (position.latitude != 0.0 &&
-            position.longitude != 0.0) {
-          return position;
+        // GPS 冷启动未就绪时可能返回 (0,0)，视为无效结果继续重试
+        if (position.latitude == 0.0 && position.longitude == 0.0) {
+          debugPrint('[LocationService] GPS 返回零坐标，等待重试 (第${attempt + 1}次)');
+          if (attempt == maxRetries - 1) return position;
+          continue;
         }
 
-        if (attempt == maxRetries - 1) {
-          return position;
-        }
+        return position;
       } catch (e) {
         debugPrint('[LocationService] 获取位置失败 (第${attempt + 1}次): $e');
         if (attempt == maxRetries - 1) {
@@ -207,80 +207,76 @@ class LocationService {
     double lon, {
     LocationAccuracyLevel? accuracyLevel,
   }) async {
-    try {
-      final response = await _dio.get(
-        'https://restapi.amap.com/v3/geocode/regeo',
-        queryParameters: {
-          'location': '$lon,$lat',
-          'key': _apiKey,
-          'extensions': 'base',
-        },
+    final response = await _dio.get(
+      'https://restapi.amap.com/v3/geocode/regeo',
+      queryParameters: {
+        'location': '$lon,$lat',
+        'key': _apiKey,
+        'extensions': 'base',
+      },
+    );
+
+    final data = response.data;
+    if (data['status'] == '1') {
+      final regeocode = data['regeocode'];
+      final addressComponent = regeocode['addressComponent'];
+
+      String province = _isValidField(addressComponent['province'])
+          ? addressComponent['province'].toString()
+          : '';
+      String city = _isValidField(addressComponent['city'])
+          ? addressComponent['city'].toString()
+          : '';
+      String district = _isValidField(addressComponent['district'])
+          ? addressComponent['district'].toString()
+          : '';
+      String township = _isValidField(addressComponent['township'])
+          ? addressComponent['township'].toString()
+          : '';
+
+      if (city.isEmpty) {
+        city = province;
+      }
+
+      String locationName = _getLocationName(
+        addressComponent,
+        city,
+        accuracyLevel: accuracyLevel,
       );
 
-      final data = response.data;
-      if (data['status'] == '1') {
-        final regeocode = data['regeocode'];
-        final addressComponent = regeocode['addressComponent'];
-
-        String province = _isValidField(addressComponent['province'])
-            ? addressComponent['province'].toString()
-            : '';
-        String city = _isValidField(addressComponent['city'])
-            ? addressComponent['city'].toString()
-            : '';
-        String district = _isValidField(addressComponent['district'])
-            ? addressComponent['district'].toString()
-            : '';
-        String township = _isValidField(addressComponent['township'])
-            ? addressComponent['township'].toString()
-            : '';
-
-        if (city.isEmpty) {
-          city = province;
+      if (locationName.isEmpty || locationName == AppLocalizations.tr('当前位置')) {
+        if (accuracyLevel == LocationAccuracyLevel.street) {
+          locationName = township.isNotEmpty
+              ? township
+              : district.isNotEmpty
+              ? district
+              : city;
+        } else {
+          locationName = district.isNotEmpty ? district : city;
         }
-
-        String locationName = _getLocationName(
-          addressComponent,
-          city,
-          accuracyLevel: accuracyLevel,
-        );
-
-        if (locationName.isEmpty || locationName == AppLocalizations.tr('当前位置')) {
-          if (accuracyLevel == LocationAccuracyLevel.street) {
-            locationName = township.isNotEmpty
-                ? township
-                : district.isNotEmpty
-                ? district
-                : city;
-          } else {
-            locationName = district.isNotEmpty ? district : city;
-          }
-        }
-
-        if (locationName.isEmpty) {
-          locationName = province.isNotEmpty
-              ? province
-              : AppLocalizations.tr('当前位置');
-        }
-
-        return Location(
-          id: '${lon.toStringAsFixed(2)},${lat.toStringAsFixed(2)}',
-          name: locationName,
-          adm1: province,
-          adm2: city,
-          country: AppLocalizations.tr('中国'),
-          lat: lat,
-          lon: lon,
-          tz: 'Asia/Shanghai',
-          utcOffset: '+08:00',
-          isDefault: false,
-          sortOrder: 0,
-        );
       }
-      throw Exception('Location lookup failed');
-    } catch (e) {
-      rethrow;
+
+      if (locationName.isEmpty) {
+        locationName = province.isNotEmpty
+            ? province
+            : AppLocalizations.tr('当前位置');
+      }
+
+      return Location(
+        id: '${lon.toStringAsFixed(4)},${lat.toStringAsFixed(4)}',
+        name: locationName,
+        adm1: province,
+        adm2: city,
+        country: AppLocalizations.tr('中国'),
+        lat: lat,
+        lon: lon,
+        tz: 'Asia/Shanghai',
+        utcOffset: '+08:00',
+        isDefault: false,
+        sortOrder: 0,
+      );
     }
+    throw Exception('Location lookup failed');
   }
 
   /// 搜索位置
@@ -319,7 +315,7 @@ class LocationService {
             final lon = double.parse(coords[0]);
             final lat = double.parse(coords[1]);
 
-            final uid = '${lon.toStringAsFixed(2)},${lat.toStringAsFixed(2)}';
+            final uid = '${lon.toStringAsFixed(4)},${lat.toStringAsFixed(4)}';
             if (seenIds.contains(uid)) continue;
             seenIds.add(uid);
 
@@ -384,7 +380,7 @@ class LocationService {
             final lon = double.parse(location[0]);
             final lat = double.parse(location[1]);
 
-            final uid = '${lon.toStringAsFixed(2)},${lat.toStringAsFixed(2)}';
+            final uid = '${lon.toStringAsFixed(4)},${lat.toStringAsFixed(4)}';
             if (seenIds.contains(uid)) continue;
             seenIds.add(uid);
 

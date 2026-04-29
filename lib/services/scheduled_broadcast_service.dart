@@ -32,11 +32,14 @@ class ScheduledBroadcastService {
   /// 天气服务实例
   QWeatherService _weatherService = QWeatherService();
 
+  /// 城市仓库实例（由 Riverpod 层注入，避免直接构造）
+  CityRepository? _cityRepository;
+
   /// 定时器，用于桌面端补偿
   Timer? _pulseTimer;
 
-  /// 最后一次触发检查的小时，避免重复触发
-  int _lastCheckHour = -1;
+  /// 最后一次触发播报的时间标记（hour * 60 + minute），避免重复触发
+  int _lastTriggeredMinute = -1;
 
   /// 缓存当前设置，以便在准点检查时使用
   ScheduledBroadcastSettings? _currentSettings;
@@ -66,6 +69,11 @@ class ScheduledBroadcastService {
   /// 更新天气服务实例，确保使用最新配置（语言等）
   void updateWeatherService(QWeatherService service) {
     _weatherService = service;
+  }
+
+  /// 注入城市仓库实例，避免直接构造
+  void updateCityRepository(CityRepository repository) {
+    _cityRepository = repository;
   }
 
   /// 初始化定时播报服务
@@ -412,7 +420,7 @@ class ScheduledBroadcastService {
     await notificationServiceProvider.cancelScheduledAndroidLiveWeatherUpdate(
       _eveningNotificationId,
     );
-    _lastCheckHour = -1; // 重置检查标记
+    _lastTriggeredMinute = -1; // 重置检查标记
   }
 
   /// 启动前台检查定时器
@@ -430,28 +438,30 @@ class ScheduledBroadcastService {
     if (settings == null || !settings.enabled) return;
 
     final now = DateTime.now();
-    // 避免在同一个小时内重复推送
-    if (now.hour == _lastCheckHour) return;
+    final nowMinuteKey = now.hour * 60 + now.minute;
 
-    // 检查早上播报
+    // 避免在同一分钟内重复推送
+    if (nowMinuteKey == _lastTriggeredMinute) return;
+
+    // 检查早上播报（精确匹配分钟）
     if (settings.morningTime.enabled &&
         now.hour == settings.morningTime.hour &&
-        now.minute >= settings.morningTime.minute) {
+        now.minute == settings.morningTime.minute) {
       debugPrint(
         '[ScheduledBroadcast] Pulse match: triggering morning broadcast',
       );
-      _lastCheckHour = now.hour;
+      _lastTriggeredMinute = nowMinuteKey;
       await sendMorningBroadcast(settings);
     }
 
-    // 检查晚上播报
+    // 检查晚上播报（精确匹配分钟）
     if (settings.eveningTime.enabled &&
         now.hour == settings.eveningTime.hour &&
-        now.minute >= settings.eveningTime.minute) {
+        now.minute == settings.eveningTime.minute) {
       debugPrint(
         '[ScheduledBroadcast] Pulse match: triggering evening broadcast',
       );
-      _lastCheckHour = now.hour;
+      _lastTriggeredMinute = nowMinuteKey;
       await sendEveningBroadcast(settings);
     }
   }
@@ -553,7 +563,7 @@ class ScheduledBroadcastService {
     debugPrint('[ScheduledBroadcast] Fetching default city weather...');
 
     final prefs = await SharedPreferences.getInstance();
-    final cityStore = await CityRepository().loadStore();
+    final cityStore = await (_cityRepository ?? CityRepository()).loadStore();
     final cities = cityStore.cities;
 
     if (cities.isEmpty) {

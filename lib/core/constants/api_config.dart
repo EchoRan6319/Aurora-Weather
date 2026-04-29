@@ -1,60 +1,87 @@
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+// 条件导入 dart:io，Web 平台使用空实现
+import 'dart:io' if (dart.library.html) '';
 
 /// API configuration.
 ///
 /// Lookup order (high to low priority):
 /// 1) --dart-define
-/// 2) Process environment variables
+/// 2) Process environment variables (non-web only)
 /// 3) .env (flutter_dotenv)
 class ApiConfig {
+  static String _fromEnv(String key) {
+    if (kIsWeb) return '';
+    try {
+      return Platform.environment[key] ?? '';
+    } catch (_) {
+      return '';
+    }
+  }
+
   static String get qweatherApiKey {
     const fromDefine = String.fromEnvironment('QWEATHER_API_KEY', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['QWEATHER_API_KEY'] ?? dotenv.env['QWEATHER_API_KEY'] ?? '';
+    return _fromEnv('QWEATHER_API_KEY').isNotEmpty
+        ? _fromEnv('QWEATHER_API_KEY')
+        : dotenv.env['QWEATHER_API_KEY'] ?? '';
   }
 
   static String get qweatherBaseUrl {
     const fromDefine = String.fromEnvironment('QWEATHER_BASE_URL', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['QWEATHER_BASE_URL'] ?? dotenv.env['QWEATHER_BASE_URL'] ?? 'https://devapi.qweather.com/v7';
+    return _fromEnv('QWEATHER_BASE_URL').isNotEmpty
+        ? _fromEnv('QWEATHER_BASE_URL')
+        : dotenv.env['QWEATHER_BASE_URL'] ?? 'https://devapi.qweather.com/v7';
   }
 
   static String get caiyunApiKey {
     const fromDefine = String.fromEnvironment('CAIYUN_API_KEY', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['CAIYUN_API_KEY'] ?? dotenv.env['CAIYUN_API_KEY'] ?? '';
+    return _fromEnv('CAIYUN_API_KEY').isNotEmpty
+        ? _fromEnv('CAIYUN_API_KEY')
+        : dotenv.env['CAIYUN_API_KEY'] ?? '';
   }
 
   static String get caiyunBaseUrl {
     const fromDefine = String.fromEnvironment('CAIYUN_BASE_URL', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['CAIYUN_BASE_URL'] ?? dotenv.env['CAIYUN_BASE_URL'] ?? 'https://api.caiyunapp.com/v2.6';
+    return _fromEnv('CAIYUN_BASE_URL').isNotEmpty
+        ? _fromEnv('CAIYUN_BASE_URL')
+        : dotenv.env['CAIYUN_BASE_URL'] ?? 'https://api.caiyunapp.com/v2.6';
   }
 
   static String get amapApiKey {
     const fromDefine = String.fromEnvironment('AMAP_API_KEY', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['AMAP_API_KEY'] ?? dotenv.env['AMAP_API_KEY'] ?? '';
+    return _fromEnv('AMAP_API_KEY').isNotEmpty
+        ? _fromEnv('AMAP_API_KEY')
+        : dotenv.env['AMAP_API_KEY'] ?? '';
   }
 
   static String get amapWebKey {
     const fromDefine = String.fromEnvironment('AMAP_WEB_KEY', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['AMAP_WEB_KEY'] ?? dotenv.env['AMAP_WEB_KEY'] ?? '';
+    return _fromEnv('AMAP_WEB_KEY').isNotEmpty
+        ? _fromEnv('AMAP_WEB_KEY')
+        : dotenv.env['AMAP_WEB_KEY'] ?? '';
   }
 
   static String get deepseekApiKey {
     const fromDefine = String.fromEnvironment('DEEPSEEK_API_KEY', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['DEEPSEEK_API_KEY'] ?? dotenv.env['DEEPSEEK_API_KEY'] ?? '';
+    return _fromEnv('DEEPSEEK_API_KEY').isNotEmpty
+        ? _fromEnv('DEEPSEEK_API_KEY')
+        : dotenv.env['DEEPSEEK_API_KEY'] ?? '';
   }
 
   static String get deepseekBaseUrl {
     const fromDefine = String.fromEnvironment('DEEPSEEK_BASE_URL', defaultValue: '');
     if (fromDefine.isNotEmpty) return fromDefine;
-    return Platform.environment['DEEPSEEK_BASE_URL'] ?? dotenv.env['DEEPSEEK_BASE_URL'] ?? 'https://api.deepseek.com/v1';
+    return _fromEnv('DEEPSEEK_BASE_URL').isNotEmpty
+        ? _fromEnv('DEEPSEEK_BASE_URL')
+        : dotenv.env['DEEPSEEK_BASE_URL'] ?? 'https://api.deepseek.com/v1';
   }
 
   static bool get isConfigured {

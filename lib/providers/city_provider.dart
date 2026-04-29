@@ -81,7 +81,8 @@ class CityController extends StateNotifier<List<Location>> {
   }
 
   bool _isSameCity(Location a, Location b) {
-    return a.id == b.id || (a.name == b.name && a.adm2 == b.adm2);
+    return a.id == b.id ||
+        (a.name == b.name && a.adm2 == b.adm2 && a.adm1 == b.adm1);
   }
 
   Future<void> _commit(List<Location> nextCities, {String? defaultCityId}) async {
@@ -295,7 +296,7 @@ class LocationInitNotifier extends StateNotifier<LocationInitState> {
       state = state.copyWith(isInitialized: false);
     }
 
-    // Android冷启动时GPS硬件需要时间就绪，500ms太短会导致首次定位失败
+    // Android 冷启动时 GPS 硬件需要约 2 秒预热，太短会导致首次定位返回 (0,0) 触发重试链
     await Future.delayed(const Duration(seconds: 2));
 
     try {

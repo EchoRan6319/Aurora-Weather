@@ -26,22 +26,8 @@ class WeatherScreen extends ConsumerStatefulWidget {
 }
 
 class _WeatherScreenState extends ConsumerState<WeatherScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // 页面加载后获取天气数据
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadWeather();
-    });
-  }
-
-  /// 加载天气数据
-  Future<void> _loadWeather() async {
-    final defaultCity = ref.read(defaultCityProvider);
-    if (defaultCity != null) {
-      await ref.read(weatherProvider.notifier).loadWeather(defaultCity);
-    }
-  }
+  // 天气加载由 MainScreen 中的 ref.listen(locationInitProvider/defaultCityProvider) 统一管理
+  // 此处不再重复调用，避免启动时多次加载
 
   /// 刷新天气数据
   Future<void> _onRefresh() async {
@@ -715,7 +701,9 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   /// [sunset]: 日落时间
   bool _isNightTime(String obsTime, String? sunrise, String? sunset) {
     try {
-      final now = DateTime.parse(obsTime);
+      // 处理带时区后缀的时间字符串，截取到秒部分
+      final sanitized = obsTime.replaceFirst(RegExp(r'[+-]\d{2}:\d{2}$'), '');
+      final now = DateTime.tryParse(sanitized) ?? DateTime.now();
 
       if (sunrise != null &&
           sunset != null &&

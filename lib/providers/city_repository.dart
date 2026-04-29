@@ -69,7 +69,7 @@ class CityRepository {
 
     for (final city in snapshot.cities) {
       final idKey = city.id.trim();
-      final compositeKey = '${city.name.toLowerCase()}|${city.adm2.toLowerCase()}';
+      final compositeKey = '${city.name.toLowerCase()}|${city.adm2.toLowerCase()}|${city.adm1.toLowerCase()}';
       if (seenIds.contains(idKey) || seenNameAdmin.contains(compositeKey)) {
         continue;
       }

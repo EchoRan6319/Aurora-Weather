@@ -135,31 +135,49 @@ $dataSection''';
         return;
       }
 
+      final lineBuffer = StringBuffer();
+
       await for (final chunk in stream) {
         final text = utf8.decode(chunk);
-        final lines = text.split('\n');
+        lineBuffer.write(text);
 
-        for (final line in lines) {
-          if (!line.startsWith('data: ')) {
-            continue;
-          }
+        final buffered = lineBuffer.toString();
+        final lines = buffered.split('\n');
+
+        // 最后一段可能不完整（TCP 分包），保留在 buffer 中
+        lineBuffer.clear();
+        lineBuffer.write(lines.last);
+
+        // 除最后一段外，都是完整行
+        for (var i = 0; i < lines.length - 1; i++) {
+          final line = lines[i].trim();
+          if (!line.startsWith('data: ')) continue;
 
           final data = line.substring(6);
-          if (data == '[DONE]') {
-            continue;
-          }
+          if (data == '[DONE]') continue;
 
           try {
             final parsed = jsonDecode(data);
             final content = parsed['choices']?[0]?['delta']?['content'];
             if (content != null) {
-              // Keep whitespace between streamed chunks; trim only at final stage.
               yield _sanitizeAiResponse(content, trim: false);
             }
           } catch (_) {
             continue;
           }
         }
+      }
+
+      // 处理 buffer 中剩余的最后一行
+      final remaining = lineBuffer.toString().trim();
+      if (remaining.startsWith('data: ') && remaining != 'data: [DONE]') {
+        try {
+          final parsed = jsonDecode(remaining.substring(6));
+          final content = parsed['choices']?[0]?['delta']?['content'];
+          if (content != null) {
+            yield _sanitizeAiResponse(content, trim: false);
+          }
+        } catch (_) {}
       }
     } catch (e) {
       yield AppLocalizations.tr(

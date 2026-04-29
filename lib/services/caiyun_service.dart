@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../core/constants/api_config.dart';
 
@@ -101,14 +102,22 @@ class CaiyunMinuteRain {
     final minutely = result['minutely'] ?? {};
     final precipitation2h = minutely['precipitation_2h'] ?? [];
     
+    // API 契约：precipitation_2h 固定返回 24 项（每 5 分钟一项，共 2 小时）
+    // 若项数异常，按实际长度动态计算间隔以保持时间轴正确
+    final itemCount = (precipitation2h as List).length;
+    final intervalMinutes = itemCount > 0 ? (120 / itemCount).round() : 5;
+    if (itemCount != 24) {
+      debugPrint('[CaiyunMinuteRain] Unexpected precipitation_2h count: $itemCount (expected 24)');
+    }
+
     return CaiyunMinuteRain(
       status: json['status'] ?? '',
       description: minutely['description'] ?? '',
-      precipitation: (precipitation2h as List)
+      precipitation: precipitation2h
           .asMap()
           .entries
           .map((e) => MinuteRainItem(
-                minute: e.key * 5,
+                minute: e.key * intervalMinutes,
                 value: (e.value as num).toDouble(),
               ))
           .toList(),

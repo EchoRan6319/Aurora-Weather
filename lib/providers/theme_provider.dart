@@ -97,13 +97,17 @@ class ThemeNotifier extends StateNotifier<ThemeSettings> {
     final prefs = await SharedPreferences.getInstance();
 
     final themeModeIndex = prefs.getInt(_keyThemeMode) ?? 0;
+    final safeThemeModeIndex =
+        (themeModeIndex >= 0 && themeModeIndex < AppThemeMode.values.length)
+            ? themeModeIndex
+            : 0;
     final seedColorValue = prefs.getInt(_keySeedColor);
     final useDynamicColor = prefs.getBool(_keyUseDynamicColor) ?? true;
     final useMaterial3 = prefs.getBool(_keyUseMaterial3) ?? true;
     final useAmoledBlack = prefs.getBool(_keyUseAmoledBlack) ?? false;
 
     state = ThemeSettings(
-      themeMode: AppThemeMode.values[themeModeIndex],
+      themeMode: AppThemeMode.values[safeThemeModeIndex],
       seedColor: seedColorValue != null ? Color(seedColorValue) : null,
       useDynamicColor: useDynamicColor,
       useMaterial3: useMaterial3,

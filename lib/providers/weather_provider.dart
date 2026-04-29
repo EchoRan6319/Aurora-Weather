@@ -109,6 +109,12 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
   /// 已显示的预警ID集合，用于避免重复显示通知
   final Set<String> _shownAlertIds = {};
 
+  /// 加载请求计数器，用于防止并发加载时旧请求覆盖新结果
+  int _loadRequestId = 0;
+
+  /// 上次缓存清理时间
+  DateTime _lastCacheCleanupTime = DateTime.fromMillisecondsSinceEpoch(0);
+
   /// 构造函数
   WeatherNotifier(this._ref, this._qweatherService, this._caiyunService)
     : super(const WeatherState());
@@ -117,7 +123,9 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
   ///
   /// [location]: 位置信息
   Future<void> loadWeather(Location location) async {
-    // 更新状态为加载中
+    final requestId = ++_loadRequestId;
+
+    // 如果已有请求正在进行，仅更新 loading 状态（不清理已有数据）
     state = state.copyWith(
       loadingState: WeatherLoadingState.loading,
       clearError: true,
@@ -129,6 +137,9 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
         location.id,
         location,
       );
+
+      // 并发保护：如果已有更新的请求，跳过本次结果
+      if (requestId != _loadRequestId) return;
 
       // 2. 尝试获取辅助数据，但不让它们阻塞核心数据
       AirQuality? airQuality;
@@ -156,6 +167,9 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
         debugPrint('加载生活指数失败: $e');
       }
 
+      // 并发保护：再次检查，因为辅助数据获取可能耗时较长
+      if (requestId != _loadRequestId) return;
+
       // 更新状态为加载完成
       state = WeatherState(
         loadingState: WeatherLoadingState.loaded,
@@ -168,8 +182,12 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
       // 自动持久化缓存数据，供定时播报回退使用
       _saveWeatherCache(location.id, weatherData);
 
-      // 清理孤儿数据（异步执行，不阻塞主流程）
-      _cleanupWeatherCache();
+      // 清理孤儿数据（限制频率：最多每小时一次）
+      final now = DateTime.now();
+      if (now.difference(_lastCacheCleanupTime).inHours >= 1) {
+        _lastCacheCleanupTime = now;
+        _cleanupWeatherCache();
+      }
 
       // 检查并发送天气预警通知
       await _checkAndSendAlertNotifications(weatherData.alerts);
@@ -179,6 +197,9 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
         scene: 'weather_load',
       );
     } catch (e) {
+      // 并发保护：仅更新当前请求的错误状态
+      if (requestId != _loadRequestId) return;
+
       // 更新状态为错误
       state = state.copyWith(
         loadingState: WeatherLoadingState.error,
