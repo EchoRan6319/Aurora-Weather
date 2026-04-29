@@ -1,19 +1,21 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../app_localizations.dart';
 import '../core/constants/api_config.dart';
 import '../models/weather_models.dart';
 import '../providers/settings_provider.dart';
 
 /// 位置服务类
-/// 
+///
 /// 负责处理位置相关的功能，包括权限检查、获取当前位置、根据坐标获取位置信息等
 class LocationService {
   /// Dio实例，用于网络请求
   final Dio _dio;
   /// 高德地图API密钥
   final String _apiKey;
+  /// 缓存的权限状态，避免冷启动时重复请求权限
+  bool? _permissionCache;
 
   /// 构造函数
   /// 
@@ -31,28 +33,51 @@ class LocationService {
       _apiKey = apiKey ?? ApiConfig.amapWebKey;
 
   /// 检查并请求位置权限
-  /// 
+  ///
+  /// [forceRequest] 为 true 时强制调用 requestPermission（仅首次调用时使用）
   /// 返回是否获取到权限
-  Future<bool> checkAndRequestPermission() async {
+  Future<bool> checkAndRequestPermission({bool forceRequest = false}) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      debugPrint('[LocationService] 系统定位服务未启用');
       return false;
     }
 
     LocationPermission permission = await Geolocator.checkPermission();
+
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return false;
+      // 仅在首次调用或明确要求时才触发系统权限弹窗
+      if (forceRequest || _permissionCache == null) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          _permissionCache = false;
+          return false;
+        }
+      } else {
+        // 非首次调用但 checkPermission 返回 denied，可能是冷启动时系统尚未就绪，短暂等待后重试
+        await Future.delayed(const Duration(milliseconds: 500));
+        permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          _permissionCache = false;
+          return false;
+        }
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      await openAppSettings();
+      _permissionCache = false;
+      debugPrint('[LocationService] 定位权限被永久拒绝');
       return false;
     }
 
+    _permissionCache = true;
     return true;
+  }
+
+  /// 重置权限缓存（用于用户从设置页返回后重新检查）
+  void resetPermissionCache() {
+    _permissionCache = null;
   }
 
   /// 获取当前位置
@@ -66,7 +91,10 @@ class LocationService {
   }) async {
     for (int attempt = 0; attempt < maxRetries; attempt++) {
       try {
-        final hasPermission = await checkAndRequestPermission();
+        // 仅首次尝试时触发系统权限请求弹窗，后续重试仅检查缓存状态
+        final hasPermission = await checkAndRequestPermission(
+          forceRequest: attempt == 0,
+        );
         if (!hasPermission) {
           if (attempt == maxRetries - 1) {
             return null;
@@ -94,6 +122,7 @@ class LocationService {
           return position;
         }
       } catch (e) {
+        debugPrint('[LocationService] 获取位置失败 (第${attempt + 1}次): $e');
         if (attempt == maxRetries - 1) {
           return null;
         }

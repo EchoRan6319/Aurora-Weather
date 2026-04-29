@@ -99,14 +99,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   }
 
   /// 初始化位置
+  /// 天气加载由 ref.listen(locationInitProvider) 统一处理，避免重复加载
   Future<void> _initLocation() async {
     await ref.read(locationInitProvider.notifier).requestLocationPermission();
     await ref.read(locationInitProvider.notifier).initLocation();
-
-    final defaultCity = ref.read(defaultCityProvider);
-    if (defaultCity != null) {
-      await ref.read(weatherProvider.notifier).loadWeather(defaultCity);
-    }
   }
 
   /// 根据新的精度级别刷新位置

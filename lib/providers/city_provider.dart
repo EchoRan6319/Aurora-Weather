@@ -295,7 +295,8 @@ class LocationInitNotifier extends StateNotifier<LocationInitState> {
       state = state.copyWith(isInitialized: false);
     }
 
-    await Future.delayed(const Duration(milliseconds: 500));
+    // Android冷启动时GPS硬件需要时间就绪，500ms太短会导致首次定位失败
+    await Future.delayed(const Duration(seconds: 2));
 
     try {
       final locationService = _ref.read(locationServiceProvider);
