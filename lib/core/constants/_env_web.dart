@@ -1,0 +1,1 @@
+String envVar(String key) => '';

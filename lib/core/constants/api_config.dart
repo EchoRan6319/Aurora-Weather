@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-// 条件导入 dart:io，Web 平台使用空实现
-import 'dart:io' if (dart.library.html) '';
+import '_env_io.dart' if (dart.library.html) '_env_web.dart' as env;
 
 /// API configuration.
 ///
@@ -12,9 +10,8 @@ import 'dart:io' if (dart.library.html) '';
 /// 3) .env (flutter_dotenv)
 class ApiConfig {
   static String _fromEnv(String key) {
-    if (kIsWeb) return '';
     try {
-      return Platform.environment[key] ?? '';
+      return env.envVar(key);
     } catch (_) {
       return '';
     }
