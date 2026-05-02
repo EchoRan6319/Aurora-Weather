@@ -67,7 +67,7 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
               Row(
                 children: [
                   Icon(
-                    LucideIcons.triangleAlert,
+                    LucideIcons.alertTriangle,
                     size: iconSize,
                     color: levelColor,
                   ),

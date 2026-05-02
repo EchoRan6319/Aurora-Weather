@@ -2,23 +2,11 @@
 <resources>
     <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is on -->
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
-        <!-- Show a splash screen on the activity. Automatically removed when
-             the Flutter engine draws its first frame -->
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
-    <!-- Theme applied to the Android Window as soon as the process has started.
-         This theme determines the color of the Android Window while your
-         Flutter UI initializes, as well as behind your Flutter UI while its
-         running.
-
-         This Theme is only used starting with V2 of Flutter's Android embedding. 
-         Using Material3 theme for dynamic color support. -->
-    <style name="NormalTheme" parent="Theme.Material3.Dark.NoActionBar">
+    <!-- Theme applied to the Android Window as soon as the process has started. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Material.NoActionBar">
         <item name="android:windowBackground">?android:colorBackground</item>
-        <!-- Enable dynamic color support -->
-        <item name="android:colorPrimary">@android:color/system_accent1_200</item>
-        <item name="android:colorPrimaryDark">@android:color/system_accent1_300</item>
-        <item name="android:colorAccent">@android:color/system_accent2_200</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>

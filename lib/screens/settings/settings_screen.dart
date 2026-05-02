@@ -108,7 +108,7 @@ class SettingsScreen extends ConsumerWidget {
                             animationDelay: 50,
                             children: [
                               SettingsSwitchTile(
-                                icon: LucideIcons.triangleAlert,
+                                icon: LucideIcons.alertTriangle,
                                 title: '天气预警通知',
                                 subtitle: '接收极端天气预警推送',
                                 value: appSettings.notificationsEnabled,
