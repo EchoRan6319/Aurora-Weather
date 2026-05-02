@@ -91,13 +91,8 @@ extension AppThemeContext on BuildContext {
   }
 }
 
-/// 自定义颜色类，封装了应用中使用的所有颜色
-/// 
-/// 这个类扩展了Flutter的ColorScheme，提供了更便捷的颜色访问方式
+/// Custom color accessor wrapping ColorScheme.
 class CustomColors {
-  /// 种子颜色，用于生成整个颜色方案
-  final Color seedColor;
-  
   /// 主要颜色，用于关键UI元素
   final Color primary;
   
@@ -190,7 +185,6 @@ class CustomColors {
   /// [outline] 轮廓颜色
   /// [outlineVariant] 轮廓变体颜色
   const CustomColors({
-    required this.seedColor,
     required this.primary,
     required this.onPrimary,
     required this.primaryContainer,
@@ -216,12 +210,8 @@ class CustomColors {
   });
 
   /// 从ColorScheme创建CustomColors实例
-  /// 
-  /// [scheme] Flutter的ColorScheme实例
-  /// [seed] 种子颜色
-  factory CustomColors.fromColorScheme(ColorScheme scheme, Color seed) {
+  factory CustomColors.fromColorScheme(ColorScheme scheme) {
     return CustomColors(
-      seedColor: seed,
       primary: scheme.primary,
       onPrimary: scheme.onPrimary,
       primaryContainer: scheme.primaryContainer,
@@ -264,37 +254,14 @@ class AppTheme {
     Color(0xFF006494), // 深蓝色
   ];
 
-  /// 创建A屏黑颜色方案
-  ///
-  /// [baseScheme] 基础颜色方案
-  /// 返回适配A屏黑的ColorScheme
-  static ColorScheme createAmoledBlackScheme(ColorScheme baseScheme) {
-    return baseScheme.copyWith(
-      surface: Colors.black,
-      surfaceContainer: const Color(0xFF121212),
-      surfaceContainerHigh: const Color(0xFF1E1E1E),
-      surfaceContainerHighest: const Color(0xFF2C2C2C),
-      surfaceTint: Colors.transparent,
-      shadow: Colors.black,
-    );
-  }
-
   /// 创建应用主题
-  ///
-  /// [colorScheme] 颜色方案
-  /// [useMaterial3] 是否使用Material 3
-  /// [fontFamily] 字体系列
-  /// [isAmoledBlack] 是否使用A屏黑主题
-  ///
-  /// 返回配置好的ThemeData实例
   static ThemeData createTheme({
     required ColorScheme colorScheme,
-    required bool useMaterial3,
     String? fontFamily,
     bool isAmoledBlack = false,
   }) {
     return ThemeData(
-      useMaterial3: useMaterial3,
+      useMaterial3: true,
       colorScheme: colorScheme,
       brightness: colorScheme.brightness,
       fontFamily: fontFamily,
