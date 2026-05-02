@@ -306,13 +306,12 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   ///
   /// [message]: 错误信息
   Widget _buildErrorState(String message, {required double viewportHeight}) {
-    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: viewportHeight,
       child: Stack(
         children: [
           Positioned.fill(
-            child: Container(color: colorScheme.surfaceContainer),
+            child: Container(color: Colors.transparent),
           ),
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
@@ -364,13 +363,12 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
 
   /// 构建空状态
   Widget _buildEmptyState({required double viewportHeight}) {
-    final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
       height: viewportHeight,
       child: Stack(
         children: [
           Positioned.fill(
-            child: Container(color: colorScheme.surfaceContainer),
+            child: Container(color: Colors.transparent),
           ),
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
@@ -410,7 +408,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   }
 
   Widget _buildEmptyStateAction() {
-    return IconButton.filledTonal(
+    return IconButton(
       onPressed: _showCitySelector,
       tooltip: context.tr('导航'),
       icon: const Icon(LucideIcons.navigation),
@@ -845,7 +843,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(context.tr('取消')),
           ),
-          FilledButton.tonal(
+          FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(context.tr('删除')),
           ),
@@ -977,7 +975,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
-            trailing: FilledButton.tonal(
+            trailing: FilledButton(
               onPressed: () => widget.onCitySelected(location),
               child: Text(context.tr('添加')),
             ),

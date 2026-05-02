@@ -264,7 +264,7 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
             leading: const Icon(LucideIcons.mapPin),
             title: Text(location.name),
             subtitle: subtitle.isEmpty ? null : Text(subtitle),
-            trailing: FilledButton.tonal(
+            trailing: FilledButton(
               onPressed: () => _addCity(location),
               child: Text(context.tr('添加')),
             ),

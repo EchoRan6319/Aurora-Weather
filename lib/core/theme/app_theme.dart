@@ -392,6 +392,25 @@ class AppTheme {
         ),
       ),
 
+      // FilledButton — Aurora glass (not Material filled)
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: colorScheme.primary
+              .withValues(alpha: isDark ? 0.7 : 0.75),
+          foregroundColor: colorScheme.onPrimary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: colorScheme.primary.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        ),
+      ),
+
+
       // TextButton
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(

@@ -479,7 +479,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          IconButton.filled(
+          IconButton(
             icon: const Icon(LucideIcons.send),
             onPressed: _isTyping ? null : _sendMessage,
           ),
