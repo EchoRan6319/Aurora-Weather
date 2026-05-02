@@ -1,31 +1,75 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
-  <!-- 背景 - 使用浅蓝色模拟 system_accent1_100 -->
-  <rect width="108" height="108" fill="#E3F2FD" rx="24"/>
+  <defs>
+    <!-- Aurora background gradient: deep indigo → cyan → purple -->
+    <linearGradient id="auroraBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0F0C29"/>
+      <stop offset="35%" stop-color="#302B63"/>
+      <stop offset="70%" stop-color="#0D3B66"/>
+      <stop offset="100%" stop-color="#1A5C5C"/>
+    </linearGradient>
 
-  <!-- 图标主体 - 整体偏移 (25, 30) -->
+    <!-- Sun gradient: warm gold to orange -->
+    <radialGradient id="sunGrad" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FFE082"/>
+      <stop offset="40%" stop-color="#FFB300"/>
+      <stop offset="100%" stop-color="#FF6D00"/>
+    </radialGradient>
+
+    <!-- Sun glow -->
+    <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FFAB00" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#FF6D00" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Cloud gradient: iridescent translucent -->
+    <linearGradient id="cloudGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#E0F7FA" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#B2EBF2" stop-opacity="0.75"/>
+    </linearGradient>
+
+    <!-- Cloud shimmer -->
+    <linearGradient id="cloudShimmer" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#80DEEA" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#E1F5FE" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#B3E5FC" stop-opacity="0.6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background: Rounded rectangle with Aurora gradient -->
+  <rect width="108" height="108" fill="url(#auroraBg)" rx="24"/>
+
+  <!-- Subtle aurora band across background -->
+  <ellipse cx="54" cy="54" rx="50" ry="40" fill="none" stroke="#00E5FF" stroke-width="0.5" opacity="0.15" transform="rotate(-15 54 54)"/>
+  <ellipse cx="54" cy="54" rx="45" ry="35" fill="none" stroke="#7C4DFF" stroke-width="0.5" opacity="0.12" transform="rotate(-25 54 54)"/>
+
+  <!-- Icon body - overall offset -->
   <g transform="translate(25, 30)">
 
-    <!-- 太阳 - 位于左上方，偏移 (3, 3) -->
-    <g transform="translate(3, 3)">
-      <!-- 太阳光芒 - 使用主强调色蓝色 -->
-      <g stroke="#1976D2" stroke-width="2.5" stroke-linecap="round" fill="none">
-        <line x1="15" y1="1" x2="15" y2="4"/>
-        <line x1="15" y1="26" x2="15" y2="29"/>
-        <line x1="1" y1="15" x2="4" y2="15"/>
-        <line x1="26" y1="15" x2="29" y2="15"/>
-        <line x1="5.5" y1="5.5" x2="7.8" y2="7.8"/>
-        <line x1="22.2" y1="22.2" x2="24.5" y2="24.5"/>
-        <line x1="5.5" y1="24.5" x2="7.8" y2="22.2"/>
-        <line x1="22.2" y1="7.8" x2="24.5" y2="5.5"/>
-      </g>
-      <!-- 太阳中心圆 -->
-      <circle cx="15" cy="15" r="7" fill="#1976D2"/>
+    <!-- Sun glow -->
+    <circle cx="17" cy="17" r="18" fill="url(#sunGlow)"/>
+
+    <!-- Sun rays - warm golden, tapered -->
+    <g stroke="#FFAB00" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9">
+      <line x1="17" y1="2" x2="17" y2="6"/>
+      <line x1="17" y1="28" x2="17" y2="32"/>
+      <line x1="2" y1="17" x2="6" y2="17"/>
+      <line x1="28" y1="17" x2="32" y2="17"/>
+      <line x1="6.5" y1="6.5" x2="9.5" y2="9.5"/>
+      <line x1="24.5" y1="24.5" x2="27.5" y2="27.5"/>
+      <line x1="6.5" y1="27.5" x2="9.5" y2="24.5"/>
+      <line x1="24.5" y1="9.5" x2="27.5" y2="6.5"/>
     </g>
 
-    <!-- 云朵 - 位于右下方，偏移 (12, 14) -->
-    <g transform="translate(12, 14)" fill="#64B5F6">
-      <!-- 云朵主体 -->
-      <path d="M36,20c0,-5 -4,-9 -9,-9c-0.5,0 -1,0.1 -1.5,0.2c-1.5,-4.5 -5.8,-7.7 -10.8,-7.7c-6.4,0 -11.5,5.2 -11.5,11.5c0,0.4 0,0.8 0.1,1.2C1.9,16.9 0,19.3 0,22c0,3.3 2.7,6 6,6h30c3.3,0 6,-2.7 6,-6S39.3,20 36,20z"/>
+    <!-- Sun center circle - gradient filled -->
+    <circle cx="17" cy="17" r="7.5" fill="url(#sunGrad)"/>
+
+    <!-- Cloud - with iridescent gradient, offset lower-right -->
+    <g transform="translate(10, 12)">
+      <!-- Cloud shadow/depth layer -->
+      <path d="M36,22c0,-5 -4,-9 -9,-9c-0.5,0 -1,0.1 -1.5,0.2c-1.5,-4.5 -5.8,-7.7 -10.8,-7.7c-6.4,0 -11.5,5.2 -11.5,11.5c0,0.4 0,0.8 0.1,1.2C1.9,18.9 0,21.3 0,24c0,3.3 2.7,6 6,6h30c3.3,0 6,-2.7 6,-6S39.3,22 36,22z" fill="url(#cloudGrad)"/>
+      <!-- Cloud shimmer overlay -->
+      <path d="M36,22c0,-5 -4,-9 -9,-9c-0.5,0 -1,0.1 -1.5,0.2c-1.5,-4.5 -5.8,-7.7 -10.8,-7.7c-6.4,0 -11.5,5.2 -11.5,11.5c0,0.4 0,0.8 0.1,1.2C1.9,18.9 0,21.3 0,24c0,3.3 2.7,6 6,6h30c3.3,0 6,-2.7 6,-6S39.3,22 36,22z" fill="url(#cloudShimmer)" opacity="0.5"/>
     </g>
 
   </g>

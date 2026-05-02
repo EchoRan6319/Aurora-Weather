@@ -1,24 +1,13 @@
 import 'package:flutter/material.dart';
 
-/// 应用图标绘制组件
-/// 
-/// 绘制与 Android 自适应图标相同的太阳半遮云图案
+/// Aurora-style app icon: glowing sun partially behind iridescent cloud
+/// on a deep gradient background.
 class AppIcon extends StatelessWidget {
-  /// 图标大小
   final double size;
-  /// 背景颜色
   final Color? backgroundColor;
-  /// 太阳颜色
   final Color? sunColor;
-  /// 云朵颜色
   final Color? cloudColor;
 
-  /// 构造函数
-  /// 
-  /// [size]: 图标大小，默认80
-  /// [backgroundColor]: 背景颜色，默认使用主题的primaryContainer
-  /// [sunColor]: 太阳颜色，默认使用主题的primary
-  /// [cloudColor]: 云朵颜色，默认使用主题的secondary
   const AppIcon({
     super.key,
     this.size = 80,
@@ -29,22 +18,28 @@ class AppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final bgColor = backgroundColor ?? colorScheme.primaryContainer.withValues(alpha: 0.5);
-    final sColor = sunColor ?? colorScheme.primary;
-    final cColor = cloudColor ?? colorScheme.secondary;
-
     return ClipRRect(
       borderRadius: BorderRadius.circular(size * 0.22),
       child: Container(
         width: size,
         height: size,
-        color: bgColor,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: const [
+              Color(0xFF0F0C29),
+              Color(0xFF302B63),
+              Color(0xFF0D3B66),
+              Color(0xFF1A5C5C),
+            ],
+          ),
+        ),
         child: CustomPaint(
           size: Size(size, size),
           painter: _AppIconPainter(
-            sunColor: sColor,
-            cloudColor: cColor,
+            sunColor: sunColor ?? const Color(0xFFFFB300),
+            cloudColor: cloudColor ?? Colors.white,
           ),
         ),
       ),
@@ -52,112 +47,163 @@ class AppIcon extends StatelessWidget {
   }
 }
 
-/// 应用图标绘制器
-/// 
-/// 负责绘制太阳和云朵的具体图形
 class _AppIconPainter extends CustomPainter {
-  /// 太阳颜色
   final Color sunColor;
-  /// 云朵颜色
   final Color cloudColor;
 
-  /// 构造函数
-  /// 
-  /// [sunColor]: 太阳颜色
-  /// [cloudColor]: 云朵颜色
-  _AppIconPainter({
-    required this.sunColor,
-    required this.cloudColor,
-  });
+  _AppIconPainter({required this.sunColor, required this.cloudColor});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 计算缩放比例
     final double scale = size.width / 108;
     canvas.scale(scale, scale);
 
-    // 图标主体偏移 (25, 30)
+    // Draw aurora bands (subtle background arcs)
+    _drawAuroraBands(canvas);
+
+    // Icon body offset
     canvas.translate(25, 30);
 
-    // 绘制太阳 - 偏移 (3, 3)
-    _drawSun(canvas, 3, 3);
+    // Draw sun glow
+    _drawSunGlow(canvas);
 
-    // 绘制云朵 - 偏移 (12, 14)
-    _drawCloud(canvas, 12, 14);
+    // Draw sun
+    _drawSun(canvas, 5, 5);
+
+    // Draw cloud with shimmer
+    _drawCloud(canvas, 10, 12);
   }
 
-  /// 绘制太阳
-  /// 
-  /// [canvas]: 画布
-  /// [offsetX]: X轴偏移
-  /// [offsetY]: Y轴偏移
+  void _drawAuroraBands(Canvas canvas) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.5;
+
+    paint.color = const Color(0xFF00E5FF).withValues(alpha: 0.15);
+    canvas.save();
+    canvas.translate(54, 54);
+    canvas.rotate(-15 * 3.14159 / 180);
+    canvas.drawOval(const Rect.fromLTRB(-50, -40, 50, 40), paint);
+    canvas.restore();
+
+    paint.color = const Color(0xFF7C4DFF).withValues(alpha: 0.12);
+    canvas.save();
+    canvas.translate(54, 54);
+    canvas.rotate(-25 * 3.14159 / 180);
+    canvas.drawOval(const Rect.fromLTRB(-45, -35, 45, 35), paint);
+    canvas.restore();
+  }
+
+  void _drawSunGlow(Canvas canvas) {
+    final paint = Paint()
+      ..shader = const RadialGradient(
+        center: Alignment.center,
+        radius: 1.0,
+        colors: [
+          Color(0x66FFAB00),
+          Color(0x00FF6D00),
+        ],
+      ).createShader(const Rect.fromLTWH(-1, -1, 38, 38));
+    canvas.drawCircle(const Offset(17, 17), 18, paint);
+  }
+
   void _drawSun(Canvas canvas, double offsetX, double offsetY) {
     canvas.save();
     canvas.translate(offsetX, offsetY);
 
-    // 光芒画笔
-    final paint = Paint()
-      ..color = sunColor
-      ..strokeWidth = 2.5
+    // Sun rays
+    final rayPaint = Paint()
+      ..color = const Color(0xFFFFAB00).withValues(alpha: 0.9)
+      ..strokeWidth = 2
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
-    // 光芒坐标点
-    final List<Offset> rays = [
-      const Offset(15, 1), const Offset(15, 4),
-      const Offset(15, 26), const Offset(15, 29),
-      const Offset(1, 15), const Offset(4, 15),
-      const Offset(26, 15), const Offset(29, 15),
-      const Offset(5.5, 5.5), const Offset(7.8, 7.8),
-      const Offset(22.2, 22.2), const Offset(24.5, 24.5),
-      const Offset(5.5, 24.5), const Offset(7.8, 22.2),
-      const Offset(22.2, 7.8), const Offset(24.5, 5.5),
+    final rays = [
+      const Offset(15, 4),
+      const Offset(15, 6),
+      const Offset(15, 26),
+      const Offset(15, 30),
+      const Offset(4, 15),
+      const Offset(6, 15),
+      const Offset(26, 15),
+      const Offset(30, 15),
+      const Offset(6.5, 6.5),
+      const Offset(9.5, 9.5),
+      const Offset(22.5, 22.5),
+      const Offset(25.5, 25.5),
+      const Offset(6.5, 25.5),
+      const Offset(9.5, 22.5),
+      const Offset(22.5, 9.5),
+      const Offset(25.5, 6.5),
     ];
 
-    // 绘制光芒
     for (int i = 0; i < rays.length; i += 2) {
-      canvas.drawLine(rays[i], rays[i + 1], paint);
+      canvas.drawLine(rays[i], rays[i + 1], rayPaint);
     }
 
-    // 绘制太阳中心圆
-    final circlePaint = Paint()
-      ..color = sunColor
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(const Offset(15, 15), 7, circlePaint);
+    // Sun center - gradient fill
+    final sunPaint = Paint()
+      ..shader = const RadialGradient(
+        center: Alignment.center,
+        radius: 0.7,
+        colors: [
+          Color(0xFFFFE082),
+          Color(0xFFFFB300),
+          Color(0xFFFF6D00),
+        ],
+      ).createShader(const Rect.fromLTWH(7.5, 7.5, 19, 19));
+    canvas.drawCircle(const Offset(17, 17), 9.5, sunPaint);
 
     canvas.restore();
   }
 
-  /// 绘制云朵
-  /// 
-  /// [canvas]: 画布
-  /// [offsetX]: X轴偏移
-  /// [offsetY]: Y轴偏移
   void _drawCloud(Canvas canvas, double offsetX, double offsetY) {
     canvas.save();
     canvas.translate(offsetX, offsetY);
 
-    // 云朵画笔
-    final paint = Paint()
-      ..color = cloudColor
-      ..style = PaintingStyle.fill;
+    // Cloud body - iridescent translucent
+    final cloudPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xE6FFFFFF),
+          Color(0xD9E0F7FA),
+          Color(0xBFB2EBF2),
+        ],
+      ).createShader(const Rect.fromLTWH(0, 10, 42, 23));
+    cloudPaint.style = PaintingStyle.fill;
 
-    // 云朵路径
-    final path = Path();
-    path.moveTo(36, 20);
-    path.cubicTo(36, 15, 32, 11, 27, 11);
-    path.cubicTo(26.5, 11, 26, 11.1, 25.5, 11.2);
-    path.cubicTo(24, 6.7, 19.7, 3.5, 14.7, 3.5);
-    path.cubicTo(8.3, 3.5, 3.2, 8.7, 3.2, 15);
-    path.cubicTo(3.2, 15.4, 3.2, 15.8, 3.3, 16.2);
-    path.cubicTo(1.9, 16.9, 0, 19.3, 0, 22);
-    path.cubicTo(0, 25.3, 2.7, 28, 6, 28);
-    path.lineTo(36, 28);
-    path.cubicTo(39.3, 28, 42, 25.3, 42, 22);
-    path.cubicTo(42, 18.7, 39.3, 20, 36, 20);
-    path.close();
+    final cloudPath = Path();
+    cloudPath.moveTo(36, 22);
+    cloudPath.cubicTo(36, 17, 32, 13, 27, 13);
+    cloudPath.cubicTo(26.5, 13, 26, 13.1, 25.5, 13.2);
+    cloudPath.cubicTo(24, 8.7, 19.7, 5.5, 14.7, 5.5);
+    cloudPath.cubicTo(8.3, 5.5, 3.2, 10.7, 3.2, 17);
+    cloudPath.cubicTo(3.2, 17.4, 3.2, 17.8, 3.3, 18.2);
+    cloudPath.cubicTo(1.9, 18.9, 0, 21.3, 0, 24);
+    cloudPath.cubicTo(0, 27.3, 2.7, 30, 6, 30);
+    cloudPath.lineTo(36, 30);
+    cloudPath.cubicTo(39.3, 30, 42, 27.3, 42, 24);
+    cloudPath.cubicTo(42, 20.7, 39.3, 22, 36, 22);
+    cloudPath.close();
 
-    canvas.drawPath(path, paint);
+    canvas.drawPath(cloudPath, cloudPaint);
+
+    // Cloud shimmer overlay
+    final shimmerPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0x8080DEEA),
+          Color(0x4DE1F5FE),
+          Color(0x99B3E5FC),
+        ],
+      ).createShader(const Rect.fromLTWH(0, 10, 42, 23));
+    shimmerPaint.style = PaintingStyle.fill;
+    canvas.drawPath(cloudPath, shimmerPaint);
+
     canvas.restore();
   }
 
