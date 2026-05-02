@@ -47,6 +47,16 @@ android {
         manifestPlaceholders["appName"] = "轻氧天气"
     }
 
+    packaging {
+        jniLibs {
+            excludes += setOf(
+                "lib/x86_64/*.so",
+                "lib/x86/*.so",
+                "lib/armeabi-v7a/*.so",
+            )
+        }
+    }
+
     signingConfigs {
         create("release") {
             storeFile = rootProject.file(releaseStoreFilePath)
