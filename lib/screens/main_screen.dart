@@ -58,14 +58,14 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         .requestLocationPermission();
 
     if (!hasLocationPermission) {
-      _showPermissionDialog(context.tr('定位权限'), context.tr('轻氧天气需要定位权限来获取您当前位置的天气信息。请在设置中授予定位权限。'));
+      _showPermissionDialog(context.tr('定位权限'), context.tr('极光天气需要定位权限来获取您当前位置的天气信息。请在设置中授予定位权限。'));
     }
 
     final hasNotificationPermission = await notificationServiceProvider
         .requestNotificationPermission();
 
     if (!hasNotificationPermission) {
-      _showPermissionDialog(context.tr('通知权限'), context.tr('轻氧天气需要通知权限来推送天气预警信息。请在设置中授予通知权限。'));
+      _showPermissionDialog(context.tr('通知权限'), context.tr('极光天气需要通知权限来推送天气预警信息。请在设置中授予通知权限。'));
     }
 
     await notificationServiceProvider.markNotificationPermissionRequested();

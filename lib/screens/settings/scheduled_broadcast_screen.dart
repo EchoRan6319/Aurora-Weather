@@ -525,7 +525,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        context.tr('• 设置 → 应用 → 轻氧天气 → 权限 → 闹钟和提醒'),
+                        context.tr('• 设置 → 应用 → 极光天气 → 权限 → 闹钟和提醒'),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
                         ),

@@ -59,7 +59,7 @@ class AppLocalizations {
   }
 
   static const Map<String, String> _enUs = <String, String>{
-    '轻氧天气': 'PureWeather',
+    '极光天气': 'Aurora Weather',
     '设置': 'Settings',
     '天气': 'Weather',
     '天气助手': 'Weather Assistant',
@@ -161,12 +161,12 @@ class AppLocalizations {
     '🟡 黄色预警 - 较重天气': '🟡 Yellow Alert - Significant Weather',
     '🔵 蓝色预警 - 一般天气': '🔵 Blue Alert - General Weather',
     '版本 {version}': 'Version {version}',
-    '关于轻氧天气': 'About PureWeather',
+    '关于极光天气': 'About Aurora Weather',
     '我知道了': 'Got it',
     '关于': 'About',
     '应用介绍': 'About the App',
-    '轻氧天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。':
-        'PureWeather is a modern cross-platform weather app designed with Aurora UI.',
+    '极光天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。':
+        'Aurora Weather is a modern cross-platform weather app designed with Aurora UI.',
     '开源协议': 'Open Source License',
     '开发者': 'Developer',
     '特别鸣谢': 'Special Thanks',
@@ -179,8 +179,8 @@ class AppLocalizations {
     '提供天气助手的 AI 问答功能': 'Provides AI Q&A for the weather assistant',
     '用户协议': 'User Agreement',
     '隐私政策': 'Privacy Policy',
-    '生效日期：2026年2月16日\n\n轻氧天气（以下简称"我们"）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。':
-        'Effective date: February 16, 2026\n\nPureWeather ("we") takes your privacy seriously. This policy explains how we handle your personal information.',
+    '生效日期：2026年2月16日\n\n极光天气（以下简称"我们"）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。':
+        'Effective date: February 16, 2026\n\nAurora Weather ("we") takes your privacy seriously. This policy explains how we handle your personal information.',
     '1. 信息收集': '1. Information Collection',
     '我们仅在您使用应用期间收集必要的信息，包括：\n• 位置信息：仅用于获取您当前位置的天气预报。您可以随时在系统中关闭该权限。\n• 天气查询历史：仅用于天气助手功能，帮助您获取更准确的天气相关回答。':
         'We only collect necessary information while you use the app, including:\n• Location information: used only to fetch weather for your current location. You can disable this permission at any time in system settings.\n• Weather query history: used only for the weather assistant to provide more accurate weather-related answers.',
@@ -193,11 +193,11 @@ class AppLocalizations {
     '4. 第三方服务': '4. Third-Party Services',
     '本应用使用以下第三方服务：\n• 和风天气（QWeather）及彩云天气：提供天气数据，您的位置坐标（经纬度）将发送至其服务器以换取天气数据。\n• 高德地图：提供城市搜索和定位服务，您的位置坐标（经纬度）将发送至其服务器以获取位置信息。\n• DeepSeek：提供天气助手的AI问答功能，您的天气查询问题将发送至其服务器以获取智能回答。':
         'This app uses the following third-party services:\n• QWeather and Caiyun Weather: provide weather data. Your location coordinates (latitude/longitude) are sent to their servers to retrieve weather data.\n• AMap: provides city search and location services. Your location coordinates are sent to its servers to retrieve location information.\n• DeepSeek: provides AI Q&A for the weather assistant. Your weather questions are sent to its servers to get responses.',
-    '欢迎使用轻氧天气！请在使用前阅读以下条款。':
-        'Welcome to PureWeather! Please read the following terms before use.',
+    '欢迎使用极光天气！请在使用前阅读以下条款。':
+        'Welcome to Aurora Weather! Please read the following terms before use.',
     '1. 服务内容': '1. Service Content',
-    '轻氧天气为您提供天气查询、极端天气预警、定时播报、城市搜索定位及天气助手等非商业服务。':
-        'PureWeather provides non-commercial services including weather lookup, severe weather alerts, scheduled broadcasts, city search/location, and a weather assistant.',
+    '极光天气为您提供天气查询、极端天气预警、定时播报、城市搜索定位及天气助手等非商业服务。':
+        'Aurora Weather provides non-commercial services including weather lookup, severe weather alerts, scheduled broadcasts, city search/location, and a weather assistant.',
     '2. 使用规范': '2. Usage Rules',
     '您不得将本应用用于任何非法目的，或以任何方式干扰应用的正常运行。在使用天气助手功能时，您应遵守相关法律法规，不得发送违法或不当内容。':
         'You must not use this app for illegal purposes or interfere with normal operation in any way. When using the weather assistant, you must comply with applicable laws and must not send illegal or inappropriate content.',
@@ -258,12 +258,12 @@ class AppLocalizations {
     '接收极端天气预警通知': 'Receive severe weather alert notifications.',
     'Android 16+ 在通知栏持续显示当前天气':
         'Show current weather persistently in the notification shade on Android 16+',
-    '轻氧天气需要定位权限来获取您当前位置的天气信息。请在设置中授予定位权限。':
-        'PureWeather needs location permission to get weather for your current location. Please grant location permission in settings.',
-    '轻氧天气需要通知权限来推送天气预警信息。请在设置中授予通知权限。':
-        'PureWeather needs notification permission to send weather alerts. Please grant notification permission in settings.',
-    '轻氧天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。':
-        'PureWeather needs notification permission to send weather alerts. Please grant it in system settings.',
+    '极光天气需要定位权限来获取您当前位置的天气信息。请在设置中授予定位权限。':
+        'Aurora Weather needs location permission to get weather for your current location. Please grant location permission in settings.',
+    '极光天气需要通知权限来推送天气预警信息。请在设置中授予通知权限。':
+        'Aurora Weather needs notification permission to send weather alerts. Please grant notification permission in settings.',
+    '极光天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。':
+        'Aurora Weather needs notification permission to send weather alerts. Please grant it in system settings.',
     '无法打开系统实时更新设置页': 'Unable to open system live update settings page.',
     '系统当前未允许应用发布实时更新（Promoted）通知。请先在系统页面开启，再返回打开本开关。':
         'The system currently does not allow this app to post Promoted live update notifications. Enable it in system settings first, then return and turn on this switch.',
@@ -300,8 +300,8 @@ class AppLocalizations {
     '定时播报需要"闹钟和提醒"权限才能准时推送。':
         'Scheduled broadcasts need the "Alarms & reminders" permission for on-time delivery.',
     '请确保以下设置已开启：': 'Please ensure the following setting is enabled:',
-    '• 设置 → 应用 → 轻氧天气 → 权限 → 闹钟和提醒':
-        '• Settings → Apps → PureWeather → Permissions → Alarms & reminders',
+    '• 设置 → 应用 → 极光天气 → 权限 → 闹钟和提醒':
+        '• Settings → Apps → Aurora Weather → Permissions → Alarms & reminders',
     '点击"去检查"跳转到设置页面确认。': 'Tap "Check" to open settings and confirm.',
     '{message}。请在系统设置中授予权限。': '{message}. Please grant it in system settings.',
     '测试播报已发送': 'Test broadcast has been sent',
@@ -368,7 +368,7 @@ class AppLocalizations {
     '服务暂时不可用': 'Service is temporarily unavailable',
     'API错误码: {code}': 'API error code: {code}',
     '清空对话': 'Clear Conversation',
-    '你好，我是轻氧天气助手': 'Hi, I am the PureWeather Assistant',
+    '你好，我是极光天气助手': 'Hi, I am the Aurora Weather Assistant',
     '我可以帮你解答天气相关问题，提供穿衣建议、出行提醒等':
         'I can answer weather-related questions and provide clothing and travel suggestions.',
     '今天适合户外运动吗？': 'Is today suitable for outdoor exercise?',

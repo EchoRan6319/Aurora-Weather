@@ -359,7 +359,7 @@ class SettingsScreen extends ConsumerWidget {
                             children: [
                               SettingsListTile(
                                 icon: LucideIcons.layoutGrid,
-                                title: '关于轻氧天气',
+                                title: '关于极光天气',
                                 onTap: () => _showAboutDialog(context),
                               ),
                               SettingsListTile(
@@ -661,7 +661,7 @@ class SettingsScreen extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    context.tr('轻氧天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。'),
+                    context.tr('极光天气需要通知权限才能推送天气预警。请在系统设置中授予通知权限。'),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -973,7 +973,7 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => const _ContentBottomSheet(
         title: '隐私政策',
         content: [
-          '生效日期：2026年2月16日\n\n轻氧天气（以下简称"我们"）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。',
+          '生效日期：2026年2月16日\n\n极光天气（以下简称"我们"）非常重视您的隐私。本协议阐述了我们如何处理您的个人信息。',
           (
             '1. 信息收集',
             '我们仅在您使用应用期间收集必要的信息，包括：\n• 位置信息：仅用于获取您当前位置的天气预报。您可以随时在系统中关闭该权限。\n• 天气查询历史：仅用于天气助手功能，帮助您获取更准确的天气相关回答。',
@@ -1001,8 +1001,8 @@ class SettingsScreen extends ConsumerWidget {
       builder: (ctx) => const _ContentBottomSheet(
         title: '用户协议',
         content: [
-          '欢迎使用轻氧天气！请在使用前阅读以下条款。',
-          ('1. 服务内容', '轻氧天气为您提供天气查询、极端天气预警、定时播报、城市搜索定位及天气助手等非商业服务。'),
+          '欢迎使用极光天气！请在使用前阅读以下条款。',
+          ('1. 服务内容', '极光天气为您提供天气查询、极端天气预警、定时播报、城市搜索定位及天气助手等非商业服务。'),
           (
             '2. 使用规范',
             '您不得将本应用用于任何非法目的，或以任何方式干扰应用的正常运行。在使用天气助手功能时，您应遵守相关法律法规，不得发送违法或不当内容。',
@@ -1094,7 +1094,7 @@ class _AboutBottomSheet extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return SettingsBottomSheet(
-      title: '关于轻氧天气',
+      title: '关于极光天气',
       bottomAction: SizedBox(
         width: double.infinity,
         child: FilledButton(
@@ -1116,7 +1116,7 @@ class _AboutBottomSheet extends StatelessWidget {
                 const AppIcon(size: 80),
                 const SizedBox(height: 16),
                 Text(
-                  context.tr('轻氧天气'),
+                  context.tr('极光天气'),
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 8),
@@ -1141,7 +1141,7 @@ class _AboutBottomSheet extends StatelessWidget {
                 context,
                 LucideIcons.info,
                 '应用介绍',
-                '轻氧天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。',
+                '极光天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。',
               ),
               const SizedBox(height: 16),
               _buildAboutItem(

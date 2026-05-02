@@ -1,20 +1,20 @@
-# ☁️ 轻氧天气 (PureWeather)
+# 极光天气 (Aurora Weather)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-Android%20%7C%20Windows%20%7C%20Linux%20%7C%20macOS%20%7C%20iOS%20%7C%20Web-brightgreen)
 ![Flutter](https://img.shields.io/badge/Flutter-3.41+-02569B?logo=flutter)
 
-一款使用 **Material You Design** 构建的现代化跨平台天气应用，支持动态主题色、多城市管理和 AI 天气助手。
+一款使用 **Aurora UI** 构建的现代化跨平台天气应用，支持玻璃质感主题、多城市管理和 AI 天气助手。
 
 ## 预览
 
-![轻氧天气应用界面](IMG_20260218_101010.jpg)
+![极光天气应用界面](App_Screenshot.jpg)
 
 ## 功能特性
 
 - **🌤 多源天气数据** — 和风天气（实时/逐时/逐日/预警/空气质量）+ 彩云天气（分钟级降水预报）
-- **🎨 Material You** — 动态取色、深色/浅色主题、AMOLED 纯黑模式、自定义主题色
-- **📍 城市管理** — 多城市支持、拖拽排序、自动定位、城市搜索
+- **🎨 Aurora UI** — 玻璃质感卡片、天气驱动动态渐变背景、深色/浅色主题
+- **📍 城市管理** — 多城市支持、自动定位、城市搜索
 - **📊 天气详情** — 当前温度、24 小时预报、7 日预报、空气质量、生活指数、天气预警
 - **🤖 天气助手** — 基于 DeepSeek V4 的智能问答，支持天气分析与建议
 - **🔔 定时播报** — 每日早晚天气推送，Android 16+ 支持实时更新通知
@@ -124,14 +124,14 @@ git push origin v5.4.1-1
 
 | 平台 | 产物 |
 |------|------|
-| Android | `PureWeather-{version}-android-arm64-v8a-release.apk` |
-| Android | `PureWeather-{version}-android-arm64-v8a-debug.apk` |
-| Windows | `PureWeather-{version}-windows-x64-installer.msix` |
-| Windows | `PureWeather-{version}-windows-x64-setup.exe` |
-| Linux | `PureWeather-{version}-linux-x64.tar.gz` |
-| macOS | `PureWeather-{version}-macos-universal.dmg` |
-| iOS | `PureWeather-{version}-ios-unsigned.ipa` |
-| Web | `PureWeather-{version}-web-release.zip` |
+| Android | `AuroraWeather-{version}-android-arm64-v8a-release.apk` |
+| Android | `AuroraWeather-{version}-android-arm64-v8a-debug.apk` |
+| Windows | `AuroraWeather-{version}-windows-x64-installer.msix` |
+| Windows | `AuroraWeather-{version}-windows-x64-setup.exe` |
+| Linux | `AuroraWeather-{version}-linux-x64.tar.gz` |
+| macOS | `AuroraWeather-{version}-macos-universal.dmg` |
+| iOS | `AuroraWeather-{version}-ios-unsigned.ipa` |
+| Web | `AuroraWeather-{version}-web-release.zip` |
 
 ---
 
@@ -159,8 +159,7 @@ lib/
 ├── screens/                # 页面
 │   ├── weather/
 │   ├── settings/
-│   ├── ai_assistant/
-│   └── city_management/
+│   └── ai_assistant/
 └── widgets/                # 可复用组件
 ```
 
@@ -188,16 +187,8 @@ lib/
 | 网络请求 | Dio |
 | 通知 | flutter_local_notifications |
 | 本地存储 | SharedPreferences |
-| 主题 | dynamic_color（Material You） |
+| 主题 | Aurora Palette（固定色彩体系） |
 | AI | DeepSeek V4（OpenAI 兼容接口） |
-
-## 绕过 ColorOS 动态取色限制
-
-ColorOS 系统限制了第三方应用获取 Material You 动态颜色。本应用通过 **Platform Channel** 直接调用 Android 原生壁纸 API 绕过此限制：
-
-- `MethodChannel('com.echoran.pureweather/wallpaper')`
-- 不支持时自动降级到预设颜色
-- 详见 [main.dart](/lib/main.dart)
 
 ---
 

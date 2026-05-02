@@ -6,7 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 /// 包含应用的基本配置和常量
 class AppConstants {
   /// 应用名称
-  static const String appName = '轻氧天气';
+  static const String appName = '极光天气';
 
   /// 应用版本号（从包信息动态获取）
   static String _appVersion = '999.0.0';

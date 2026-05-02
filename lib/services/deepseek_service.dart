@@ -39,7 +39,7 @@ class DeepSeekService {
               : '（暂无天气数据，请先提醒用户添加城市并刷新天气）');
 
     if (isEnglish) {
-      return '''You are "PureWeather Assistant". Provide accurate, readable, and actionable advice based on weather data.
+      return '''You are "Aurora Weather Assistant". Provide accurate, readable, and actionable advice based on weather data.
 
 Output plain text only. Do not use Markdown control markers (such as headings, bold, code blocks, or link wrappers).
 
@@ -57,7 +57,7 @@ Style requirements:
 $dataSection''';
     }
 
-    return '''你是“轻氧天气助手”。请基于天气数据给出准确、易读、可执行的建议。
+    return '''你是“极光天气助手”。请基于天气数据给出准确、易读、可执行的建议。
 
 只输出纯文本，禁止使用 Markdown 控制标记（例如：#标题、**加粗**、反引号代码块、链接包装符号等），但保留正常中文标点和常用符号。
 

@@ -119,7 +119,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     });
 
     return MaterialApp(
-      title: AppLocalizations.tr('轻氧天气'),
+      title: AppLocalizations.tr('极光天气'),
       debugShowCheckedModeBanner: false,
       locale: appLocale,
       localizationsDelegates: const [

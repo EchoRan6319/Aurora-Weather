@@ -1,5 +1,5 @@
 name: pureweather
-description: "轻氧天气 - 一款使用 Aurora UI 的天气应用"
+description: "极光天气 - 一款使用 Aurora UI 的天气应用"
 publish_to: 'none'
 
 version: 999.0.0+999
@@ -64,7 +64,7 @@ flutter_launcher_icons:
   remove_alpha_ios: true
 
 msix_config:
-  display_name: 轻氧天气
+  display_name: 极光天气
   publisher_display_name: EchoRan
   identity_name: com.echoran.pureweather
   logo_path: assets/icons/app_icon.png
