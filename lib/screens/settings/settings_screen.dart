@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'dart:ui';
 import '../../app_localizations.dart';
 import '../../providers/theme_provider.dart';
@@ -92,25 +91,12 @@ class SettingsScreen extends ConsumerWidget {
                               SettingsListTile(
                                 icon: Icons.color_lens_outlined,
                                 title: '主题颜色',
-                                subtitle: themeSettings.useDynamicColor
-                                    ? '跟随壁纸'
-                                    : '自定义颜色',
+                                subtitle: '自定义颜色',
                                 onTap: () => _showColorPickerDialog(
                                   context,
                                   ref,
                                   themeSettings,
                                 ),
-                              ),
-                              SettingsSwitchTile(
-                                icon: Icons.wallpaper_outlined,
-                                title: '动态取色',
-                                subtitle: '根据壁纸自动生成主题色',
-                                value: themeSettings.useDynamicColor,
-                                onChanged: (value) {
-                                  ref
-                                      .read(themeProvider.notifier)
-                                      .setUseDynamicColor(value);
-                                },
                               ),
                             ],
                           ),
@@ -568,8 +554,6 @@ class SettingsScreen extends ConsumerWidget {
             settings,
           ),
           children: [
-            _buildDynamicColorSection(context, ref, settings),
-            const SizedBox(height: 24),
             _buildSectionTitle(context, '预设颜色'),
             const SizedBox(height: 12),
             _buildPresetColors(context, settings, selectedColor, (color) {
@@ -612,251 +596,6 @@ class SettingsScreen extends ConsumerWidget {
         color: Theme.of(context).colorScheme.primary,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
-      ),
-    );
-  }
-
-  Widget _buildDynamicColorSection(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeSettings settings,
-  ) {
-    final tokens = context.uiTokens;
-    return FutureBuilder<Color?>(
-      future: _getWallpaperColor(),
-      builder: (context, snapshot) {
-        final wallpaperColor = snapshot.data;
-        final isCurrentDynamic = settings.useDynamicColor;
-
-        if (wallpaperColor == null) {
-          return DynamicColorBuilder(
-            builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-              final isSupported = lightDynamic != null;
-              final dynamicColor = lightDynamic?.primary;
-
-              if (!isSupported) {
-                return _buildDynamicColorNotSupported(context);
-              }
-
-              return Material(
-                color: isCurrentDynamic
-                    ? tokens.selectedBackground
-                    : tokens.cardBackground,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(color: tokens.cardBorder, width: 1),
-                ),
-                child: InkWell(
-                  onTap: () {
-                    ref.read(themeProvider.notifier).setUseDynamicColor(true);
-                    Navigator.pop(context);
-                  },
-                  borderRadius: BorderRadius.circular(16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: dynamicColor,
-                            borderRadius: BorderRadius.circular(12),
-                            border: null,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                context.tr('壁纸取色'),
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      color: isCurrentDynamic
-                                          ? tokens.selectedForeground
-                                          : Theme.of(
-                                              context,
-                                            ).colorScheme.onSurface,
-                                    ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                context.tr(
-                                  '检测颜色: #{color}',
-                                  args: {
-                                    'color': dynamicColor!
-                                        .toARGB32()
-                                        .toRadixString(16)
-                                        .substring(2)
-                                        .toUpperCase(),
-                                  },
-                                ),
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: isCurrentDynamic
-                                          ? tokens.selectedForeground
-                                                .withValues(alpha: 0.7)
-                                          : Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant,
-                                      fontFamily: 'monospace',
-                                    ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (isCurrentDynamic)
-                          Icon(
-                            Icons.check_circle,
-                            color: tokens.selectedForeground,
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-        }
-
-        return Material(
-          color: isCurrentDynamic
-              ? tokens.selectedBackground
-              : tokens.cardBackground,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: tokens.cardBorder, width: 1),
-          ),
-          child: InkWell(
-            onTap: () {
-              ref.read(themeProvider.notifier).setUseDynamicColor(true);
-              Navigator.pop(context);
-            },
-            borderRadius: BorderRadius.circular(16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: wallpaperColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: null,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          context.tr('壁纸取色'),
-                          style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.w500,
-                                color: isCurrentDynamic
-                                    ? tokens.selectedForeground
-                                    : Theme.of(context).colorScheme.onSurface,
-                              ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          context.tr(
-                            '检测颜色: #{color}',
-                            args: {
-                              'color': wallpaperColor
-                                  .toARGB32()
-                                  .toRadixString(16)
-                                  .substring(2)
-                                  .toUpperCase(),
-                            },
-                          ),
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: isCurrentDynamic
-                                    ? tokens.selectedForeground.withValues(
-                                        alpha: 0.7,
-                                      )
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                                fontFamily: 'monospace',
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isCurrentDynamic)
-                    Icon(Icons.check_circle, color: tokens.selectedForeground),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<Color?> _getWallpaperColor() async {
-    if (defaultTargetPlatform != TargetPlatform.android) return null;
-
-    try {
-      const channel = MethodChannel('com.echoran.pureweather/wallpaper');
-      final int? colorInt = await channel.invokeMethod<int>(
-        'getWallpaperPrimaryColor',
-      );
-      if (colorInt != null) {
-        return Color(colorInt);
-      }
-    } catch (e) {
-      debugPrint('[DynamicColor] Failed to get wallpaper color: $e');
-    }
-    return null;
-  }
-
-  Widget _buildDynamicColorNotSupported(BuildContext context) {
-    final tokens = context.uiTokens;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: tokens.dangerBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: tokens.dangerBorder, width: 1),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.warning_amber,
-                color: Theme.of(context).colorScheme.error,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                context.tr('动态取色不可用'),
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            context.tr(
-              '可能原因：\n• 设备系统版本低于 Android 12\n• 设备制造商禁用了动态取色\n• 系统设置中未启用 Material You',
-            ),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -1089,7 +828,6 @@ class SettingsScreen extends ConsumerWidget {
           child: OutlinedButton(
             onPressed: () {
               ref.read(themeProvider.notifier).setSeedColor(null);
-              ref.read(themeProvider.notifier).setUseDynamicColor(true);
               Navigator.pop(dialogContext);
             },
             style: OutlinedButton.styleFrom(
@@ -1107,7 +845,6 @@ class SettingsScreen extends ConsumerWidget {
           child: FilledButton(
             onPressed: () {
               ref.read(themeProvider.notifier).setSeedColor(selectedColor);
-              ref.read(themeProvider.notifier).setUseDynamicColor(false);
               Navigator.pop(dialogContext);
             },
             style: FilledButton.styleFrom(
@@ -1761,7 +1498,7 @@ class _AboutBottomSheet extends StatelessWidget {
                 context,
                 Icons.info_outline,
                 '应用介绍',
-                '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。',
+                '轻氧天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。',
               ),
               const SizedBox(height: 16),
               _buildAboutItem(
