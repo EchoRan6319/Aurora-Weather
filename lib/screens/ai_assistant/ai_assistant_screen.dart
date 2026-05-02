@@ -252,7 +252,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         builder: (context, constraints) {
           final isWide = constraints.maxWidth > 900;
           return Container(
-            color: Theme.of(context).colorScheme.surfaceContainer,
+            color: Colors.transparent,
             child: SafeArea(
               child: Align(
                 alignment: Alignment.topCenter,
