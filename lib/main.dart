@@ -4,9 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:dynamic_color/dynamic_color.dart';
 import 'app_localizations.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/aurora_palette.dart';
 import 'core/constants/app_constants.dart';
 import 'providers/theme_provider.dart';
 import 'providers/settings_provider.dart';
@@ -20,7 +20,6 @@ import 'services/scheduled_broadcast_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 初始化应用版本号（从包信息获取）
   await AppConstants.initialize();
 
   try {
@@ -47,12 +46,6 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
-  /// 缓存的动态取色结果（ColorOS 等系统绕过逻辑）
-  ColorScheme? _bypassedColorScheme;
-
-  /// 是否已完成动态取色尝试
-  bool _bypassColorLoaded = false;
-
   @override
   void initState() {
     super.initState();
@@ -113,147 +106,83 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
       }
     });
 
-    return DynamicColorBuilder(
-      builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-        // 首次需要动态取色时触发绕过逻辑，结果缓存到字段中
-        if (themeSettings.useDynamicColor &&
-            !_bypassColorLoaded &&
-            lightDynamic != null) {
-          _bypassColorLoaded = true;
-          _getBypassedColorScheme(lightDynamic).then((result) {
-            if (result != null && mounted) {
-              setState(() => _bypassedColorScheme = result);
-            }
-          });
+    final seedColor = themeSettings.seedColor;
+    final ColorScheme lightColorScheme;
+    final ColorScheme darkColorScheme;
+
+    if (seedColor != null) {
+      lightColorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: Brightness.light,
+      );
+      darkColorScheme = ColorScheme.fromSeed(
+        seedColor: seedColor,
+        brightness: Brightness.dark,
+      );
+    } else {
+      lightColorScheme = AuroraPalette.lightColorScheme();
+      darkColorScheme = AuroraPalette.darkColorScheme();
+    }
+
+    final finalDarkColorScheme = themeSettings.useAmoledBlack
+        ? AuroraPalette.amoledBlackColorScheme()
+        : darkColorScheme;
+
+    return MaterialApp(
+      title: AppLocalizations.tr('轻氧天气'),
+      debugShowCheckedModeBanner: false,
+      locale: appLocale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      localeResolutionCallback: (locale, supportedLocales) {
+        if (locale == null) {
+          AppLocalizations.updateCurrentLocale(
+            const Locale('zh', 'CN'),
+          );
+          return const Locale('zh', 'CN');
         }
-
-        final ColorScheme? finalLightDynamic =
-            _bypassedColorScheme ?? lightDynamic;
-
-        ColorScheme lightColorScheme;
-        ColorScheme darkColorScheme;
-
-        if (themeSettings.useDynamicColor && finalLightDynamic != null) {
-          lightColorScheme = finalLightDynamic;
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: finalLightDynamic.primary,
-            brightness: Brightness.dark,
-          );
-          debugPrint(
-            '[DynamicColor] Using system dynamic colors. Primary: ${finalLightDynamic.primary}',
-          );
-        } else {
-          final seedColor =
-              themeSettings.seedColor ?? AppTheme.presetSeedColors.first;
-          lightColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor,
-            brightness: Brightness.light,
-          );
-          darkColorScheme = ColorScheme.fromSeed(
-            seedColor: seedColor,
-            brightness: Brightness.dark,
-          );
-          debugPrint('[DynamicColor] Using seed color: $seedColor');
+        for (final supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale.languageCode) {
+            AppLocalizations.updateCurrentLocale(supportedLocale);
+            return supportedLocale;
+          }
         }
+        AppLocalizations.updateCurrentLocale(const Locale('zh', 'CN'));
+        return const Locale('zh', 'CN');
+      },
+      theme: AppTheme.createTheme(colorScheme: lightColorScheme),
+      darkTheme: AppTheme.createTheme(
+        colorScheme: finalDarkColorScheme,
+        isAmoledBlack: themeSettings.useAmoledBlack,
+      ),
+      themeMode: themeNotifier.flutterThemeMode,
+      builder: (context, child) {
+        AppLocalizations.updateCurrentLocale(
+          Localizations.localeOf(context),
+        );
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final overlayStyle =
+            (isDark
+                    ? SystemUiOverlayStyle.light
+                    : SystemUiOverlayStyle.dark)
+                .copyWith(
+                  statusBarColor: Colors.transparent,
+                  systemNavigationBarColor: Colors.transparent,
+                  systemNavigationBarDividerColor: Colors.transparent,
+                  systemNavigationBarContrastEnforced: false,
+                );
 
-        final finalDarkColorScheme = themeSettings.useAmoledBlack
-            ? AppTheme.createAmoledBlackScheme(darkColorScheme)
-            : darkColorScheme;
-
-        return MaterialApp(
-          title: AppLocalizations.tr('轻氧天气'),
-          debugShowCheckedModeBanner: false,
-          locale: appLocale,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
-          localeResolutionCallback: (locale, supportedLocales) {
-            if (locale == null) {
-              AppLocalizations.updateCurrentLocale(
-                const Locale('zh', 'CN'),
-              );
-              return const Locale('zh', 'CN');
-            }
-            for (final supportedLocale in supportedLocales) {
-              if (supportedLocale.languageCode == locale.languageCode) {
-                AppLocalizations.updateCurrentLocale(supportedLocale);
-                return supportedLocale;
-              }
-            }
-            AppLocalizations.updateCurrentLocale(const Locale('zh', 'CN'));
-            return const Locale('zh', 'CN');
-          },
-          theme: AppTheme.createTheme(
-            colorScheme: lightColorScheme,
-            useMaterial3: themeSettings.useMaterial3,
-          ),
-          darkTheme: AppTheme.createTheme(
-            colorScheme: finalDarkColorScheme,
-            useMaterial3: themeSettings.useMaterial3,
-            isAmoledBlack: themeSettings.useAmoledBlack,
-          ),
-          themeMode: themeNotifier.flutterThemeMode,
-          builder: (context, child) {
-            AppLocalizations.updateCurrentLocale(
-              Localizations.localeOf(context),
-            );
-            final isDark = Theme.of(context).brightness == Brightness.dark;
-            final overlayStyle =
-                (isDark
-                        ? SystemUiOverlayStyle.light
-                        : SystemUiOverlayStyle.dark)
-                    .copyWith(
-                      statusBarColor: Colors.transparent,
-                      systemNavigationBarColor: Colors.transparent,
-                      systemNavigationBarDividerColor: Colors.transparent,
-                      systemNavigationBarContrastEnforced: false,
-                    );
-
-            return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: overlayStyle,
-              child: child!,
-            );
-          },
-          home: const MainScreen(),
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: overlayStyle,
+          child: child!,
         );
       },
+      home: const MainScreen(),
     );
-  }
-
-  /// 针对 ColorOS 等系统的动态取色绕过逻辑
-  /// 调用前已确认 useDynamicColor 为 true 且 dynamic 不为 null
-  Future<ColorScheme?> _getBypassedColorScheme(
-    ColorScheme? dynamic,
-  ) async {
-    if (dynamic == null) return null;
-    if (defaultTargetPlatform != TargetPlatform.android) return null;
-
-    // 直接尝试获取壁纸颜色，绕过系统限制
-    debugPrint(
-      '[DynamicColor] Attempting native bypass to get wallpaper color...',
-    );
-    try {
-      const channel = MethodChannel('com.echoran.pureweather/wallpaper');
-      final int? colorInt = await channel.invokeMethod<int>(
-        'getWallpaperPrimaryColor',
-      );
-      if (colorInt != null) {
-        final color = Color(colorInt);
-        debugPrint(
-          '[DynamicColor] Native bypass successful. Extracted color: $color',
-        );
-        return ColorScheme.fromSeed(
-          seedColor: color,
-          brightness: Brightness.light,
-        );
-      }
-    } catch (e) {
-      debugPrint('[DynamicColor] Native bypass failed: $e');
-    }
-    return null;
   }
 }
