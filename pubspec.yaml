@@ -59,7 +59,7 @@ flutter:
 
 flutter_launcher_icons:
   android: false
-  ios: true
+  ios: false
   image_path: "assets/icons/app_icon.svg"
   remove_alpha_ios: true
 

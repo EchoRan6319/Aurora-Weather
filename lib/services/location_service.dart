@@ -143,8 +143,9 @@ class LocationService {
   /// [value]: 要检查的字段值
   /// 
   /// 返回字段是否有效
-  bool _isValidField(String? value) {
+  bool _isValidField(dynamic value) {
     if (value == null) return false;
+    if (value is! String) return false;
     if (value.isEmpty) return false;
     if (value == '[]') return false;
     return true;
