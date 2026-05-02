@@ -239,7 +239,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         title: Text(context.tr('天气助手')),
         actions: [
           if (chatSession.messages.isNotEmpty)
-            IconButton.filledTonal(
+            IconButton(
               icon: const Icon(LucideIcons.trash2),
               onPressed: () {
                 ref.read(chatProvider.notifier).clearHistory();
