@@ -182,9 +182,10 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final showAI = appSettings.showAIAssistant;
     final screens = _getScreens(showAI);
     final destinations = _getDestinations(context, showAI);
-    final weatherCode = int.tryParse(
-      weatherState.weatherData?.current.icon ?? '100',
-    ) ?? 100;
+    final weatherData = weatherState.weatherData;
+    final weatherCode = weatherData != null
+        ? (int.tryParse(weatherData.current.icon) ?? 100)
+        : null;
 
     // 监听位置初始化状态
     ref.listen(locationInitProvider, (previous, next) {
@@ -240,30 +241,49 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       }
     });
 
-    return AuroraBackground(
-      weatherCode: weatherCode,
-      child: Scaffold(
-        extendBody: false,
-        body: IndexedStack(index: _currentIndex, children: screens),
-        bottomNavigationBar: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: 0.5,
-              color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
-            ),
-            NavigationBar(
-              selectedIndex: _currentIndex,
-              onDestinationSelected: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              destinations: destinations,
-            ),
+    final scaffold = Scaffold(
+      extendBody: false,
+      body: IndexedStack(index: _currentIndex, children: screens),
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 0.5,
+            color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+          ),
+          NavigationBar(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            destinations: destinations,
+          ),
+        ],
+      ),
+    );
+
+    if (weatherCode != null) {
+      return AuroraBackground(weatherCode: weatherCode, child: scaffold);
+    }
+
+    // Brand aurora gradient matching AppIcon colors while weather loads.
+    // Looks intentional, not like a broken screen.
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF0F0C29),
+            Color(0xFF302B63),
+            Color(0xFF0D3B66),
+            Color(0xFF1A5C5C),
           ],
         ),
       ),
+      child: scaffold,
     );
   }
 }
