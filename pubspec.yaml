@@ -1,5 +1,5 @@
 name: pureweather
-description: "轻氧天气 - 一款使用 Material You Design 的天气应用"
+description: "轻氧天气 - 一款使用 Aurora UI 的天气应用"
 publish_to: 'none'
 
 version: 999.0.0+999
@@ -23,7 +23,6 @@ dependencies:
   fl_chart: ^0.69.0
   cached_network_image: ^3.4.1
   flutter_animate: ^4.5.2
-  dynamic_color: ^1.7.0
   flutter_local_notifications: ^18.0.1
   permission_handler: ^11.3.1
   dio: ^5.7.0
