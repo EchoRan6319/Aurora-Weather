@@ -75,8 +75,6 @@ class AppLocalizations {
     '主题颜色': 'Theme Color',
     '跟随壁纸': 'Follow Wallpaper',
     '自定义颜色': 'Custom Color',
-    '动态取色': 'Dynamic Color',
-    '根据壁纸自动生成主题色': 'Generate theme colors from wallpaper automatically.',
     '跟随系统': 'Follow System',
     '默认跟随系统': 'Follow System (Default)',
     '自动跟随系统语言': 'Automatically follow system language',
@@ -89,11 +87,6 @@ class AppLocalizations {
     '使用深色主题显示': 'Use dark theme.',
     '选择主题颜色': 'Choose Theme Color',
     '预设颜色': 'Preset Colors',
-    '壁纸取色': 'Pick From Wallpaper',
-    '检测颜色: #{color}': 'Detected color: #{color}',
-    '动态取色不可用': 'Dynamic color unavailable',
-    '可能原因：\n• 设备系统版本低于 Android 12\n• 设备制造商禁用了动态取色\n• 系统设置中未启用 Material You':
-        'Possible reasons:\n• Device version is below Android 12\n• Device manufacturer disabled dynamic color\n• Material You is not enabled in system settings',
     '十六进制颜色代码': 'Hex Color Code',
     '预览效果': 'Preview',
     '主色': 'Primary',
@@ -172,8 +165,8 @@ class AppLocalizations {
     '我知道了': 'Got it',
     '关于': 'About',
     '应用介绍': 'About the App',
-    '轻氧天气是一款使用 Material You Design 的现代化跨平台天气应用，支持全平台。':
-        'PureWeather is a modern cross-platform weather app designed with Material You.',
+    '轻氧天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。':
+        'PureWeather is a modern cross-platform weather app designed with Aurora UI.',
     '开源协议': 'Open Source License',
     '开发者': 'Developer',
     '特别鸣谢': 'Special Thanks',

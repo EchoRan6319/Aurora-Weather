@@ -8,7 +8,7 @@ import '../../core/theme/app_theme.dart';
 
 /// 天气卡片排序页面
 ///
-/// 遵循 Material You 设计规范，提供统一的视觉风格和交互体验
+/// 遵循 Aurora UI 设计规范，提供统一的视觉风格和交互体验
 class CardOrderScreen {
   static void show(BuildContext context) {
     showModalBottomSheet(

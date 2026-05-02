@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 
-/// Material You 风格的设置分组组件
+/// Aurora UI 风格的设置分组组件
 ///
 /// 遵循 Material 3 设计规范，提供统一的视觉风格和交互体验
 class SettingsSection extends StatelessWidget {

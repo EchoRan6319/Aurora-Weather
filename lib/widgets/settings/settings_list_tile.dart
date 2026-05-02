@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../app_localizations.dart';
 
-/// Material You 风格的设置列表项组件
+/// Aurora UI 风格的设置列表项组件
 ///
 /// 遵循 Material 3 设计规范，提供统一的视觉风格和交互体验
 class SettingsListTile extends StatelessWidget {

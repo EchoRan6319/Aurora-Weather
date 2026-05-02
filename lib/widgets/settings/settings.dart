@@ -1,6 +1,6 @@
 /// 设置组件库
 ///
-/// 提供 Material You 风格的统一设置界面组件
+/// 提供 Aurora UI 风格的统一设置界面组件
 library;
 
 export 'settings_list_tile.dart';
