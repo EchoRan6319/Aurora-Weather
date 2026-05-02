@@ -247,14 +247,23 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       child: Scaffold(
         extendBody: false,
         body: IndexedStack(index: _currentIndex, children: screens),
-        bottomNavigationBar: NavigationBar(
-          selectedIndex: _currentIndex,
-          onDestinationSelected: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          destinations: destinations,
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 0.5,
+              color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
+            ),
+            NavigationBar(
+              selectedIndex: _currentIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              destinations: destinations,
+            ),
+          ],
         ),
       ),
     );

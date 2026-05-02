@@ -42,38 +42,38 @@ class AuroraPalette {
   static const Color lightShadow = Color(0xFF000000);
   static const Color lightScrim = Color(0xFF000000);
 
-  // ── Dark mode ──────────────────────────────────
+  // ── Dark mode — Aurora midnight palette ────────
 
-  static const Color darkPrimary = Color(0xFF9ECAFF);
-  static const Color darkOnPrimary = Color(0xFF003258);
-  static const Color darkPrimaryContainer = Color(0xFF00497D);
-  static const Color darkOnPrimaryContainer = Color(0xFFD1E4FF);
+  static const Color darkPrimary = Color(0xFF00E5FF);         // Cyan aurora
+  static const Color darkOnPrimary = Color(0xFF003544);
+  static const Color darkPrimaryContainer = Color(0xFF004D60);
+  static const Color darkOnPrimaryContainer = Color(0xFFB3F0FF);
 
-  static const Color darkSecondary = Color(0xFFBBC7DB);
-  static const Color darkOnSecondary = Color(0xFF253140);
-  static const Color darkSecondaryContainer = Color(0xFF3B4858);
-  static const Color darkOnSecondaryContainer = Color(0xFFD7E3F7);
+  static const Color darkSecondary = Color(0xFFC4B5FD);      // Soft lavender
+  static const Color darkOnSecondary = Color(0xFF2D1750);
+  static const Color darkSecondaryContainer = Color(0xFF443068);
+  static const Color darkOnSecondaryContainer = Color(0xFFEBE0FF);
 
-  static const Color darkTertiary = Color(0xFFD7BDE4);
-  static const Color darkOnTertiary = Color(0xFF3B2948);
-  static const Color darkTertiaryContainer = Color(0xFF523F5F);
-  static const Color darkOnTertiaryContainer = Color(0xFFF2DAFF);
+  static const Color darkTertiary = Color(0xFFFF6B9D);       // Aurora pink
+  static const Color darkOnTertiary = Color(0xFF4A0025);
+  static const Color darkTertiaryContainer = Color(0xFF6B003B);
+  static const Color darkOnTertiaryContainer = Color(0xFFFFD9E5);
 
-  static const Color darkError = Color(0xFFFFB4AB);
-  static const Color darkOnError = Color(0xFF690005);
-  static const Color darkErrorContainer = Color(0xFF93000A);
+  static const Color darkError = Color(0xFFFF6B6B);
+  static const Color darkOnError = Color(0xFF3B0000);
+  static const Color darkErrorContainer = Color(0xFF5F0000);
   static const Color darkOnErrorContainer = Color(0xFFFFDAD6);
 
-  static const Color darkSurface = Color(0xFF1A1C1E);
-  static const Color darkOnSurface = Color(0xFFE2E2E6);
-  static const Color darkOnSurfaceVariant = Color(0xFFC3C7CF);
-  static const Color darkOutline = Color(0xFF8D9199);
-  static const Color darkOutlineVariant = Color(0xFF43474E);
-  static const Color darkSurfaceContainerLowest = Color(0xFF0E1114);
-  static const Color darkSurfaceContainer = Color(0xFF1E2024);
-  static const Color darkSurfaceContainerHigh = Color(0xFF282A2E);
-  static const Color darkSurfaceContainerHighest = Color(0xFF333539);
-  static const Color darkSurfaceTint = Color(0xFF9ECAFF);
+  static const Color darkSurface = Color(0xFF0B0A1A);        // Deep indigo black
+  static const Color darkOnSurface = Color(0xFFE8E0F0);
+  static const Color darkOnSurfaceVariant = Color(0xFFC8BFD8);
+  static const Color darkOutline = Color(0xFF8A7F98);
+  static const Color darkOutlineVariant = Color(0xFF4A4060);
+  static const Color darkSurfaceContainerLowest = Color(0xFF070618);
+  static const Color darkSurfaceContainer = Color(0xFF120F28);
+  static const Color darkSurfaceContainerHigh = Color(0xFF1D1838);
+  static const Color darkSurfaceContainerHighest = Color(0xFF282348);
+  static const Color darkSurfaceTint = Color(0xFF00E5FF);
   static const Color darkShadow = Color(0xFF000000);
   static const Color darkScrim = Color(0xFF000000);
 
@@ -145,14 +145,14 @@ class AuroraPalette {
     );
   }
 
-  /// AMOLED pure-black dark variant.
+  /// AMOLED pure-black dark variant with aurora accents preserved.
   static ColorScheme amoledBlackColorScheme() {
     final base = darkColorScheme();
     return base.copyWith(
       surface: Colors.black,
-      surfaceContainer: const Color(0xFF121212),
-      surfaceContainerHigh: const Color(0xFF1E1E1E),
-      surfaceContainerHighest: const Color(0xFF2C2C2C),
+      surfaceContainer: const Color(0xFF0A0A0A),
+      surfaceContainerHigh: const Color(0xFF141414),
+      surfaceContainerHighest: const Color(0xFF1E1E1E),
       surfaceTint: Colors.transparent,
       shadow: Colors.black,
     );

@@ -310,34 +310,42 @@ class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
 
-      // NavigationBar — glass, translucent
+      // NavigationBar — Aurora glass, no Material 3 pill indicator
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colorScheme.surface
-            .withValues(alpha: isDark ? 0.60 : 0.70),
-        indicatorColor: colorScheme.secondaryContainer
-            .withValues(alpha: isDark ? 0.7 : 0.8),
+            .withValues(alpha: isDark ? 0.50 : 0.65),
         surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        height: 64,
+        indicatorColor: Colors.transparent,
+        indicatorShape: const StadiumBorder(),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return TextStyle(
-              color: colorScheme.onSurface,
+              color: colorScheme.primary,
               fontWeight: FontWeight.w600,
-              fontSize: 12,
+              fontSize: 11,
               fontFamily: fontFamily,
             );
           }
           return TextStyle(
-            color: colorScheme.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
             fontWeight: FontWeight.w400,
-            fontSize: 12,
+            fontSize: 11,
             fontFamily: fontFamily,
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return IconThemeData(color: colorScheme.onSecondaryContainer);
+            return IconThemeData(
+              color: colorScheme.primary,
+              size: 22,
+            );
           }
-          return IconThemeData(color: colorScheme.onSurfaceVariant);
+          return IconThemeData(
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+            size: 22,
+          );
         }),
       ),
 
