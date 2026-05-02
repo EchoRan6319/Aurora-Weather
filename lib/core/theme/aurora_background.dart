@@ -19,12 +19,13 @@ class AuroraBackground extends StatefulWidget {
 }
 
 class _AuroraBackgroundState extends State<AuroraBackground>
-    with TickerProviderStateMixin {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late final AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 10),
@@ -33,8 +34,23 @@ class _AuroraBackgroundState extends State<AuroraBackground>
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        _controller.stop();
+      case AppLifecycleState.resumed:
+        _controller.repeat(reverse: true);
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+        break;
+    }
   }
 
   @override

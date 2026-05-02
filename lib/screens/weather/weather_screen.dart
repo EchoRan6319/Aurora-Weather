@@ -145,10 +145,10 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
 
     // 获取今日天气和昼夜状态
     final todayDaily = weather.daily.isNotEmpty ? weather.daily.first : null;
-    final isNight = _isNightTime(
+    final isNight = WeatherCode.isNightTimeFromObsTime(
       weather.current.obsTime,
-      todayDaily?.sunrise,
-      todayDaily?.sunset,
+      sunrise: todayDaily?.sunrise,
+      sunset: todayDaily?.sunset,
     );
 
     return Container(
@@ -691,57 +691,6 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     );
   }
 
-  /// 判断是否为夜间
-  ///
-  /// [obsTime]: 观测时间
-  /// [sunrise]: 日出时间
-  /// [sunset]: 日落时间
-  bool _isNightTime(String obsTime, String? sunrise, String? sunset) {
-    try {
-      // 处理带时区后缀的时间字符串，截取到秒部分
-      final sanitized = obsTime.replaceFirst(RegExp(r'[+-]\d{2}:\d{2}$'), '');
-      final now = DateTime.tryParse(sanitized) ?? DateTime.now();
-
-      if (sunrise != null &&
-          sunset != null &&
-          sunrise.isNotEmpty &&
-          sunset.isNotEmpty) {
-        final sunriseTime = _parseTime(sunrise, now);
-        final sunsetTime = _parseTime(sunset, now);
-
-        if (sunriseTime != null && sunsetTime != null) {
-          return now.isBefore(sunriseTime) || now.isAfter(sunsetTime);
-        }
-      }
-
-      // 默认规则：6点前或18点后为夜间
-      return now.hour < 6 || now.hour >= 18;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  /// 解析时间字符串
-  ///
-  /// [time]: 时间字符串 (HH:MM)
-  /// [baseDate]: 基础日期
-  DateTime? _parseTime(String time, DateTime baseDate) {
-    try {
-      final parts = time.split(':');
-      if (parts.length >= 2) {
-        final hour = int.parse(parts[0]);
-        final minute = int.parse(parts[1]);
-        return DateTime(
-          baseDate.year,
-          baseDate.month,
-          baseDate.day,
-          hour,
-          minute,
-        );
-      }
-    } catch (_) {}
-    return null;
-  }
 }
 
 /// 城市选择器底部弹窗

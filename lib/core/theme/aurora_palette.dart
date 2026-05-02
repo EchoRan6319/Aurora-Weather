@@ -145,16 +145,4 @@ class AuroraPalette {
     );
   }
 
-  /// AMOLED pure-black dark variant with aurora accents preserved.
-  static ColorScheme amoledBlackColorScheme() {
-    final base = darkColorScheme();
-    return base.copyWith(
-      surface: Colors.black,
-      surfaceContainer: const Color(0xFF0A0A0A),
-      surfaceContainerHigh: const Color(0xFF141414),
-      surfaceContainerHighest: const Color(0xFF1E1E1E),
-      surfaceTint: Colors.transparent,
-      shadow: Colors.black,
-    );
-  }
 }

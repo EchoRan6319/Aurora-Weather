@@ -28,6 +28,8 @@ void main() async {
     // CI can inject API keys via --dart-define or environment variables.
   }
 
+  await ThemeNotifier.preload();
+
   await notificationServiceProvider.initialize();
   await notificationServiceProvider.createNotificationChannel();
 
@@ -79,6 +81,17 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
     await scheduledBroadcastServiceProvider.scheduleBroadcasts(settings);
   }
 
+  ThemeMode _flutterThemeMode(AppThemeMode mode) {
+    switch (mode) {
+      case AppThemeMode.light:
+        return ThemeMode.light;
+      case AppThemeMode.dark:
+        return ThemeMode.dark;
+      case AppThemeMode.system:
+        return ThemeMode.system;
+    }
+  }
+
   Locale? _resolveAppLocale(AppLanguage language) {
     switch (language) {
       case AppLanguage.zhCN:
@@ -94,7 +107,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final themeSettings = ref.watch(themeProvider);
     final appSettings = ref.watch(settingsProvider);
-    final themeNotifier = ref.read(themeProvider.notifier);
     final appLocale = _resolveAppLocale(appSettings.appLanguage);
 
     ref.listen<ScheduledBroadcastSettings>(scheduledBroadcastProvider, (
@@ -105,28 +117,6 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         scheduledBroadcastServiceProvider.scheduleBroadcasts(next);
       }
     });
-
-    final seedColor = themeSettings.seedColor;
-    final ColorScheme lightColorScheme;
-    final ColorScheme darkColorScheme;
-
-    if (seedColor != null) {
-      lightColorScheme = ColorScheme.fromSeed(
-        seedColor: seedColor,
-        brightness: Brightness.light,
-      );
-      darkColorScheme = ColorScheme.fromSeed(
-        seedColor: seedColor,
-        brightness: Brightness.dark,
-      );
-    } else {
-      lightColorScheme = AuroraPalette.lightColorScheme();
-      darkColorScheme = AuroraPalette.darkColorScheme();
-    }
-
-    final finalDarkColorScheme = themeSettings.useAmoledBlack
-        ? AuroraPalette.amoledBlackColorScheme()
-        : darkColorScheme;
 
     return MaterialApp(
       title: AppLocalizations.tr('轻氧天气'),
@@ -155,12 +145,9 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
         AppLocalizations.updateCurrentLocale(const Locale('zh', 'CN'));
         return const Locale('zh', 'CN');
       },
-      theme: AppTheme.createTheme(colorScheme: lightColorScheme),
-      darkTheme: AppTheme.createTheme(
-        colorScheme: finalDarkColorScheme,
-        isAmoledBlack: themeSettings.useAmoledBlack,
-      ),
-      themeMode: themeNotifier.flutterThemeMode,
+      theme: AppTheme.createTheme(colorScheme: AuroraPalette.lightColorScheme()),
+      darkTheme: AppTheme.createTheme(colorScheme: AuroraPalette.darkColorScheme()),
+      themeMode: _flutterThemeMode(themeSettings.themeMode),
       builder: (context, child) {
         AppLocalizations.updateCurrentLocale(
           Localizations.localeOf(context),

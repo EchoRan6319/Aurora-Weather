@@ -8,40 +8,25 @@ enum AppThemeMode { system, light, dark }
 /// Theme settings persisted to SharedPreferences.
 class ThemeSettings {
   final AppThemeMode themeMode;
-  final Color? seedColor;
-  final bool useAmoledBlack;
 
   const ThemeSettings({
     this.themeMode = AppThemeMode.system,
-    this.seedColor,
-    this.useAmoledBlack = false,
   });
 
-  ThemeSettings copyWith({
-    AppThemeMode? themeMode,
-    Color? seedColor,
-    bool? useAmoledBlack,
-    bool clearSeedColor = false,
-  }) {
-    return ThemeSettings(
-      themeMode: themeMode ?? this.themeMode,
-      seedColor: clearSeedColor ? null : (seedColor ?? this.seedColor),
-      useAmoledBlack: useAmoledBlack ?? this.useAmoledBlack,
-    );
+  ThemeSettings copyWith({AppThemeMode? themeMode}) {
+    return ThemeSettings(themeMode: themeMode ?? this.themeMode);
   }
 }
 
 /// Theme notifier managing persisted theme settings state.
 class ThemeNotifier extends StateNotifier<ThemeSettings> {
   static const String _keyThemeMode = 'theme_mode';
-  static const String _keySeedColor = 'seed_color';
-  static const String _keyUseAmoledBlack = 'use_amoled_black';
 
-  ThemeNotifier() : super(const ThemeSettings()) {
-    _loadSettings();
-  }
+  /// Preloaded settings, set by [preload] before runApp.
+  static ThemeSettings? _preloaded;
 
-  Future<void> _loadSettings() async {
+  /// Call in main() before runApp to avoid flash of default theme.
+  static Future<void> preload() async {
     final prefs = await SharedPreferences.getInstance();
 
     final themeModeIndex = prefs.getInt(_keyThemeMode) ?? 0;
@@ -49,36 +34,18 @@ class ThemeNotifier extends StateNotifier<ThemeSettings> {
         (themeModeIndex >= 0 && themeModeIndex < AppThemeMode.values.length)
             ? themeModeIndex
             : 0;
-    final seedColorValue = prefs.getInt(_keySeedColor);
-    final useAmoledBlack = prefs.getBool(_keyUseAmoledBlack) ?? false;
 
-    state = ThemeSettings(
+    _preloaded = ThemeSettings(
       themeMode: AppThemeMode.values[safeThemeModeIndex],
-      seedColor: seedColorValue != null ? Color(seedColorValue) : null,
-      useAmoledBlack: useAmoledBlack,
     );
   }
+
+  ThemeNotifier() : super(_preloaded ?? const ThemeSettings());
 
   Future<void> setThemeMode(AppThemeMode mode) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_keyThemeMode, mode.index);
     state = state.copyWith(themeMode: mode);
-  }
-
-  Future<void> setSeedColor(Color? color) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (color != null) {
-      await prefs.setInt(_keySeedColor, color.toARGB32());
-    } else {
-      await prefs.remove(_keySeedColor);
-    }
-    state = state.copyWith(seedColor: color, clearSeedColor: color == null);
-  }
-
-  Future<void> setUseAmoledBlack(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyUseAmoledBlack, value);
-    state = state.copyWith(useAmoledBlack: value);
   }
 
   ThemeMode get flutterThemeMode {
@@ -90,11 +57,6 @@ class ThemeNotifier extends StateNotifier<ThemeSettings> {
       case AppThemeMode.system:
         return ThemeMode.system;
     }
-  }
-
-  bool get isAmoledBlackEnabled {
-    if (state.themeMode == AppThemeMode.light) return false;
-    return state.useAmoledBlack;
   }
 
   bool isDarkMode(BuildContext context) {

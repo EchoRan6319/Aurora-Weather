@@ -133,36 +133,6 @@ class _DailyItem extends StatelessWidget {
     this.temperatureUnit = 'celsius',
   });
 
-  /// 判断是否为夜间
-  bool _isNightTime() {
-    final now = DateTime.now();
-
-    if (sunrise == null ||
-        sunset == null ||
-        sunrise!.isEmpty ||
-        sunset!.isEmpty) {
-      return now.hour >= 18 || now.hour < 6;
-    }
-
-    final sunriseParts = sunrise!.split(':');
-    final sunsetParts = sunset!.split(':');
-
-    if (sunriseParts.length < 2 || sunsetParts.length < 2) {
-      return now.hour >= 18 || now.hour < 6;
-    }
-
-    final sunriseHour = int.tryParse(sunriseParts[0]) ?? 6;
-    final sunriseMinute = int.tryParse(sunriseParts[1]) ?? 0;
-    final sunsetHour = int.tryParse(sunsetParts[0]) ?? 18;
-    final sunsetMinute = int.tryParse(sunsetParts[1]) ?? 0;
-
-    final sunriseMinutes = sunriseHour * 60 + sunriseMinute;
-    final sunsetMinutes = sunsetHour * 60 + sunsetMinute;
-    final currentMinutes = now.hour * 60 + now.minute;
-
-    return currentMinutes < sunriseMinutes || currentMinutes >= sunsetMinutes;
-  }
-
   @override
   Widget build(BuildContext context) {
     final date = DateTime.tryParse(weather.fxDate);
@@ -184,7 +154,9 @@ class _DailyItem extends StatelessWidget {
       text = weather.textDay.isNotEmpty ? weather.textDay : weather.textNight;
     }
 
-    final isNight = isToday ? _isNightTime() : false;
+    final isNight = isToday
+        ? WeatherCode.isNightTime(DateTime.now(), sunrise: sunrise, sunset: sunset)
+        : false;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),

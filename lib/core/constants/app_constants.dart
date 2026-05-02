@@ -163,4 +163,76 @@ class WeatherCode {
     }
     return celsius.round().toString();
   }
+
+  /// Returns true if [time] is at night relative to the given sunrise/sunset.
+  ///
+  /// [sunrise] and [sunset] should be in HH:MM format.
+  /// [nextSunrise] is used for future-day forecasts.
+  /// [referenceNow] provides the "today" context for future-day logic.
+  static bool isNightTime(DateTime time, {
+    String? sunrise,
+    String? sunset,
+    String? nextSunrise,
+    DateTime? referenceNow,
+  }) {
+    final sunriseMinutes = _parseTimeToMinutes(sunrise);
+    final sunsetMinutes = _parseTimeToMinutes(sunset);
+    final currentMinutes = time.hour * 60 + time.minute;
+
+    if (sunriseMinutes != null && sunsetMinutes != null) {
+      final refNow = referenceNow ?? DateTime.now();
+      final today = DateTime(refNow.year, refNow.month, refNow.day);
+      final timeDay = DateTime(time.year, time.month, time.day);
+
+      if (!timeDay.isAfter(today)) {
+        return currentMinutes < sunriseMinutes || currentMinutes >= sunsetMinutes;
+      }
+      final futureSunrise = _parseTimeToMinutes(nextSunrise) ?? sunriseMinutes;
+      if (currentMinutes < futureSunrise) return true;
+      return currentMinutes >= sunsetMinutes;
+    }
+
+    return time.hour >= 18 || time.hour < 6;
+  }
+
+  /// Parses an obsTime string (ISO with optional TZ suffix) and checks night.
+  static bool isNightTimeFromObsTime(String obsTime, {String? sunrise, String? sunset}) {
+    final time = _parseObsTime(obsTime) ?? DateTime.now();
+    return isNightTime(time, sunrise: sunrise, sunset: sunset);
+  }
+
+  static int? _parseTimeToMinutes(String? hhmm) {
+    if (hhmm == null || hhmm.isEmpty) return null;
+    final parts = hhmm.split(':');
+    if (parts.length < 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return null;
+    return hour * 60 + minute;
+  }
+
+  static DateTime? _parseObsTime(String raw) {
+    final value = raw.trim();
+    if (value.isEmpty) return null;
+
+    var sanitized = value.replaceFirst(RegExp(r'[+-]\d{2}:\d{2}$'), '');
+    var parsed = DateTime.tryParse(sanitized);
+    if (parsed != null) return parsed;
+
+    final normalized = sanitized.replaceFirst(' ', 'T');
+    parsed = DateTime.tryParse(normalized);
+    if (parsed != null) return parsed.toLocal();
+
+    final tzNoColon = RegExp(r'([+-]\d{2})(\d{2})$');
+    if (tzNoColon.hasMatch(normalized)) {
+      final withColon = normalized.replaceFirstMapped(
+        tzNoColon,
+        (m) => '${m.group(1)}:${m.group(2)}',
+      );
+      parsed = DateTime.tryParse(withColon);
+      if (parsed != null) return parsed.toLocal();
+    }
+
+    return null;
+  }
 }

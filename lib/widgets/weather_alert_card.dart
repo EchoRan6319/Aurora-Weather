@@ -25,7 +25,7 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final tokens = context.uiTokens;
     final alertColor = _getAlertColor(widget.alerts.first.level, colorScheme);
-    final levelColor = _getLevelColor(widget.alerts.first.level, colorScheme);
+    final levelColor = _getAlertColor(widget.alerts.first.level, colorScheme);
     final backgroundColor = Color.alphaBlend(
       alertColor.withValues(alpha: 0.16),
       tokens.dangerBackground,
@@ -152,21 +152,6 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
   }
 
   Color _getAlertColor(String level, ColorScheme colorScheme) {
-    switch (level) {
-      case '红色':
-        return colorScheme.error;
-      case '橙色':
-        return Colors.orange;
-      case '黄色':
-        return Colors.yellow.shade700;
-      case '蓝色':
-        return colorScheme.primary;
-      default:
-        return colorScheme.outline;
-    }
-  }
-
-  Color _getLevelColor(String level, ColorScheme colorScheme) {
     switch (level) {
       case '红色':
         return colorScheme.error;

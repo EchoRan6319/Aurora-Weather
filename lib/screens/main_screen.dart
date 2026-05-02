@@ -213,11 +213,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
 
       if (previous.showAIAssistant != next.showAIAssistant) {
         setState(() {
-          if (next.showAIAssistant) {
-            if (_currentIndex == 1) _currentIndex = 2;
-          } else {
-            if (_currentIndex == 1) _currentIndex = 0;
-            else if (_currentIndex == 2) _currentIndex = 1;
+          final targetScreens = _getScreens(next.showAIAssistant);
+          if (_currentIndex >= targetScreens.length) {
+            _currentIndex = targetScreens.length - 1;
           }
         });
       }
