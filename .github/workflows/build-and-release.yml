@@ -53,7 +53,7 @@ jobs:
       - name: Create release
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
-          ARGS=(--title "PureWeather $TAG" --generate-notes)
+          ARGS=(--title "AuroraWeather$TAG" --generate-notes)
           [[ "${{ github.ref_type }}" != "tag" ]] && ARGS+=(--prerelease)
           gh release create "$TAG" "${ARGS[@]}" 2>/dev/null || true
         env:
@@ -128,7 +128,7 @@ jobs:
             ls -la build/app/outputs/flutter-apk || true
             exit 1
           fi
-          DST="build/app/outputs/flutter-apk/PureWeather-${{ steps.version.outputs.version }}-android-arm64-v8a-${{ matrix.mode }}.apk"
+          DST="build/app/outputs/flutter-apk/AuroraWeather-${{ steps.version.outputs.version }}-android-arm64-v8a-${{ matrix.mode }}.apk"
           cp "$SRC" "$DST"
           gh release upload "${{ steps.release_tag.outputs.tag }}" "$DST" --clobber
         env:
@@ -167,7 +167,7 @@ jobs:
         run: |
           $tag = "${{ steps.release_tag.outputs.tag }}"
           $isPrerelease = ("$env:GITHUB_REF_TYPE" -ne "tag")
-          $args = @($tag, "--title", "PureWeather $tag", "--generate-notes")
+          $args = @($tag, "--title", "AuroraWeather $tag", "--generate-notes")
           if ($isPrerelease) { $args += "--prerelease" }
           gh release create @args 2>&1 | Out-Null
           echo "Release tag: $tag (exists or created)"
@@ -229,7 +229,7 @@ jobs:
           $buildPart = if ($parts.Count -gt 1) { $parts[1] } else { "0" }
           $version = "$baseVersion.$buildPart"
           $cert = New-SelfSignedCertificate -Type Custom `
-            -Subject "CN=PureWeather, O=EchoRan, C=CN" `
+            -Subject "CN=AuroraWeather, O=EchoRan, C=CN" `
             -KeyUsage DigitalSignature `
             -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}") `
             -CertStoreLocation "Cert:\CurrentUser\My"
@@ -256,7 +256,7 @@ jobs:
           $tag = "${{ steps.release_tag.outputs.tag }}"
           $ver = "${{ steps.version.outputs.version }}"
           Get-ChildItem "build/windows/x64/runner/Release/*.msix" | ForEach-Object {
-            $newName = "build/windows/x64/runner/Release/PureWeather-$ver-windows-x64-installer.msix"
+            $newName = "build/windows/x64/runner/Release/AuroraWeather-$ver-windows-x64-installer.msix"
             Move-Item $_.FullName $newName -Force
             gh release upload $tag $newName --clobber
           }
@@ -297,7 +297,7 @@ jobs:
       - name: Create release
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
-          ARGS=(--title "PureWeather $TAG" --generate-notes)
+          ARGS=(--title "AuroraWeather$TAG" --generate-notes)
           [[ "${{ github.ref_type }}" != "tag" ]] && ARGS+=(--prerelease)
           gh release create "$TAG" "${ARGS[@]}" 2>/dev/null || true
         env:
@@ -343,7 +343,7 @@ jobs:
             --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
             --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
       - name: Package Linux
-        run: tar -C build/linux/x64/release -czf "build/linux/x64/release/PureWeather-${{ steps.version.outputs.version }}-linux-x64.tar.gz" bundle
+        run: tar -C build/linux/x64/release -czf "build/linux/x64/release/AuroraWeather-${{ steps.version.outputs.version }}-linux-x64.tar.gz" bundle
       - name: Build Web
         env:
           QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
@@ -361,15 +361,15 @@ jobs:
             --dart-define=AMAP_WEB_KEY="$AMAP_WEB_KEY" \
             --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
       - name: Package Web
-        run: cd build && zip -r "PureWeather-${{ steps.version.outputs.version }}-web-release.zip" web
+        run: cd build && zip -r "AuroraWeather-${{ steps.version.outputs.version }}-web-release.zip" web
       - name: Upload to Release
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
           gh release upload "$TAG" \
-            "build/linux/x64/release/PureWeather-${{ steps.version.outputs.version }}-linux-x64.tar.gz" \
+            "build/linux/x64/release/AuroraWeather-${{ steps.version.outputs.version }}-linux-x64.tar.gz" \
             --clobber
           gh release upload "$TAG" \
-            "build/PureWeather-${{ steps.version.outputs.version }}-web-release.zip" \
+            "build/AuroraWeather-${{ steps.version.outputs.version }}-web-release.zip" \
             --clobber
         env:
           GH_TOKEN: ${{ github.token }}
@@ -399,7 +399,7 @@ jobs:
       - name: Create release
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
-          ARGS=(--title "PureWeather $TAG" --generate-notes)
+          ARGS=(--title "AuroraWeather$TAG" --generate-notes)
           [[ "${{ github.ref_type }}" != "tag" ]] && ARGS+=(--prerelease)
           gh release create "$TAG" "${ARGS[@]}" 2>/dev/null || true
         env:
@@ -442,10 +442,10 @@ jobs:
             --dart-define=DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
       - name: Package macOS DMG
         run: |
-          hdiutil create -volname "PureWeather" \
+          hdiutil create -volname "AuroraWeather" \
             -srcfolder "build/macos/Build/Products/Release/PureWeather.app" \
             -ov -format UDZO \
-            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos-universal.dmg"
+            "build/macos/Build/Products/Release/AuroraWeather-${{ steps.version.outputs.version }}-macos-universal.dmg"
       - name: Build iOS
         env:
           QWEATHER_API_KEY: ${{ secrets.QWEATHER_API_KEY }}
@@ -467,16 +467,16 @@ jobs:
           cd build/ios/iphoneos
           mkdir -p Payload
           cp -r Runner.app Payload/
-          zip -r "PureWeather-${{ steps.version.outputs.version }}-ios-unsigned.ipa" Payload
+          zip -r "AuroraWeather-${{ steps.version.outputs.version }}-ios-unsigned.ipa" Payload
           rm -rf Payload
       - name: Upload macOS + iOS to Release
         run: |
           TAG="${{ steps.release_tag.outputs.tag }}"
           gh release upload "$TAG" \
-            "build/macos/Build/Products/Release/PureWeather-${{ steps.version.outputs.version }}-macos-universal.dmg" \
+            "build/macos/Build/Products/Release/AuroraWeather-${{ steps.version.outputs.version }}-macos-universal.dmg" \
             --clobber || true
           gh release upload "$TAG" \
-            "build/ios/iphoneos/PureWeather-${{ steps.version.outputs.version }}-ios-unsigned.ipa" \
+            "build/ios/iphoneos/AuroraWeather-${{ steps.version.outputs.version }}-ios-unsigned.ipa" \
             --clobber || true
         env:
           GH_TOKEN: ${{ github.token }}
