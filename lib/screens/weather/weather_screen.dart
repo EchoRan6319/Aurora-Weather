@@ -8,6 +8,7 @@ import '../../providers/city_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/theme/aurora_background.dart';
 import '../../services/caiyun_service.dart';
 import '../../widgets/hourly_forecast.dart';
 import '../../widgets/daily_forecast.dart';
@@ -56,53 +57,59 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherProvider);
     final defaultCity = ref.watch(defaultCityProvider);
+    final weatherCode = int.tryParse(
+      weatherState.weatherData?.current.icon ?? '100',
+    ) ?? 100;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final bool isWide = constraints.maxWidth > 900;
 
-        final scaffoldBody = RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse,
-                PointerDeviceKind.stylus,
-                PointerDeviceKind.invertedStylus,
-                PointerDeviceKind.trackpad,
-              },
-            ),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: isWide ? 900 : double.infinity,
-                      ),
-                      child: _buildCurrentWeather(
-                        weatherState,
-                        defaultCity,
-                        ref.watch(settingsProvider),
-                        viewportHeight: constraints.maxHeight,
+        final scaffoldBody = AuroraBackground(
+          weatherCode: weatherCode,
+          child: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(
+                dragDevices: {
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.invertedStylus,
+                  PointerDeviceKind.trackpad,
+                },
+              ),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: isWide ? 900 : double.infinity,
+                        ),
+                        child: _buildCurrentWeather(
+                          weatherState,
+                          defaultCity,
+                          ref.watch(settingsProvider),
+                          viewportHeight: constraints.maxHeight,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                SliverToBoxAdapter(
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: isWide ? 900 : double.infinity,
+                  SliverToBoxAdapter(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: isWide ? 900 : double.infinity,
+                        ),
+                        child: _buildContent(weatherState),
                       ),
-                      child: _buildContent(weatherState),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -150,10 +157,8 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
       todayDaily?.sunset,
     );
 
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
-      color: colorScheme.surfaceContainer,
+      color: Colors.transparent,
       child: Padding(
         padding: EdgeInsets.only(
           left: 24,
