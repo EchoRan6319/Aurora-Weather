@@ -34,7 +34,7 @@ class AirQualityCard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.air,
+                  LucideIcons.wind,
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),

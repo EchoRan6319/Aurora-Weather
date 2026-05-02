@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,11 +61,11 @@ class SettingsScreen extends ConsumerWidget {
                           // 个性化设置组
                           SettingsSection(
                             title: '个性化',
-                            icon: Icons.palette_outlined,
+                            icon: LucideIcons.palette,
                             animationDelay: 0,
                             children: [
                               SettingsListTile(
-                                icon: Icons.brightness_6_outlined,
+                                icon: LucideIcons.sunMoon,
                                 title: '主题模式',
                                 subtitle: _getThemeModeName(
                                   themeSettings.themeMode,
@@ -78,7 +79,7 @@ class SettingsScreen extends ConsumerWidget {
                               // A屏黑主题开关（仅在深色模式下显示）
                               if (themeSettings.themeMode != AppThemeMode.light)
                                 SettingsSwitchTile(
-                                  icon: Icons.brightness_2_outlined,
+                                  icon: LucideIcons.moonStar,
                                   title: 'A屏黑主题',
                                   subtitle: '纯黑背景，更适合AMOLED屏幕',
                                   value: themeSettings.useAmoledBlack,
@@ -89,7 +90,7 @@ class SettingsScreen extends ConsumerWidget {
                                   },
                                 ),
                               SettingsListTile(
-                                icon: Icons.color_lens_outlined,
+                                icon: LucideIcons.paintbrush,
                                 title: '主题颜色',
                                 subtitle: '自定义颜色',
                                 onTap: () => _showColorPickerDialog(
@@ -103,11 +104,11 @@ class SettingsScreen extends ConsumerWidget {
                           // 通知设置组
                           SettingsSection(
                             title: '通知',
-                            icon: Icons.notifications_outlined,
+                            icon: LucideIcons.bell,
                             animationDelay: 50,
                             children: [
                               SettingsSwitchTile(
-                                icon: Icons.warning_amber_outlined,
+                                icon: LucideIcons.triangleAlert,
                                 title: '天气预警通知',
                                 subtitle: '接收极端天气预警推送',
                                 value: appSettings.notificationsEnabled,
@@ -132,7 +133,7 @@ class SettingsScreen extends ConsumerWidget {
                                   defaultTargetPlatform ==
                                       TargetPlatform.android)
                                 SettingsSwitchTile(
-                                  icon: Icons.update_rounded,
+                                  icon: LucideIcons.refreshCw,
                                   title: '实时更新通知',
                                   subtitle: 'Android 16+ 在通知栏持续显示当前天气',
                                   value: appSettings
@@ -234,7 +235,7 @@ class SettingsScreen extends ConsumerWidget {
                                   },
                                 ),
                               SettingsListTile(
-                                icon: Icons.schedule_outlined,
+                                icon: LucideIcons.clock,
                                 title: '定时播报',
                                 subtitle: '设置每日定时推送天气信息',
                                 onTap: () =>
@@ -245,7 +246,7 @@ class SettingsScreen extends ConsumerWidget {
                                   defaultTargetPlatform ==
                                       TargetPlatform.android)
                                 SettingsListTile(
-                                  icon: Icons.bug_report_outlined,
+                                  icon: LucideIcons.bug,
                                   title: '实时更新诊断面板',
                                   subtitle: '仅 Debug 版本可见，查看失败卡点',
                                   onTap: () =>
@@ -256,11 +257,11 @@ class SettingsScreen extends ConsumerWidget {
                           // 显示设置组
                           SettingsSection(
                             title: '显示',
-                            icon: Icons.visibility_outlined,
+                            icon: LucideIcons.eye,
                             animationDelay: 100,
                             children: [
                               SettingsSwitchTile(
-                                icon: Icons.psychology_outlined,
+                                icon: LucideIcons.brain,
                                 title: '显示天气助手',
                                 subtitle: '在底部导航栏显示天气助手页面',
                                 value: appSettings.showAIAssistant,
@@ -271,7 +272,7 @@ class SettingsScreen extends ConsumerWidget {
                                 },
                               ),
                               SettingsListTile(
-                                icon: Icons.language_outlined,
+                                icon: LucideIcons.globe,
                                 title: '语言',
                                 subtitle: _getAppLanguageName(
                                   appSettings.appLanguage,
@@ -283,7 +284,7 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                               SettingsListTile(
-                                icon: Icons.device_thermostat_outlined,
+                                icon: LucideIcons.thermometer,
                                 title: '温度单位',
                                 subtitle:
                                     appSettings.temperatureUnit == 'celsius'
@@ -296,7 +297,7 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                               SettingsListTile(
-                                icon: Icons.location_on_outlined,
+                                icon: LucideIcons.mapPin,
                                 title: '位置显示精度',
                                 subtitle:
                                     appSettings.locationAccuracyLevel ==
@@ -310,7 +311,7 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               ),
                               SettingsListTile(
-                                icon: Icons.sort_rounded,
+                                icon: LucideIcons.arrowUpDown,
                                 title: '天气卡片排序',
                                 subtitle: '自定义天气详情页卡片显示顺序',
                                 onTap: () => CardOrderScreen.show(context),
@@ -320,11 +321,11 @@ class SettingsScreen extends ConsumerWidget {
                           // 数据设置组
                           SettingsSection(
                             title: '数据',
-                            icon: Icons.sync_outlined,
+                            icon: LucideIcons.refreshCw,
                             animationDelay: 150,
                             children: [
                               SettingsSwitchTile(
-                                icon: Icons.autorenew_outlined,
+                                icon: LucideIcons.rotateCw,
                                 title: '自动刷新',
                                 subtitle: context.tr(
                                   '每 {minutes} 分钟自动更新',
@@ -340,7 +341,7 @@ class SettingsScreen extends ConsumerWidget {
                                 },
                               ),
                               SettingsListTile(
-                                icon: Icons.timer_outlined,
+                                icon: LucideIcons.timer,
                                 title: '刷新间隔',
                                 subtitle: context.tr(
                                   '{minutes} 分钟',
@@ -359,11 +360,11 @@ class SettingsScreen extends ConsumerWidget {
                           // 高级设置组
                           SettingsSection(
                             title: '高级',
-                            icon: Icons.tune_outlined,
+                            icon: LucideIcons.slidersHorizontal,
                             animationDelay: 200,
                             children: [
                               SettingsSwitchTile(
-                                icon: Icons.swipe_outlined,
+                                icon: LucideIcons.hand,
                                 title: '预测式返回手势',
                                 subtitle: '返回时显示预览动画（Android 14+）',
                                 value: appSettings.predictiveBackEnabled,
@@ -378,21 +379,21 @@ class SettingsScreen extends ConsumerWidget {
                           // 关于设置组
                           SettingsSection(
                             title: '关于',
-                            icon: Icons.info_outline,
+                            icon: LucideIcons.info,
                             animationDelay: 250,
                             children: [
                               SettingsListTile(
-                                icon: Icons.apps_outlined,
+                                icon: LucideIcons.layoutGrid,
                                 title: '关于轻氧天气',
                                 onTap: () => _showAboutDialog(context),
                               ),
                               SettingsListTile(
-                                icon: Icons.privacy_tip_outlined,
+                                icon: LucideIcons.shield,
                                 title: '隐私政策',
                                 onTap: () => _showPrivacyPolicy(context),
                               ),
                               SettingsListTile(
-                                icon: Icons.description_outlined,
+                                icon: LucideIcons.fileText,
                                 title: '用户协议',
                                 onTap: () => _showUserAgreement(context),
                               ),
@@ -431,11 +432,11 @@ class SettingsScreen extends ConsumerWidget {
   IconData _getThemeModeIcon(AppThemeMode mode) {
     switch (mode) {
       case AppThemeMode.system:
-        return Icons.brightness_auto_outlined;
+        return LucideIcons.monitor;
       case AppThemeMode.light:
-        return Icons.light_mode_outlined;
+        return LucideIcons.sun;
       case AppThemeMode.dark:
-        return Icons.dark_mode_outlined;
+        return LucideIcons.moon;
     }
   }
 
@@ -456,13 +457,13 @@ class SettingsScreen extends ConsumerWidget {
     AppSettings settings,
   ) {
     final options = [
-      (AppLanguage.system, '默认跟随系统', '自动跟随系统语言', Icons.smartphone_outlined),
-      (AppLanguage.zhCN, '简体中文', '始终使用简体中文', Icons.translate_outlined),
+      (AppLanguage.system, '默认跟随系统', '自动跟随系统语言', LucideIcons.smartphone),
+      (AppLanguage.zhCN, '简体中文', '始终使用简体中文', LucideIcons.languages),
       (
         AppLanguage.enUS,
         'English (US)',
         'Always use English (US)',
-        Icons.language_outlined,
+        LucideIcons.globe,
       ),
     ];
 
@@ -635,7 +636,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
               child: isSelected
                   ? Icon(
-                      Icons.check,
+                      LucideIcons.check,
                       color:
                           ThemeData.estimateBrightnessForColor(color) ==
                               Brightness.dark
@@ -703,9 +704,9 @@ class SettingsScreen extends ConsumerWidget {
             controller: hexController,
             decoration: InputDecoration(
               hintText: '#RRGGBB',
-              prefixIcon: const Icon(Icons.tag),
+              prefixIcon: const Icon(LucideIcons.tag),
               suffixIcon: IconButton(
-                icon: const Icon(Icons.content_paste),
+                icon: const Icon(LucideIcons.clipboardPaste),
                 onPressed: () async {
                   final data = await Clipboard.getData('text/plain');
                   if (data?.text != null) {
@@ -883,7 +884,7 @@ class SettingsScreen extends ConsumerWidget {
           return SettingsSelectionItem(
             title: context.tr('{minutes} 分钟', args: {'minutes': interval.$1}),
             subtitle: interval.$2,
-            icon: Icons.timer_outlined,
+            icon: LucideIcons.timer,
             isSelected: settings.refreshInterval == interval.$1,
             onTap: () {
               ref
@@ -903,8 +904,8 @@ class SettingsScreen extends ConsumerWidget {
     AppSettings settings,
   ) {
     final units = [
-      ('celsius', '摄氏度', '°C', '温度显示为摄氏度', Icons.device_thermostat_outlined),
-      ('fahrenheit', '华氏度', '°F', '温度显示为华氏度', Icons.thermostat_outlined),
+      ('celsius', '摄氏度', '°C', '温度显示为摄氏度', LucideIcons.thermometer),
+      ('fahrenheit', '华氏度', '°F', '温度显示为华氏度', LucideIcons.thermometer),
     ];
 
     showModalBottomSheet(
@@ -940,13 +941,13 @@ class SettingsScreen extends ConsumerWidget {
         LocationAccuracyLevel.district,
         '展示区/县',
         '定位到行政区级别',
-        Icons.location_city,
+        LucideIcons.building2,
       ),
       (
         LocationAccuracyLevel.street,
         '展示附近地标/街道',
         '精确定位到街道级别',
-        Icons.location_on_outlined,
+        LucideIcons.mapPin,
       ),
     ];
 
@@ -1012,7 +1013,7 @@ class SettingsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.notifications_off_outlined,
+                  LucideIcons.bellOff,
                   color: Theme.of(context).colorScheme.error,
                 ),
                 const SizedBox(width: 12),
@@ -1073,7 +1074,7 @@ class SettingsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.update_disabled_outlined,
+                  LucideIcons.refreshCwOff,
                   color: Theme.of(context).colorScheme.error,
                 ),
                 const SizedBox(width: 12),
@@ -1162,8 +1163,8 @@ class SettingsScreen extends ConsumerWidget {
                           children: [
                             Icon(
                               entry.success
-                                  ? Icons.check_circle_outline
-                                  : Icons.error_outline,
+                                  ? LucideIcons.checkCircle
+                                  : LucideIcons.alertCircle,
                               size: 18,
                               color: statusColor,
                             ),
@@ -1496,23 +1497,23 @@ class _AboutBottomSheet extends StatelessWidget {
             children: [
               _buildAboutItem(
                 context,
-                Icons.info_outline,
+                LucideIcons.info,
                 '应用介绍',
                 '轻氧天气是一款使用 Aurora UI 的现代化跨平台天气应用，支持全平台。',
               ),
               const SizedBox(height: 16),
               _buildAboutItem(
                 context,
-                Icons.code_outlined,
+                LucideIcons.code2,
                 '开源协议',
                 'MIT License',
               ),
               const SizedBox(height: 16),
-              _buildAboutItem(context, Icons.people_outline, '开发者', 'EchoRan'),
+              _buildAboutItem(context, LucideIcons.user, '开发者', 'EchoRan'),
               const SizedBox(height: 16),
               _buildAboutItem(
                 context,
-                Icons.link_outlined,
+                LucideIcons.link,
                 'GitHub',
                 'https://github.com/EchoRan6319/PureWeather',
                 isLink: true,
@@ -1527,7 +1528,7 @@ class _AboutBottomSheet extends StatelessWidget {
               Row(
                 children: [
                   Icon(
-                    Icons.favorite_outline,
+                    LucideIcons.heart,
                     color: Theme.of(context).colorScheme.primary,
                     size: 20,
                   ),
@@ -1542,25 +1543,25 @@ class _AboutBottomSheet extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              _buildAboutItem(context, Icons.cloud_outlined, '和风天气', '提供天气数据'),
+              _buildAboutItem(context, LucideIcons.cloud, '和风天气', '提供天气数据'),
               const SizedBox(height: 16),
               _buildAboutItem(
                 context,
-                Icons.cloud_queue_outlined,
+                LucideIcons.cloud,
                 '彩云天气',
                 '提供分钟级降雨预报',
               ),
               const SizedBox(height: 16),
               _buildAboutItem(
                 context,
-                Icons.location_on_outlined,
+                LucideIcons.mapPin,
                 '高德地图',
                 '提供城市搜索和定位服务',
               ),
               const SizedBox(height: 16),
               _buildAboutItem(
                 context,
-                Icons.lightbulb_outlined,
+                LucideIcons.lightbulb,
                 'DeepSeek',
                 '提供天气助手的 AI 问答功能',
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter/services.dart';
 import '../../app_localizations.dart';
@@ -276,7 +277,7 @@ class SettingsSelectionItem extends StatelessWidget {
                 ),
                 // 右侧选中标记
                 if (isSelected)
-                  Icon(Icons.check_circle, color: tokens.selectedForeground),
+                  Icon(LucideIcons.checkCircle, color: tokens.selectedForeground),
               ],
             ),
           ),

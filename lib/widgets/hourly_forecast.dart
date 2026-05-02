@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
@@ -100,7 +101,7 @@ class HourlyForecast extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.info_outline,
+                  LucideIcons.info,
                   size: 18,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -128,7 +129,7 @@ class HourlyForecast extends StatelessWidget {
     return Row(
       children: [
         Icon(
-          Icons.schedule,
+          LucideIcons.clock,
           size: 20,
           color: Theme.of(context).colorScheme.primary,
         ),
@@ -480,7 +481,7 @@ class _HourlyItem extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.water_drop,
+              LucideIcons.droplet,
               size: 10,
               color: Theme.of(context).colorScheme.tertiary,
             ),

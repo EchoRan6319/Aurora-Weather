@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
@@ -239,7 +240,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
         actions: [
           if (chatSession.messages.isNotEmpty)
             IconButton.filledTonal(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(LucideIcons.trash2),
               onPressed: () {
                 ref.read(chatProvider.notifier).clearHistory();
               },
@@ -313,7 +314,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.psychology,
+                  LucideIcons.brain,
                   size: 40,
                   color: Theme.of(context).colorScheme.onPrimaryContainer,
                 ),
@@ -416,7 +417,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
               shape: BoxShape.circle,
             ),
             child: Icon(
-              Icons.psychology,
+              LucideIcons.brain,
               size: 18,
               color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
@@ -479,7 +480,7 @@ class _AIAssistantScreenState extends ConsumerState<AIAssistantScreen> {
           ),
           const SizedBox(width: 8),
           IconButton.filled(
-            icon: const Icon(Icons.send),
+            icon: const Icon(LucideIcons.send),
             onPressed: _isTyping ? null : _sendMessage,
           ),
         ],

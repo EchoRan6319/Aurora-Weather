@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:ui';
 import '../../app_localizations.dart';
@@ -178,7 +179,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                   children: [
                     if (location?.isLocated == true) ...[
                       Icon(
-                        Icons.location_on,
+                        LucideIcons.mapPin,
                         size: 20,
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -194,7 +195,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 Positioned(
                   right: 0,
                   child: IconButton(
-                    icon: const Icon(Icons.navigation_outlined),
+                    icon: const Icon(LucideIcons.navigation),
                     onPressed: _showCitySelector,
                     tooltip: context.tr('导航'),
                   ),
@@ -333,7 +334,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    Icons.error_outline,
+                    LucideIcons.alertCircle,
                     size: 64,
                     color: Theme.of(context).colorScheme.error,
                   ),
@@ -356,7 +357,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: _onRefresh,
-                    icon: const Icon(Icons.refresh),
+                    icon: const Icon(LucideIcons.refreshCw),
                     label: Text(context.tr('重试')),
                   ),
                 ],
@@ -389,7 +390,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
-                  Icons.location_city,
+                  LucideIcons.building2,
                   size: 64,
                   color: Theme.of(context).colorScheme.outline,
                 ),
@@ -419,7 +420,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
     return IconButton.filledTonal(
       onPressed: _showCitySelector,
       tooltip: context.tr('导航'),
-      icon: const Icon(Icons.navigation_outlined),
+      icon: const Icon(LucideIcons.navigation),
     );
   }
 
@@ -529,7 +530,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
             Row(
               children: [
                 Icon(
-                  Icons.water_drop,
+                  LucideIcons.droplet,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(width: 8),
@@ -577,7 +578,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
             Row(
               children: [
                 Icon(
-                  Icons.info_outline,
+                  LucideIcons.info,
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -596,7 +597,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
               children: [
                 Expanded(
                   child: _buildDetailItem(
-                    Icons.air,
+                    LucideIcons.wind,
                     context.tr(current.windDir),
                     context.tr('{value}级', args: {'value': current.windScale}),
                     null,
@@ -604,7 +605,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 ),
                 Expanded(
                   child: _buildDetailItem(
-                    Icons.water_drop,
+                    LucideIcons.droplet,
                     context.tr('湿度'),
                     '${current.humidity}%',
                     null,
@@ -613,7 +614,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 Expanded(
                   child: todayDaily != null
                       ? _buildDetailItem(
-                          Icons.wb_twilight,
+                          LucideIcons.sunrise,
                           context.tr('日出'),
                           todayDaily.sunrise,
                           null,
@@ -628,7 +629,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
               children: [
                 Expanded(
                   child: _buildDetailItem(
-                    Icons.visibility,
+                    LucideIcons.eye,
                     context.tr('能见度'),
                     '${current.vis} km',
                     null,
@@ -636,7 +637,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 ),
                 Expanded(
                   child: _buildDetailItem(
-                    Icons.compress,
+                    LucideIcons.gauge,
                     context.tr('气压'),
                     '${current.pressure} hPa',
                     null,
@@ -645,7 +646,7 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
                 Expanded(
                   child: todayDaily != null
                       ? _buildDetailItem(
-                          Icons.nights_stay,
+                          LucideIcons.sunset,
                           context.tr('日落'),
                           todayDaily.sunset,
                           null,
@@ -913,10 +914,10 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                         controller: _searchController,
                         decoration: InputDecoration(
                           hintText: context.tr('搜索城市'),
-                          prefixIcon: const Icon(Icons.search),
+                          prefixIcon: const Icon(LucideIcons.search),
                           suffixIcon: _searchController.text.isNotEmpty
                               ? IconButton(
-                                  icon: const Icon(Icons.clear),
+                                  icon: const Icon(LucideIcons.x),
                                   onPressed: () {
                                     _searchController.clear();
                                     setState(() {
@@ -935,7 +936,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          icon: const Icon(Icons.my_location),
+                          icon: const Icon(LucideIcons.crosshair),
                           label: Text(context.tr('定位当前位置')),
                           onPressed: _getCurrentLocation,
                         ),
@@ -975,7 +976,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
             border: Border.all(color: context.uiTokens.cardBorder),
           ),
           child: ListTile(
-            leading: const Icon(Icons.location_on_outlined),
+            leading: const Icon(LucideIcons.mapPin),
             title: Text(location.name),
             subtitle: Text(
               '${location.lat.toStringAsFixed(2)}, ${location.lon.toStringAsFixed(2)}',
@@ -1009,7 +1010,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.location_city,
+              LucideIcons.building2,
               size: 64,
               color: Theme.of(context).colorScheme.outline,
             ),
@@ -1066,10 +1067,10 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
           child: ListTile(
             leading: Icon(
               isDefault
-                  ? Icons.check_circle_rounded
+                  ? LucideIcons.checkCircle
                   : (isLocated
-                        ? Icons.my_location_rounded
-                        : Icons.location_on_outlined),
+                        ? LucideIcons.crosshair
+                        : LucideIcons.mapPin),
               color: isDefault
                   ? context.uiTokens.selectedBorder
                   : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -1105,7 +1106,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          Icons.my_location_rounded,
+                          LucideIcons.crosshair,
                           size: 14,
                           color: context.uiTokens.selectedForeground,
                         ),
@@ -1159,7 +1160,7 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                   data: (weather) {
                     if (weather == null) {
                       return Icon(
-                        Icons.error_outline,
+                        LucideIcons.alertCircle,
                         size: 18,
                         color: Theme.of(context).colorScheme.error,
                       );
@@ -1183,14 +1184,14 @@ class _CitySelectorSheetState extends ConsumerState<_CitySelectorSheet> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                   error: (error, stackTrace) => Icon(
-                    Icons.error_outline,
+                    LucideIcons.alertCircle,
                     size: 18,
                     color: Theme.of(context).colorScheme.error,
                   ),
                 ),
                 // 删除按钮
                 IconButton(
-                  icon: const Icon(Icons.delete_outline, size: 20),
+                  icon: const Icon(LucideIcons.trash2, size: 20),
                   onPressed: () async {
                     final confirmed = await _confirmRemoveCity(city);
                     if (!confirmed) {

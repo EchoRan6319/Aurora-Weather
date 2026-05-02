@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../app_localizations.dart';
@@ -155,19 +156,19 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   ) {
     return [
       NavigationDestination(
-        icon: Icon(Icons.wb_cloudy_outlined),
-        selectedIcon: Icon(Icons.wb_cloudy),
+        icon: Icon(LucideIcons.cloud),
+        selectedIcon: Icon(LucideIcons.cloud),
         label: context.tr('天气'),
       ),
       if (showAIAssistant)
         NavigationDestination(
-          icon: Icon(Icons.psychology_outlined),
-          selectedIcon: Icon(Icons.psychology),
+          icon: Icon(LucideIcons.brain),
+          selectedIcon: Icon(LucideIcons.brain),
           label: context.tr('天气助手'),
         ),
       NavigationDestination(
-        icon: Icon(Icons.settings_outlined),
-        selectedIcon: Icon(Icons.settings),
+        icon: Icon(LucideIcons.settings),
+        selectedIcon: Icon(LucideIcons.settings),
         label: context.tr('设置'),
       ),
     ];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
 import '../../app_localizations.dart';
@@ -56,27 +57,27 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
     final cardInfo = <String, ({String title, IconData icon, String description})>{
       'hourly': (
         title: context.tr('24小时预报'),
-        icon: Icons.schedule_outlined,
+        icon: LucideIcons.clock,
         description: context.tr('显示未来24小时的天气变化趋势'),
       ),
       'daily': (
         title: context.tr('7天预报'),
-        icon: Icons.calendar_month_outlined,
+        icon: LucideIcons.calendar,
         description: context.tr('显示未来7天的天气概况'),
       ),
       'airQuality': (
         title: context.tr('空气质量'),
-        icon: Icons.air_outlined,
+        icon: LucideIcons.wind,
         description: context.tr('显示当前空气质量指数和污染物信息'),
       ),
       'details': (
         title: context.tr('详细信息'),
-        icon: Icons.info_outline,
+        icon: LucideIcons.info,
         description: context.tr('显示湿度、气压、能见度等详细数据'),
       ),
       'indices': (
         title: context.tr('生活指数'),
-        icon: Icons.tips_and_updates_outlined,
+        icon: LucideIcons.lightbulb,
         description: context.tr('显示穿衣、运动、洗车等生活建议'),
       ),
     };
@@ -162,7 +163,7 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
                         SizedBox(
                           width: 48,
                           child: IconButton(
-                            icon: const Icon(Icons.restore_outlined),
+                            icon: const Icon(LucideIcons.undo2),
                             tooltip: context.tr('恢复默认'),
                             onPressed: () {
                               setState(() {
@@ -196,7 +197,7 @@ class _CardOrderBottomSheetState extends ConsumerState<_CardOrderBottomSheet> {
                     child: Row(
                       children: [
                         Icon(
-                          Icons.info_outline,
+                          LucideIcons.info,
                           size: 20,
                           color: colorScheme.primary,
                         ),
@@ -397,7 +398,7 @@ class _ReorderableCardItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  Icons.drag_handle,
+                  LucideIcons.gripVertical,
                   color: colorScheme.onSurfaceVariant,
                   size: 24,
                 ),

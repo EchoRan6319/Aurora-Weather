@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../app_localizations.dart';
@@ -61,7 +62,7 @@ class DailyForecast extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.calendar_today,
+                  LucideIcons.calendar,
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),

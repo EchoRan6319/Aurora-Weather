@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../app_localizations.dart';
@@ -49,7 +50,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
       child: Row(
         children: [
           Icon(
-            Icons.info_outline,
+            LucideIcons.info,
             size: 20,
             color: Theme.of(context).colorScheme.primary,
           ),
@@ -76,11 +77,11 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
   ) {
     return SettingsSection(
       title: '基本设置',
-      icon: Icons.settings_outlined,
+      icon: LucideIcons.settings,
       showDividers: false,
       children: [
         SettingsSwitchTile(
-          icon: Icons.notifications_active_outlined,
+          icon: LucideIcons.bellRing,
           title: '启用定时播报',
           subtitle: '开启后将在设定时间推送天气信息（优先实时更新）',
           value: settings.enabled,
@@ -113,7 +114,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
   ) {
     return SettingsSection(
       title: '播报时间',
-      icon: Icons.schedule_outlined,
+      icon: LucideIcons.clock,
       children: [
         _buildTimeTile(
           context,
@@ -121,7 +122,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           title: '早间播报',
           subtitle: '推送今日天气情况',
           time: settings.morningTime,
-          icon: Icons.wb_sunny_outlined,
+          icon: LucideIcons.sun,
           enabled: settings.enabled,
           onTimeChanged: (time) async {
             await ref
@@ -151,7 +152,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           title: '晚间播报',
           subtitle: '推送次日天气情况',
           time: settings.eveningTime,
-          icon: Icons.nightlight_outlined,
+          icon: LucideIcons.moon,
           enabled: settings.enabled,
           onTimeChanged: (time) async {
             await ref
@@ -186,10 +187,10 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
   ) {
     return SettingsSection(
       title: '播报内容',
-      icon: Icons.article_outlined,
+      icon: LucideIcons.fileText,
       children: [
         SettingsSwitchTile(
-          icon: Icons.air_outlined,
+          icon: LucideIcons.wind,
           title: '包含风力风向',
           subtitle: '在播报中显示风向和风力等级',
           value: settings.includeWindInfo,
@@ -202,7 +203,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
               : null,
         ),
         SettingsSwitchTile(
-          icon: Icons.water_drop_outlined,
+          icon: LucideIcons.droplet,
           title: '包含湿度信息',
           subtitle: '在播报中显示空气湿度',
           value: settings.includeAirQuality,
@@ -225,10 +226,10 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
   ) {
     return SettingsSection(
       title: '测试',
-      icon: Icons.play_circle_outline,
+      icon: LucideIcons.playCircle,
       children: [
         SettingsListTile(
-          icon: Icons.wb_sunny_outlined,
+          icon: LucideIcons.sun,
           title: '测试早间播报',
           subtitle: '立即发送一条早间播报通知',
           onTap: () async {
@@ -236,7 +237,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
           },
         ),
         SettingsListTile(
-          icon: Icons.nightlight_outlined,
+          icon: LucideIcons.moon,
           title: '测试晚间播报',
           subtitle: '立即发送一条晚间播报通知',
           onTap: () async {
@@ -422,7 +423,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.battery_saver_outlined,
+                  LucideIcons.batteryWarning,
                   size: 48,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -492,7 +493,7 @@ class ScheduledBroadcastScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(
-                  Icons.alarm,
+                  LucideIcons.alarmClock,
                   size: 48,
                   color: Theme.of(context).colorScheme.primary,
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../app_localizations.dart';
@@ -187,10 +188,10 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: context.tr('搜索城市'),
-                    prefixIcon: const Icon(Icons.search),
+                    prefixIcon: const Icon(LucideIcons.search),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear),
+                            icon: const Icon(LucideIcons.x),
                             onPressed: () {
                               _searchController.clear();
                               setState(() {
@@ -210,7 +211,7 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        icon: const Icon(Icons.my_location),
+                        icon: const Icon(LucideIcons.crosshair),
                         label: Text(context.tr('定位当前位置')),
                         onPressed: _getCurrentLocation,
                       ),
@@ -260,7 +261,7 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
             border: Border.all(color: context.uiTokens.cardBorder),
           ),
           child: ListTile(
-            leading: const Icon(Icons.location_on_outlined),
+            leading: const Icon(LucideIcons.mapPin),
             title: Text(location.name),
             subtitle: subtitle.isEmpty ? null : Text(subtitle),
             trailing: FilledButton.tonal(
@@ -283,7 +284,7 @@ class _CityManagementScreenState extends ConsumerState<CityManagementScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.location_city,
+              LucideIcons.building2,
               size: 64,
               color: Theme.of(context).colorScheme.outline,
             ),
@@ -394,8 +395,8 @@ class _CityListItem extends ConsumerWidget {
       child: ListTile(
         leading: Icon(
           isDefault
-              ? Icons.check_circle_rounded
-              : (city.isLocated ? Icons.my_location_rounded : Icons.location_on_outlined),
+              ? LucideIcons.checkCircle
+              : (city.isLocated ? LucideIcons.crosshair : LucideIcons.mapPin),
           color: isDefault
               ? context.uiTokens.selectedBorder
               : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -416,9 +417,9 @@ class _CityListItem extends ConsumerWidget {
               runSpacing: 6,
               children: [
                 if (city.isLocated)
-                  _StatusTag(label: context.tr('定位'), icon: Icons.my_location_rounded),
+                  _StatusTag(label: context.tr('定位'), icon: LucideIcons.crosshair),
                 if (isDefault)
-                  _StatusTag(label: context.tr('默认'), icon: Icons.check_circle_rounded),
+                  _StatusTag(label: context.tr('默认'), icon: LucideIcons.checkCircle),
               ],
             ),
           ],
@@ -439,11 +440,11 @@ class _CityListItem extends ConsumerWidget {
                 height: 24,
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
-              error: (error, stack) => const Icon(Icons.error_outline, size: 20),
+              error: (error, stack) => const Icon(LucideIcons.alertCircle, size: 20),
             ),
             const SizedBox(width: 8),
             IconButton(
-              icon: const Icon(Icons.delete_outline),
+              icon: const Icon(LucideIcons.trash2),
               onPressed: onDelete,
               color: Theme.of(context).colorScheme.error,
             ),

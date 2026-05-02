@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../../app_localizations.dart';
 
 /// Material You 风格的设置列表项组件
@@ -105,7 +106,7 @@ class SettingsListTile extends StatelessWidget {
               ] else if (onTap != null) ...[
                 const SizedBox(width: 8),
                 Icon(
-                  Icons.chevron_right,
+                  LucideIcons.chevronRight,
                   size: 24,
                   color: iconColor,
                 ),

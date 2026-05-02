@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 /// 应用常量类
@@ -120,28 +121,28 @@ class WeatherCode {
   /// 返回对应的天气图标
   static IconData getWeatherIcon(int code, {bool isNight = false}) {
     if (code == 100 || code == 150) {
-      return isNight ? Icons.nightlight_round : Icons.wb_sunny;
+      return isNight ? LucideIcons.moon : LucideIcons.sun;
     } else if (code == 101 ||
         code == 102 ||
         code == 103 ||
         code == 151 ||
         code == 152 ||
         code == 153) {
-      return isNight ? Icons.nights_stay : Icons.wb_cloudy;
+      return isNight ? LucideIcons.cloudMoon : LucideIcons.cloudSun;
     } else if (code == 104) {
-      return Icons.cloud;
+      return LucideIcons.cloud;
     } else if ((code >= 300 && code <= 399) || code == 350 || code == 351) {
-      return Icons.water_drop;
+      return LucideIcons.cloudRain;
     } else if ((code >= 400 && code <= 499) || code == 456 || code == 457) {
-      return Icons.ac_unit;
+      return LucideIcons.cloudSnow;
     } else if (code >= 500 && code <= 515) {
-      return Icons.blur_on;
+      return LucideIcons.cloudFog;
     } else if (code == 900) {
-      return Icons.thermostat;
+      return LucideIcons.thermometerSun;
     } else if (code == 901) {
-      return Icons.severe_cold;
+      return LucideIcons.thermometerSnowflake;
     }
-    return Icons.cloud_queue;
+    return LucideIcons.cloud;
   }
 
   /// 温度单位转换

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../app_localizations.dart';
 import '../models/weather_models.dart';
@@ -31,7 +32,7 @@ class WeatherIndicesCard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  Icons.tips_and_updates,
+                  LucideIcons.lightbulb,
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -143,23 +144,23 @@ class _IndexItem extends StatelessWidget {
   IconData _getIndexIcon(String type) {
     switch (type) {
       case '1':
-        return Icons.directions_run;
+        return LucideIcons.footprints;
       case '2':
-        return Icons.directions_car;
+        return LucideIcons.car;
       case '3':
-        return Icons.checkroom;
+        return LucideIcons.shirt;
       case '5':
-        return Icons.opacity;
+        return LucideIcons.droplets;
       case '6':
-        return Icons.wb_sunny;
+        return LucideIcons.sun;
       case '7':
-        return Icons.sick;
+        return LucideIcons.heartPulse;
       case '8':
-        return Icons.beach_access;
+        return LucideIcons.umbrella;
       case '9':
-        return Icons.local_florist;
+        return LucideIcons.flower2;
       default:
-        return Icons.info_outline;
+        return LucideIcons.info;
     }
   }
 }

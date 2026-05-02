@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import '../app_localizations.dart';
@@ -66,7 +67,7 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
               Row(
                 children: [
                   Icon(
-                    Icons.warning_amber_rounded,
+                    LucideIcons.triangleAlert,
                     size: iconSize,
                     color: levelColor,
                   ),
@@ -102,7 +103,7 @@ class _WeatherAlertCardState extends State<WeatherAlertCard> {
                   ),
                   SizedBox(width: spacing),
                   Icon(
-                    _isExpanded ? Icons.expand_less : Icons.expand_more,
+                    _isExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
                     size: iconSize,
                     color: levelColor,
                   ),
