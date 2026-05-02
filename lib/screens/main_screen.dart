@@ -6,6 +6,7 @@ import '../app_localizations.dart';
 import '../providers/city_provider.dart';
 import '../providers/weather_provider.dart';
 import '../providers/settings_provider.dart';
+import '../core/theme/aurora_background.dart';
 import '../services/notification_service.dart';
 import 'weather/weather_screen.dart';
 import 'ai_assistant/ai_assistant_screen.dart';
@@ -177,9 +178,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final appSettings = ref.watch(settingsProvider);
+    final weatherState = ref.watch(weatherProvider);
     final showAI = appSettings.showAIAssistant;
     final screens = _getScreens(showAI);
     final destinations = _getDestinations(context, showAI);
+    final weatherCode = int.tryParse(
+      weatherState.weatherData?.current.icon ?? '100',
+    ) ?? 100;
 
     // 监听位置初始化状态
     ref.listen(locationInitProvider, (previous, next) {
@@ -202,33 +207,21 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     ref.listen(settingsProvider, (previous, next) {
       if (previous == null) return;
 
-      // 处理位置精度变化
       if (previous.locationAccuracyLevel != next.locationAccuracyLevel) {
         _refreshLocationWithNewAccuracy(next.locationAccuracyLevel);
       }
 
-      // 处理天气助手开关状态变化
       if (previous.showAIAssistant != next.showAIAssistant) {
         setState(() {
           if (next.showAIAssistant) {
-            // 如果天气助手启用，且当前在设置页面(索引1)，则切换到索引2
-            if (_currentIndex == 1) {
-              _currentIndex = 2;
-            }
+            if (_currentIndex == 1) _currentIndex = 2;
           } else {
-            // 如果天气助手禁用
-            if (_currentIndex == 1) {
-              // 如果当前在天气助手页面，切换到天气页面
-              _currentIndex = 0;
-            } else if (_currentIndex == 2) {
-              // 如果当前在设置页面，切换到索引1
-              _currentIndex = 1;
-            }
+            if (_currentIndex == 1) _currentIndex = 0;
+            else if (_currentIndex == 2) _currentIndex = 1;
           }
         });
       }
 
-      // 处理 Android 实时更新通知开关变化
       if (previous.androidLiveUpdateNotificationEnabled !=
           next.androidLiveUpdateNotificationEnabled) {
         ref
@@ -238,7 +231,6 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             );
       }
 
-      // 处理语言变化：切换语言后自动重新拉取天气，避免出现中英混排
       if (previous.appLanguage != next.appLanguage) {
         final defaultCity = ref.read(defaultCityProvider);
         if (defaultCity != null) {
@@ -250,17 +242,20 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       }
     });
 
-    return Scaffold(
-      extendBody: false,
-      body: IndexedStack(index: _currentIndex, children: screens),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        destinations: destinations,
+    return AuroraBackground(
+      weatherCode: weatherCode,
+      child: Scaffold(
+        extendBody: false,
+        body: IndexedStack(index: _currentIndex, children: screens),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _currentIndex,
+          onDestinationSelected: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          destinations: destinations,
+        ),
       ),
     );
   }

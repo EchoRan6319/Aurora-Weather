@@ -27,14 +27,17 @@ class AppUiTokens extends ThemeExtension<AppUiTokens> {
   factory AppUiTokens.fromColorScheme(ColorScheme colorScheme) {
     final isDark = colorScheme.brightness == Brightness.dark;
     return AppUiTokens(
-      cardBackground: colorScheme.surfaceContainerHigh,
-      cardBorder: colorScheme.outlineVariant.withValues(alpha: isDark ? 0.6 : 0.75),
-      selectedBackground: colorScheme.secondaryContainer,
-      selectedBorder: colorScheme.secondary,
+      // Translucent glass cards let the Aurora gradient show through
+      cardBackground: colorScheme.surfaceContainerHigh
+          .withValues(alpha: isDark ? 0.55 : 0.65),
+      cardBorder: colorScheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.45),
+      selectedBackground: colorScheme.secondaryContainer
+          .withValues(alpha: isDark ? 0.65 : 0.75),
+      selectedBorder: colorScheme.secondary.withValues(alpha: isDark ? 0.7 : 0.8),
       selectedForeground: colorScheme.onSecondaryContainer,
       dangerBackground: colorScheme.errorContainer.withValues(alpha: isDark ? 0.45 : 0.35),
       dangerBorder: colorScheme.error.withValues(alpha: isDark ? 0.75 : 0.6),
-      divider: colorScheme.outlineVariant.withValues(alpha: isDark ? 0.75 : 0.9),
+      divider: colorScheme.outlineVariant.withValues(alpha: isDark ? 0.5 : 0.6),
       pressedOverlay: colorScheme.primary.withValues(alpha: 0.08),
     );
   }
@@ -254,12 +257,18 @@ class AppTheme {
     Color(0xFF006494), // 深蓝色
   ];
 
-  /// 创建应用主题
+  /// 创建 Aurora UI 主题 — 玻璃质感、半透明、无阴影
   static ThemeData createTheme({
     required ColorScheme colorScheme,
     String? fontFamily,
     bool isAmoledBlack = false,
   }) {
+    final isDark = colorScheme.brightness == Brightness.dark;
+    final glassBg = colorScheme.surfaceContainerHigh
+        .withValues(alpha: isDark ? 0.55 : 0.65);
+    final glassBorder = colorScheme.outlineVariant
+        .withValues(alpha: isDark ? 0.30 : 0.40);
+
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
@@ -268,50 +277,51 @@ class AppTheme {
       extensions: <ThemeExtension<dynamic>>[
         AppUiTokens.fromColorScheme(colorScheme),
       ],
-      scaffoldBackgroundColor: colorScheme.surfaceContainer,
-      
-      // 应用栏主题
+      // Transparent scaffold lets Aurora gradient show through
+      scaffoldBackgroundColor: Colors.transparent,
+
+      // AppBar — translucent glass
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.surfaceContainer,
+        backgroundColor: Colors.transparent,
         foregroundColor: colorScheme.onSurface,
         elevation: 0,
-        scrolledUnderElevation: 3,
-        surfaceTintColor: colorScheme.surfaceTint,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
       ),
-      
-      // 卡片主题
+
+      // Cards — glass panels, zero elevation
       cardTheme: CardThemeData(
-        color: colorScheme.surfaceContainer,
-        surfaceTintColor: colorScheme.surfaceTint,
-        elevation: 2,
-        shadowColor: colorScheme.shadow.withValues(alpha: 0.15),
+        color: glassBg,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 1,
-          ),
+          side: BorderSide(color: glassBorder, width: 1),
         ),
       ),
-      
-      // 悬浮按钮主题
+
+      // FAB — glass
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: colorScheme.primaryContainer,
+        backgroundColor: colorScheme.primaryContainer
+            .withValues(alpha: isDark ? 0.7 : 0.8),
         foregroundColor: colorScheme.onPrimaryContainer,
-        elevation: 3,
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      
-      // 导航栏主题
+
+      // NavigationBar — glass, translucent
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: colorScheme.surface,
-        indicatorColor: colorScheme.secondaryContainer,
-        surfaceTintColor: colorScheme.surfaceTint,
+        backgroundColor: colorScheme.surface
+            .withValues(alpha: isDark ? 0.60 : 0.70),
+        indicatorColor: colorScheme.secondaryContainer
+            .withValues(alpha: isDark ? 0.7 : 0.8),
+        surfaceTintColor: Colors.transparent,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
             return TextStyle(
               color: colorScheme.onSurface,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               fontSize: 12,
               fontFamily: fontFamily,
             );
@@ -330,26 +340,29 @@ class AppTheme {
           return IconThemeData(color: colorScheme.onSurfaceVariant);
         }),
       ),
-      
-      // 芯片主题
+
+      // Chips — translucent
       chipTheme: ChipThemeData(
-        backgroundColor: colorScheme.surfaceContainerHighest,
-        selectedColor: colorScheme.secondaryContainer,
+        backgroundColor: colorScheme.surfaceContainerHighest
+            .withValues(alpha: 0.6),
+        selectedColor: colorScheme.secondaryContainer
+            .withValues(alpha: 0.7),
         labelStyle: TextStyle(color: colorScheme.onSurface, fontFamily: fontFamily),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      
-      // 输入框主题
+
+      // Input fields — glass fill
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceContainerHighest,
+        fillColor: colorScheme.surfaceContainerHighest
+            .withValues(alpha: isDark ? 0.4 : 0.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: glassBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -364,20 +377,22 @@ class AppTheme {
           vertical: 12,
         ),
       ),
-      
-      //  elevated按钮主题
+
+      // ElevatedButton — glass with primary tint
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary,
+          backgroundColor: colorScheme.primary
+              .withValues(alpha: isDark ? 0.8 : 0.9),
           foregroundColor: colorScheme.onPrimary,
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
       ),
-      
-      // 文本按钮主题
+
+      // TextButton
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: colorScheme.primary,
@@ -386,8 +401,8 @@ class AppTheme {
           ),
         ),
       ),
-      
-      // 轮廓按钮主题
+
+      // OutlinedButton — glass border
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: colorScheme.primary,
@@ -397,39 +412,43 @@ class AppTheme {
           side: BorderSide(color: colorScheme.outline),
         ),
       ),
-      
-      // 底部弹窗主题
+
+      // BottomSheet — glass top surface
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: colorScheme.surface,
-        surfaceTintColor: colorScheme.surfaceTint,
+        backgroundColor: colorScheme.surface
+            .withValues(alpha: isDark ? 0.85 : 0.90),
+        surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
       ),
-      
-      // 对话框主题
+
+      // Dialog — glass panel
       dialogTheme: DialogThemeData(
-        backgroundColor: colorScheme.surfaceContainerHigh,
-        surfaceTintColor: colorScheme.surfaceTint,
+        backgroundColor: colorScheme.surfaceContainerHigh
+            .withValues(alpha: isDark ? 0.85 : 0.90),
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
       ),
-      
-      //  snackbar主题
+
+      // SnackBar — glass floating
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: colorScheme.inverseSurface,
+        backgroundColor: colorScheme.inverseSurface
+            .withValues(alpha: 0.85),
         contentTextStyle: TextStyle(color: colorScheme.onInverseSurface, fontFamily: fontFamily),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
-      
-      // 列表项主题
+
+      // ListTile
       listTileTheme: ListTileThemeData(
-        tileColor: colorScheme.surface,
-        selectedTileColor: colorScheme.secondaryContainer,
+        tileColor: Colors.transparent,
+        selectedTileColor: colorScheme.secondaryContainer
+            .withValues(alpha: 0.6),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
-      
-      // 开关主题
+
+      // Switch
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
@@ -444,16 +463,16 @@ class AppTheme {
           return colorScheme.surfaceContainerHighest;
         }),
       ),
-      
-      // 滑块主题
+
+      // Slider
       sliderTheme: SliderThemeData(
         activeTrackColor: colorScheme.primary,
         inactiveTrackColor: colorScheme.surfaceContainerHighest,
         thumbColor: colorScheme.primary,
         overlayColor: colorScheme.primary.withValues(alpha: 0.12),
       ),
-      
-      // 进度指示器主题
+
+      // ProgressIndicator
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: colorScheme.primary,
         linearTrackColor: colorScheme.surfaceContainerHighest,

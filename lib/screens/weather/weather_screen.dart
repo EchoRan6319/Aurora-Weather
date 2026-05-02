@@ -9,7 +9,6 @@ import '../../providers/city_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/theme/aurora_background.dart';
 import '../../services/caiyun_service.dart';
 import '../../widgets/hourly_forecast.dart';
 import '../../widgets/daily_forecast.dart';
@@ -58,17 +57,13 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherProvider);
     final defaultCity = ref.watch(defaultCityProvider);
-    final weatherCode = int.tryParse(
-      weatherState.weatherData?.current.icon ?? '100',
-    ) ?? 100;
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final bool isWide = constraints.maxWidth > 900;
 
-        final scaffoldBody = AuroraBackground(
-          weatherCode: weatherCode,
-          child: RefreshIndicator(
+        return Scaffold(
+          body: RefreshIndicator(
             onRefresh: _onRefresh,
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(context).copyWith(
@@ -114,8 +109,6 @@ class _WeatherScreenState extends ConsumerState<WeatherScreen> {
             ),
           ),
         );
-
-        return Scaffold(body: scaffoldBody);
       },
     );
   }
