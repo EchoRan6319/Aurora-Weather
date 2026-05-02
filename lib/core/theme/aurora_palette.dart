@@ -42,38 +42,38 @@ class AuroraPalette {
   static const Color lightShadow = Color(0xFF000000);
   static const Color lightScrim = Color(0xFF000000);
 
-  // ── Dark mode — Aurora midnight palette ────────
+  // ── Dark mode — Clean blue palette ───────────
 
-  static const Color darkPrimary = Color(0xFF00E5FF);         // Cyan aurora
-  static const Color darkOnPrimary = Color(0xFF003544);
-  static const Color darkPrimaryContainer = Color(0xFF004D60);
-  static const Color darkOnPrimaryContainer = Color(0xFFB3F0FF);
+  static const Color darkPrimary = Color(0xFF60A5FA);         // Clear blue
+  static const Color darkOnPrimary = Color(0xFF003061);
+  static const Color darkPrimaryContainer = Color(0xFF004A8C);
+  static const Color darkOnPrimaryContainer = Color(0xFFD1E4FF);
 
-  static const Color darkSecondary = Color(0xFFC4B5FD);      // Soft lavender
-  static const Color darkOnSecondary = Color(0xFF2D1750);
-  static const Color darkSecondaryContainer = Color(0xFF443068);
-  static const Color darkOnSecondaryContainer = Color(0xFFEBE0FF);
+  static const Color darkSecondary = Color(0xFF90CAF9);       // Soft light blue
+  static const Color darkOnSecondary = Color(0xFF0A3060);
+  static const Color darkSecondaryContainer = Color(0xFF1A4070);
+  static const Color darkOnSecondaryContainer = Color(0xFFD6E8FF);
 
-  static const Color darkTertiary = Color(0xFFFF6B9D);       // Aurora pink
-  static const Color darkOnTertiary = Color(0xFF4A0025);
-  static const Color darkTertiaryContainer = Color(0xFF6B003B);
-  static const Color darkOnTertiaryContainer = Color(0xFFFFD9E5);
+  static const Color darkTertiary = Color(0xFF80CBC4);        // Muted teal
+  static const Color darkOnTertiary = Color(0xFF003731);
+  static const Color darkTertiaryContainer = Color(0xFF005046);
+  static const Color darkOnTertiaryContainer = Color(0xFFB2F0E5);
 
   static const Color darkError = Color(0xFFFF6B6B);
   static const Color darkOnError = Color(0xFF3B0000);
   static const Color darkErrorContainer = Color(0xFF5F0000);
   static const Color darkOnErrorContainer = Color(0xFFFFDAD6);
 
-  static const Color darkSurface = Color(0xFF0B0A1A);        // Deep indigo black
-  static const Color darkOnSurface = Color(0xFFE8E0F0);
-  static const Color darkOnSurfaceVariant = Color(0xFFC8BFD8);
-  static const Color darkOutline = Color(0xFF8A7F98);
-  static const Color darkOutlineVariant = Color(0xFF4A4060);
-  static const Color darkSurfaceContainerLowest = Color(0xFF070618);
-  static const Color darkSurfaceContainer = Color(0xFF120F28);
-  static const Color darkSurfaceContainerHigh = Color(0xFF1D1838);
-  static const Color darkSurfaceContainerHighest = Color(0xFF282348);
-  static const Color darkSurfaceTint = Color(0xFF00E5FF);
+  static const Color darkSurface = Color(0xFF111827);         // Blue-gray dark
+  static const Color darkOnSurface = Color(0xFFE2E8F0);
+  static const Color darkOnSurfaceVariant = Color(0xFFB0BEC5);
+  static const Color darkOutline = Color(0xFF6B7B8D);
+  static const Color darkOutlineVariant = Color(0xFF374151);
+  static const Color darkSurfaceContainerLowest = Color(0xFF0D1117);
+  static const Color darkSurfaceContainer = Color(0xFF1A2332);
+  static const Color darkSurfaceContainerHigh = Color(0xFF243044);
+  static const Color darkSurfaceContainerHighest = Color(0xFF2E3D56);
+  static const Color darkSurfaceTint = Color(0xFF60A5FA);
   static const Color darkShadow = Color(0xFF000000);
   static const Color darkScrim = Color(0xFF000000);
 

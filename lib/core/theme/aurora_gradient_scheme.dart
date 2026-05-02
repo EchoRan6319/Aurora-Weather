@@ -70,54 +70,54 @@ class WeatherGradientScheme {
     Color(0xFFB3E5FC),
   ];
 
-  // ── Dark gradients — Aurora midnight ────────────
+  // ── Dark gradients — Clean blue night ──────────
 
   static const List<Color> _sunnyDark = [
-    Color(0xFF0B0A1A),
-    Color(0xFF1A1040),
-    Color(0xFF003544),
-    Color(0xFF4A1025),
+    Color(0xFF111827),
+    Color(0xFF1E3A5F),
+    Color(0xFF2563EB),
+    Color(0xFF1A365D),
   ];
 
   static const List<Color> _cloudyDark = [
-    Color(0xFF0B0A1A),
-    Color(0xFF1D1838),
-    Color(0xFF2D1750),
-    Color(0xFF120F28),
+    Color(0xFF111827),
+    Color(0xFF1E293B),
+    Color(0xFF334155),
+    Color(0xFF1E3A5F),
   ];
 
   static const List<Color> _rainDark = [
-    Color(0xFF070618),
-    Color(0xFF003544),
-    Color(0xFF1D1838),
-    Color(0xFF282348),
+    Color(0xFF0F172A),
+    Color(0xFF1E3A5F),
+    Color(0xFF1E293B),
+    Color(0xFF243044),
   ];
 
   static const List<Color> _snowDark = [
-    Color(0xFF0B0A1A),
-    Color(0xFF282348),
-    Color(0xFF443068),
-    Color(0xFF1D1838),
+    Color(0xFF111827),
+    Color(0xFF243044),
+    Color(0xFF334155),
+    Color(0xFF1E293B),
   ];
 
   static const List<Color> _fogDark = [
-    Color(0xFF0B0A1A),
-    Color(0xFF1D1838),
-    Color(0xFF2D1750),
-    Color(0xFF120F28),
+    Color(0xFF111827),
+    Color(0xFF1E293B),
+    Color(0xFF2D3A4F),
+    Color(0xFF1A2332),
   ];
 
   static const List<Color> _hotDark = [
-    Color(0xFF1A0510),
-    Color(0xFF6B003B),
-    Color(0xFF3A0020),
-    Color(0xFF4A0025),
+    Color(0xFF1A1020),
+    Color(0xFF4A1A30),
+    Color(0xFF6B2040),
+    Color(0xFF3A1525),
   ];
 
   static const List<Color> _coldDark = [
-    Color(0xFF070618),
-    Color(0xFF004D60),
-    Color(0xFF003544),
-    Color(0xFF120F28),
+    Color(0xFF0F172A),
+    Color(0xFF1E3A5F),
+    Color(0xFF2563EB),
+    Color(0xFF111827),
   ];
 }
