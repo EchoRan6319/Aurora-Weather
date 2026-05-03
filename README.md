@@ -5,6 +5,7 @@
 ![Flutter](https://img.shields.io/badge/Flutter-3.41+-02569B?logo=flutter)
 
 一款使用 **Aurora UI** 构建的现代化跨平台天气应用，支持玻璃质感主题、多城市管理和 AI 天气助手。
+
 （本项目近期正在重构，稳定性略有不足，请知悉）
 
 ## 预览
