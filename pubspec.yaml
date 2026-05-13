@@ -2,7 +2,7 @@ name: pureweather
 description: "极光天气 - 一款使用 Aurora UI 的天气应用"
 publish_to: 'none'
 
-version: 6.0.1+1
+version: 6.0.2+1
 
 environment:
   sdk: ^3.9.0
