@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.echoran" "\0"
-            VALUE "FileDescription", "pureweather" "\0"
+            VALUE "FileDescription", "极光天气" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "pureweather" "\0"
+            VALUE "InternalName", "AuroraWeather" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.echoran. All rights reserved." "\0"
             VALUE "OriginalFilename", "pureweather.exe" "\0"
-            VALUE "ProductName", "pureweather" "\0"
+            VALUE "ProductName", "极光天气" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

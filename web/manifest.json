@@ -1,11 +1,11 @@
 {
-    "name": "pureweather",
-    "short_name": "pureweather",
+    "name": "极光天气",
+    "short_name": "极光天气",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "极光天气 - 一款使用 Aurora UI 的天气应用",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

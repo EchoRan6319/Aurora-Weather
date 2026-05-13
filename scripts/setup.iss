@@ -1,7 +1,7 @@
-; PureWeather Setup Script
+; AuroraWeather Setup Script
 ; Usage: iscc /DMyAppVersion=1.0.0 scripts/setup.iss
 
-#define MyAppName "PureWeather"
+#define MyAppName "极光天气"
 #define MyAppPublisher "EchoRan"
 #define MyAppExeName "pureweather.exe"
 
@@ -13,7 +13,7 @@ VersionInfoVersion={#MyAppVersion}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 OutputDir=..\build\windows\installer
-OutputBaseFilename=PureWeather_{#MyAppVersion}-windows-x64-setup
+OutputBaseFilename=AuroraWeather_{#MyAppVersion}-windows-x64-setup
 Compression=lzma2
 SolidCompression=yes
 DisableProgramGroupPage=yes
@@ -35,4 +35,4 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional icons:"
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "Launch PureWeather"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#MyAppExeName}"; Description: "Launch AuroraWeather"; Flags: nowait postinstall skipifsilent

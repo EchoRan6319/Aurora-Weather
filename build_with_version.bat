@@ -1,7 +1,7 @@
 @echo off
 chcp 65001 >nul
 echo ==========================================
-echo   PureWeather Build with Version Sync
+echo   AuroraWeather Build with Version Sync
 echo ==========================================
 echo.
 

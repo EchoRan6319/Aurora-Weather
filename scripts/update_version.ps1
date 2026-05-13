@@ -1,4 +1,4 @@
-# PureWeather Version Sync Script
+# AuroraWeather Version Sync Script
 # Reads version from Git tag and updates project files
 
 param(
@@ -11,7 +11,7 @@ $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ProjectRoot = Split-Path -Parent $ScriptDir
 
-Write-Host "=== PureWeather Version Sync Script ===" -ForegroundColor Cyan
+Write-Host "=== AuroraWeather Version Sync Script ===" -ForegroundColor Cyan
 Write-Host "Project Root: $ProjectRoot" -ForegroundColor Gray
 
 # Get latest Git tag

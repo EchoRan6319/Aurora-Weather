@@ -44,7 +44,6 @@ android {
         targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        manifestPlaceholders["appName"] = "轻氧天气"
     }
 
     packaging {
@@ -69,7 +68,6 @@ android {
     buildTypes {
         getByName("debug") {
             applicationIdSuffix = ".debug"
-            manifestPlaceholders["appName"] = "轻氧天气Debug"
         }
         getByName("release") {
             signingConfig = signingConfigs.getByName("release")

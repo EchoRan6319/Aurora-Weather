@@ -233,9 +233,9 @@ jobs:
             -KeyUsage DigitalSignature `
             -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}") `
             -CertStoreLocation "Cert:\CurrentUser\My"
-          $password = ConvertTo-SecureString -String "PureWeather@2026" -Force -AsPlainText
+          $password = ConvertTo-SecureString -String "AuroraWeather@2026" -Force -AsPlainText
           Export-PfxCertificate -Cert $cert -FilePath "cert.pfx" -Password $password
-          dart run msix:create --build-windows=false --certificate-path=cert.pfx --certificate-password=PureWeather@2026 --install-certificate=false --version="$version"
+          dart run msix:create --build-windows=false --certificate-path=cert.pfx --certificate-password=AuroraWeather@2026 --install-certificate=false --version="$version"
       - name: Build Inno Setup installer
         shell: pwsh
         run: |
@@ -443,7 +443,7 @@ jobs:
       - name: Package macOS DMG
         run: |
           hdiutil create -volname "AuroraWeather" \
-            -srcfolder "build/macos/Build/Products/Release/PureWeather.app" \
+            -srcfolder "build/macos/Build/Products/Release/AuroraWeather.app" \
             -ov -format UDZO \
             "build/macos/Build/Products/Release/AuroraWeather-${{ steps.version.outputs.version }}-macos-universal.dmg"
       - name: Build iOS

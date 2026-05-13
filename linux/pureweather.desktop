@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=PureWeather
-Comment=轻氧天气 - 一款使用 Material You Design 的天气应用
+Name=极光天气
+Comment=极光天气 - 一款使用 Aurora UI 的天气应用
 Exec=pureweather
 Icon=pureweather
 Terminal=false
