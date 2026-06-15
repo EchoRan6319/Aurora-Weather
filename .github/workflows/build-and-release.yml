@@ -39,7 +39,8 @@ jobs:
       - name: Get version from git tag
         id: version
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          LATEST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+          [[ -z "$LATEST_TAG" ]] && LATEST_TAG="v0.0.0"
           VERSION="${LATEST_TAG#v}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
       - name: Determine release tag
@@ -148,8 +149,8 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          $raw = git describe --tags --abbrev=0
-          if (-not $raw) { $raw = "0.0.0" }
+          $raw = git tag --list "v*" --sort=-v:refname | Select-Object -First 1
+          if (-not $raw) { $raw = "v0.0.0" }
           $version = $raw -replace '^v', ''
           echo "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding UTF8 -Append
       - name: Determine release tag
@@ -284,7 +285,8 @@ jobs:
       - name: Get version from git tag
         id: version
         run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          TAG=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+          [[ -z "$TAG" ]] && TAG="v0.0.0"
           echo "version=${TAG#v}" >> $GITHUB_OUTPUT
       - name: Determine release tag
         id: release_tag
@@ -386,7 +388,8 @@ jobs:
       - name: Get version from git tag
         id: version
         run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          TAG=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+          [[ -z "$TAG" ]] && TAG="v0.0.0"
           echo "version=${TAG#v}" >> $GITHUB_OUTPUT
       - name: Determine release tag
         id: release_tag
